@@ -81,4 +81,4 @@ const bugs = [
   },
 ];
 
-module.exports = bugs;
+export default bugs;

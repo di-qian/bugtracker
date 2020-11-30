@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Button } from 'react-bootstrap';
-//import bugs from '../bugs';
+import { Row, Col, Image, ListGroup } from 'react-bootstrap';
 import CommentBox from '../components/CommentBox';
 import axios from 'axios';
 
@@ -15,15 +13,12 @@ const BugScreen = ({ match }) => {
       setBug(data);
     };
     fetchBug();
-  }, []);
+  }, [match]);
 
   return (
     <>
       <Row>
         <Col>
-          {/* <Link className="btn btn-dark my-3" to="/">
-        Go Back
-      </Link> */}
           <ListGroup variant="flush">
             <ListGroup.Item>
               <Image

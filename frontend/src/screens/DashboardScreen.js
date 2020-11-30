@@ -40,11 +40,6 @@ const DashboardScreen = () => {
                 <td>{bug.project}</td>
                 <td>{bug.name}</td>
                 <td>
-                  {console.log(
-                    Date.parse(JSON.stringify(bug.resolvedBy)) +
-                      ' ' +
-                      Date.now()
-                  )}
                   {bug.resolvedAt ? (
                     <Badge variant="success">CLOSED</Badge>
                   ) : Date.parse(JSON.stringify(bug.resolvedBy)) >
