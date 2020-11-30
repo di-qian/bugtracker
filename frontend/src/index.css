@@ -1,3 +1,32 @@
 main {
   min-height: 80vh;
 }
+
+.fh {
+  color: red;
+}
+
+.fn {
+  color: orange;
+}
+
+.fl {
+  color: blue;
+}
+
+hr.solid {
+  border-top: 1px solid #999;
+}
+
+.profileImage {
+  width: 15%;
+  border-radius: 50%;
+}
+
+.ex1 {
+  margin-left: 30px;
+}
+
+.title1 {
+  font-size: 1.3rem;
+}
