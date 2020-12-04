@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import bugRoutes from './routes/bugRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/bugs', bugRoutes);
+app.use('/api/projects', projectRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
