@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Table, Badge } from 'react-bootstrap';
 import Message from '../components/Message';
@@ -15,6 +16,11 @@ const DashboardScreen = () => {
     dispatch(listBugs());
   }, [dispatch]);
 
+  const getDateString = (inDate) => {
+    let date = new Date(inDate);
+    return date.toDateString();
+  };
+
   return (
     <>
       <h1>Latest Bugs</h1>
@@ -27,7 +33,6 @@ const DashboardScreen = () => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>#</th>
                 <th>Project</th>
                 <th>Bug Title</th>
                 <th>Staus</th>
@@ -43,31 +48,33 @@ const DashboardScreen = () => {
             <tbody>
               {bugs.map((bug) => (
                 <tr key={bug._id}>
-                  <td>{bug._id}</td>
-                  <td>{bug.project}</td>
+                  <td>{bug.project.name}</td>
                   <td>{bug.name}</td>
                   <td>
                     {bug.resolvedAt ? (
                       <Badge variant="success">CLOSED</Badge>
-                    ) : Date.parse(JSON.stringify(bug.resolvedBy)) >
-                      Date.now() ? (
+                    ) : Date.parse(bug.resolvedBy) > Date.now() ? (
                       <Badge variant="primary">OPEN</Badge>
                     ) : (
                       <Badge variant="danger">OVERDUE</Badge>
                     )}
                   </td>
-                  <td>{bug.createdAt}</td>
-                  <td>{bug.resolvedBy}</td>
                   <td>
-                    {bug.Priority === 'High' ? (
+                    <Moment format="YYYY-MM-DD">{bug.createdAt}</Moment>
+                  </td>
+                  <td>
+                    <Moment format="YYYY-MM-DD">{bug.resolvedBy}</Moment>
+                  </td>
+                  <td>
+                    {bug.priority === 'High' ? (
                       <i className="fas fa-bolt fh" />
-                    ) : bug.Priority === 'Normal' ? (
+                    ) : bug.priority === 'Normal' ? (
                       <i className="fas fa-bolt fn" />
                     ) : (
                       <i className="fas fa-bolt fl" />
                     )}
                   </td>
-                  <td>{bug.assignedTo}</td>
+                  <td>{bug.assignedTo.name}</td>
                   <td>
                     <a href={`/bug/${bug._id}`}>
                       <i className="fas fa-ellipsis-v"></i>

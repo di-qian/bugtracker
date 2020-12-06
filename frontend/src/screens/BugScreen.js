@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, Image, ListGroup } from 'react-bootstrap';
 import { listBugDetails } from '../actions/bugActions';
@@ -38,7 +39,7 @@ const BugScreen = ({ match }) => {
                   My Name
                   {'       '}
                   <i className="far fa-clock fa-lg ml-4 mr-1"></i>
-                  {Date.now()}
+                  <Moment format="YYYY-MM-DD">{Date.now()}</Moment>
                 </ListGroup.Item>
 
                 <ListGroup.Item>
