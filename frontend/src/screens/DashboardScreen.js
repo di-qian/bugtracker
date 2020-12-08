@@ -1,29 +1,76 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Table, Badge } from 'react-bootstrap';
+import { Row, Table, Badge, Button } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { listBugs } from '../actions/bugActions';
+import { listBugs, deleteBug, createBug } from '../actions/bugActions';
+import { BUG_CREATE_RESET } from '../constants/bugConstants';
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ history }) => {
+  const [showTable, setShowTable] = useState('');
   const dispatch = useDispatch();
 
   const bugList = useSelector((state) => state.bugList);
   const { loading, error, bugs } = bugList;
 
-  useEffect(() => {
-    dispatch(listBugs());
-  }, [dispatch]);
+  const bugDelete = useSelector((state) => state.bugDelete);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = bugDelete;
 
-  const getDateString = (inDate) => {
-    let date = new Date(inDate);
-    return date.toDateString();
+  const bugCreate = useSelector((state) => state.bugCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    bug: createdBug,
+  } = bugCreate;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  useEffect(() => {
+    dispatch({ type: BUG_CREATE_RESET });
+
+    if (!userInfo.isAdmin) {
+      setShowTable('hide trwidth');
+    } else {
+      setShowTable('');
+    }
+
+    if (successCreate) {
+      history.push(`/bug/${createdBug._id}/edit`);
+    } else {
+      dispatch(listBugs());
+    }
+  }, [dispatch, history, userInfo, successDelete, successCreate, createdBug]);
+
+  const deleteHandler = (id) => {
+    if (window.confirm('Are you sure')) {
+      dispatch(deleteBug(id));
+    }
+  };
+
+  const createBugHandler = () => {
+    dispatch(createBug());
   };
 
   return (
     <>
       <h1>Latest Bugs</h1>
+      <Row>
+        <Button className="my-3" onClick={createBugHandler}>
+          <i className="fas fa-plus"></i> New Issue
+        </Button>
+      </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
@@ -79,6 +126,21 @@ const DashboardScreen = () => {
                     <a href={`/bug/${bug._id}`}>
                       <i className="fas fa-ellipsis-v"></i>
                     </a>
+                  </td>
+
+                  <td className={showTable}>
+                    {/* <LinkContainer to={`/admin/bug/${bug._id}/edit`}>
+                      <Button variant="light" className="btn-sm">
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    </LinkContainer> */}
+                    <Button
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => deleteHandler(bug._id)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </Button>
                   </td>
                 </tr>
               ))}

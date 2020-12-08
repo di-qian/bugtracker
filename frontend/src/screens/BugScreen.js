@@ -29,40 +29,51 @@ const BugScreen = ({ match }) => {
             <Col>
               <ListGroup variant="flush">
                 <ListGroup.Item>
-                  <Image
-                    className="mr-2"
-                    src="/images/profiles/profile2.jpg"
-                    width="35"
-                    height="35"
-                    roundedCircle
-                  />
-                  My Name
-                  {'       '}
-                  <i className="far fa-clock fa-lg ml-4 mr-1"></i>
+                  <i className="far fa-clock fa-lg mr-2"></i>
                   <Moment format="YYYY-MM-DD">{Date.now()}</Moment>
                 </ListGroup.Item>
 
                 <ListGroup.Item>
-                  <Row>
-                    <span class="badge badge-pill badge-light">
+                  <Row className="mb-3">
+                    <span className="badge badge-pill badge-light mr-2">
                       Bug Tracking
                     </span>
 
                     {bug.Priority === 'High' ? (
-                      <span class="badge badge-danger">High Priority</span>
+                      <span className="badge badge-danger">High Priority</span>
                     ) : bug.Priority === 'Normal' ? (
-                      <span class="badge badge-warning">Normal Priority</span>
+                      <span className="badge badge-warning">
+                        Normal Priority
+                      </span>
                     ) : (
-                      <span class="badge badge-primary">Low Priority</span>
+                      <span className="badge badge-primary">Low Priority</span>
                     )}
                   </Row>
-                  <Row className="ex1 title1">
-                    <span className="font-weight-bold pt-3">{bug.name}</span>
+                  <Row>
+                    <p className="font-weight-bold mr-2">Issue: </p>
+                    <p>{bug.name}</p>
+                  </Row>
+                  <Row>
+                    <p className="font-weight-bold mr-2">Created on: </p>
+                    <Moment format="YYYY-MM-DD">{bug.createdAt}</Moment>
+                    <p className="font-weight-bold ml-4 mr-2">Due By: </p>
+                    <Moment format="YYYY-MM-DD">{bug.resolvedBy}</Moment>
+                  </Row>
+                  <Row>
+                    <p className="font-weight-bold mr-2">Assignee: </p>
+                    <Image
+                      className="mr-2"
+                      src="/images/profiles/profile2.jpg"
+                      width="35"
+                      height="35"
+                      roundedCircle
+                    />
+                    <p>{bug.assignedTo ? bug.assignedTo.name : ''}</p>
                   </Row>
                 </ListGroup.Item>
 
                 <ListGroup.Item>
-                  <Row className="ex1">
+                  <Row>
                     <span className="font-weight-bold mr-2">Description:</span>
                     <p>{bug.description}</p>
                   </Row>

@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import DashboardScreen from './screens/DashboardScreen';
 import BugScreen from './screens/BugScreen';
+import BugEditScreen from './screens/BugEditScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -20,7 +21,8 @@ const App = () => {
           <Route path="/login" component={LoginScreen} />
           <Route path="/register" component={RegisterScreen} />
           <Route path="/profile" component={ProfileScreen} />
-          <Route path="/bug/:id" component={BugScreen} />
+          <Route path="/bug/:id" component={BugScreen} exact />
+          <Route path="/bug/:id/edit" component={BugEditScreen} />
           <Route path="/admin/userlist" component={UserListScreen} />
           <Route path="/admin/user/:id/edit" component={UserEditScreen} />
           <Route path="/" component={DashboardScreen} exact />

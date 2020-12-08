@@ -1,7 +1,13 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { bugListReducer, bugDetailsReducer } from './reducers/bugReducers';
+import {
+  bugListReducer,
+  bugDetailsReducer,
+  bugDeleteReducer,
+  bugCreateReducer,
+  bugUpdateReducer,
+} from './reducers/bugReducers';
 import {
   userLoginReducer,
   userRegisterReducer,
@@ -12,9 +18,14 @@ import {
   userUpdateReducer,
 } from './reducers/userReducers';
 
+import { projectListReducer } from './reducers/projectReducers';
+
 const reducer = combineReducers({
   bugList: bugListReducer,
   bugDetails: bugDetailsReducer,
+  bugDelete: bugDeleteReducer,
+  bugCreate: bugCreateReducer,
+  bugUpdate: bugUpdateReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
@@ -22,6 +33,7 @@ const reducer = combineReducers({
   userList: userListReducer,
   userDelete: userDeleteReducer,
   userUpdate: userUpdateReducer,
+  projectList: projectListReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
