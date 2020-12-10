@@ -37,6 +37,7 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      image: user.image,
       isAdmin: user.isAdmin,
       isManager: user.isManager,
       token: generateToken(user._id),
@@ -71,6 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      image: user.image,
       isAdmin: user.isAdmin,
       isManager: user.isManager,
       token: generateToken(user._id),
@@ -92,6 +94,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      image: user.image,
       isAdmin: user.isAdmin,
       isManager: user.isManager,
     });
@@ -113,6 +116,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (req.body.password) {
       user.password = req.body.password;
     }
+    if (req.body.image) {
+      user.image = req.body.image;
+    }
 
     const updatedUser = await user.save();
 
@@ -120,6 +126,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      image: updatedUser.image,
       isAdmin: updatedUser.isAdmin,
       isManager: updatedUser.isManager,
       token: generateToken(updatedUser._id),
@@ -163,6 +170,7 @@ const updateUser = asyncHandler(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      image: updatedUser.image,
       isAdmin: updatedUser.isAdmin,
       isManager: updatedUser.isManager,
     });

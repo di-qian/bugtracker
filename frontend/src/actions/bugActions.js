@@ -17,6 +17,7 @@ import {
   BUG_UPDATE_FAIL,
   BUG_UPDATE_RESET,
 } from '../constants/bugConstants';
+import { logout } from './userActions';
 
 export const listBugs = () => async (dispatch) => {
   try {
@@ -90,7 +91,7 @@ export const deleteBug = (id) => async (dispatch, getState) => {
   }
 };
 
-export const createBug = () => async (dispatch, getState) => {
+export const createBug = (newbug) => async (dispatch, getState) => {
   try {
     dispatch({
       type: BUG_CREATE_REQUEST,
@@ -102,11 +103,12 @@ export const createBug = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
-    const { data } = await axios.post(`/api/bugs`, {}, config);
+    const { data } = await axios.post(`/api/bugs`, newbug, config);
 
     dispatch({
       type: BUG_CREATE_SUCCESS,

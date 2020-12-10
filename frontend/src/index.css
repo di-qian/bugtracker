@@ -18,6 +18,12 @@ main {
   visibility: hidden;
 }
 
+span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
 .trwidth {
   width: 0%;
 }

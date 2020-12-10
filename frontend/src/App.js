@@ -21,10 +21,11 @@ const App = () => {
           <Route path="/login" component={LoginScreen} />
           <Route path="/register" component={RegisterScreen} />
           <Route path="/profile" component={ProfileScreen} />
-          <Route path="/bug/:id" component={BugScreen} exact />
-          <Route path="/bug/:id/edit" component={BugEditScreen} />
+          <Route path="/bug/create" component={BugEditScreen} />
+
           <Route path="/admin/userlist" component={UserListScreen} />
           <Route path="/admin/user/:id/edit" component={UserEditScreen} />
+          <Route path="/bug/edit/:id" component={BugScreen} exact />
           <Route path="/" component={DashboardScreen} exact />
         </Container>
       </main>

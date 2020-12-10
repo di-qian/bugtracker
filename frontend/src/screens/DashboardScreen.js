@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Row, Table, Badge, Button } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { listBugs, deleteBug, createBug } from '../actions/bugActions';
+import { listBugs, deleteBug } from '../actions/bugActions';
 import { BUG_CREATE_RESET } from '../constants/bugConstants';
 
 const DashboardScreen = ({ history }) => {
@@ -22,32 +22,20 @@ const DashboardScreen = ({ history }) => {
     success: successDelete,
   } = bugDelete;
 
-  const bugCreate = useSelector((state) => state.bugCreate);
-  const {
-    loading: loadingCreate,
-    error: errorCreate,
-    success: successCreate,
-    bug: createdBug,
-  } = bugCreate;
-
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
     dispatch({ type: BUG_CREATE_RESET });
 
-    if (!userInfo.isAdmin) {
-      setShowTable('hide trwidth');
-    } else {
-      setShowTable('');
-    }
+    // if (!userInfo.isAdmin) {
+    //   setShowTable('hide trwidth');
+    // } else {
+    //   setShowTable('');
+    // }
 
-    if (successCreate) {
-      history.push(`/bug/${createdBug._id}/edit`);
-    } else {
-      dispatch(listBugs());
-    }
-  }, [dispatch, history, userInfo, successDelete, successCreate, createdBug]);
+    dispatch(listBugs());
+  }, [dispatch, history, userInfo, successDelete]);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {
@@ -56,12 +44,15 @@ const DashboardScreen = ({ history }) => {
   };
 
   const createBugHandler = () => {
-    dispatch(createBug());
+    history.push('/bug/create');
   };
 
   return (
     <>
-      <h1>Latest Bugs</h1>
+      <Row>
+        <h1>Latest Bugs</h1>
+      </Row>
+
       <Row>
         <Button className="my-3" onClick={createBugHandler}>
           <i className="fas fa-plus"></i> New Issue
@@ -69,8 +60,7 @@ const DashboardScreen = ({ history }) => {
       </Row>
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant="danger">{errorDelete}</Message>}
-      {loadingCreate && <Loader />}
-      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
+
       {loading ? (
         <Loader />
       ) : error ? (
@@ -90,6 +80,7 @@ const DashboardScreen = ({ history }) => {
                 <th>
                   <i className="fas fa-ellipsis-v"></i>
                 </th>
+                <th className={showTable}>Remove</th>
               </tr>
             </thead>
             <tbody>
@@ -114,16 +105,16 @@ const DashboardScreen = ({ history }) => {
                   </td>
                   <td>
                     {bug.priority === 'High' ? (
-                      <i className="fas fa-bolt fh" />
+                      <i className="fas fa-bolt fh"> High</i>
                     ) : bug.priority === 'Normal' ? (
-                      <i className="fas fa-bolt fn" />
+                      <i className="fas fa-bolt fn"> Normal</i>
                     ) : (
-                      <i className="fas fa-bolt fl" />
+                      <i className="fas fa-bolt fl"> Low</i>
                     )}
                   </td>
                   <td>{bug.assignedTo.name}</td>
                   <td>
-                    <a href={`/bug/${bug._id}`}>
+                    <a href={`/bug/edit/${bug._id}`}>
                       <i className="fas fa-ellipsis-v"></i>
                     </a>
                   </td>

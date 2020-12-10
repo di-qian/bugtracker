@@ -1,19 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Image, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
-import { listBugDetails, updateBug } from '../actions/bugActions';
+import { createBug } from '../actions/bugActions';
 import { listProjects } from '../actions/projectActions';
 import { listUsers } from '../actions/userActions';
-import { BUG_UPDATE_RESET } from '../constants/bugConstants';
 
-const BugEditScreen = ({ match, history }) => {
-  const bugId = match.params.id;
-
+const BugEditScreen = ({ history }) => {
   const [name, setName] = useState('');
   const [priority, setPriority] = useState('');
   const [image, setImage] = useState('');
@@ -25,14 +23,14 @@ const BugEditScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
   const bugDetails = useSelector((state) => state.bugDetails);
-  const { loading, error, bug } = bugDetails;
+  const { loading, error } = bugDetails;
 
-  const bugUpdate = useSelector((state) => state.bugUpdate);
+  const bugCreate = useSelector((state) => state.bugCreate);
   const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = bugUpdate;
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+  } = bugCreate;
 
   const projectList = useSelector((state) => state.projectList);
   const { projects } = projectList;
@@ -47,20 +45,11 @@ const BugEditScreen = ({ match, history }) => {
     dispatch(listProjects());
     dispatch(listUsers());
 
-    if (successUpdate) {
-      dispatch({ type: BUG_UPDATE_RESET });
+    if (successCreate) {
+      //dispatch({ type: BUG_CREATE_RESET });
       history.push('/');
-    } else {
-      if (!bug.name || bug._id !== bugId) {
-        dispatch(listBugDetails(bugId));
-      } else {
-        setName(bug.name);
-        setPriority(bug.priority);
-        setImage(bug.image);
-        setDescription(bug.description);
-      }
     }
-  }, [dispatch, history, bugId, bug, successUpdate]);
+  }, [dispatch, history, successCreate]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -87,12 +76,12 @@ const BugEditScreen = ({ match, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    console.log(assignedTo + 'assigned To');
     var dt = new Date();
     dt.setMonth(dt.getMonth() + 1);
 
     dispatch(
-      updateBug({
-        _id: bugId,
+      createBug({
         name,
         priority,
         image,
@@ -106,21 +95,50 @@ const BugEditScreen = ({ match, history }) => {
   };
 
   const settingProject = (e) => {
-    const projectId = projects.find((x) => x.name === e)._id;
-    setProject(projectId);
+    const newproject = projects.find((x) => x.name === e);
+    if (newproject) {
+      setProject(newproject._id);
+    }
   };
 
   const settingAssignedTo = (e) => {
-    const assignedToId = users.find((x) => x.name === e)._id;
-    setAssignedTo(assignedToId);
+    const user_assignedTo = users.find((x) => x.name === e);
+    if (user_assignedTo) {
+      setAssignedTo(user_assignedTo._id);
+    }
   };
 
   return (
     <>
       <FormContainer>
-        <h1>Edit Bug</h1>
-        {loadingUpdate && <Loader />}
-        {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+        <Form.Row className="align-items-center mb-3">
+          <Col sm={3} className="my-1">
+            <h4>New Bug</h4>
+          </Col>
+          <Col sm={3} className="my-1">
+            <i className="far fa-clock fa-lg mr-2"></i>
+
+            <Moment format="YYYY-MM-DD">{Date.now()}</Moment>
+          </Col>
+          <Col xs="auto" className="my-1">
+            <Image
+              className="mr-2"
+              src="/images/profiles/profile2.jpg"
+              width="35"
+              height="35"
+              roundedCircle
+            />
+
+            <Form.Label>
+              <span>{userInfo.name ? userInfo.name : ''}</span>
+            </Form.Label>
+          </Col>
+        </Form.Row>
+
+        <hr />
+
+        {loadingCreate && <Loader />}
+        {errorCreate && <Message variant="danger">{errorCreate}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -140,11 +158,12 @@ const BugEditScreen = ({ match, history }) => {
             <Form.Group controlId="description">
               <Form.Label>Description</Form.Label>
               <Form.Control
-                type="text"
+                as="textarea"
+                rows={3}
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-              ></Form.Control>
+              />
             </Form.Group>
 
             <Form.Group controlId="priority">
@@ -152,7 +171,6 @@ const BugEditScreen = ({ match, history }) => {
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"
-                id="inlineFormCustomSelectPref"
                 onChange={(e) => setPriority(e.target.value)}
                 custom
               >
@@ -168,13 +186,12 @@ const BugEditScreen = ({ match, history }) => {
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"
-                id="inlineFormCustomSelectPref"
                 onChange={(e) => settingProject(e.target.value)}
                 custom
               >
-                <option>Choose...</option>
+                <option key="0">Choose...</option>
                 {projects.map((project) => (
-                  <option>{project.name}</option>
+                  <option key={project._id}>{project.name}</option>
                 ))}
               </Form.Control>
             </Form.Group>
@@ -197,21 +214,25 @@ const BugEditScreen = ({ match, history }) => {
             </Form.Group>
 
             <Form.Group controlId="assignedTo">
-              <Form.Label>Assign To</Form.Label>
+              <Form.Label>Assign To (Manager Only)</Form.Label>
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"
-                id="inlineFormCustomSelectPref"
                 onChange={(e) => settingAssignedTo(e.target.value)}
+                disabled={!userInfo.isManager}
                 custom
               >
-                <option>Choose...</option>
-                {users ? users.map((user) => <option>{user.name}</option>) : ''}
+                <option key="0">Choose...</option>
+                {users
+                  ? users.map((user) => (
+                      <option key={user._id}>{user.name}</option>
+                    ))
+                  : ''}
               </Form.Control>
             </Form.Group>
 
             <Button className="mr-2" type="submit" variant="primary">
-              Update
+              Add
             </Button>
             <Link className="btn btn-dark my-3" to="/">
               Go Back

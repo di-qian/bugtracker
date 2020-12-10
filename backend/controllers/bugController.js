@@ -15,10 +15,9 @@ const getBugs = asyncHandler(async (req, res) => {
 // @route   GET /api/bugs/:id
 // @access  Public
 const getBugById = asyncHandler(async (req, res) => {
-  const bug = await Bug.findById(req.params.id).populate(
-    'assignedTo',
-    'name email'
-  );
+  const bug = await Bug.findById(req.params.id)
+    .populate('project', 'name')
+    .populate('assignedTo', 'name email image');
 
   if (bug) {
     res.json(bug);
@@ -48,16 +47,14 @@ const deleteBug = asyncHandler(async (req, res) => {
 // @access  Private
 const createBug = asyncHandler(async (req, res) => {
   const bug = new Bug({
-    name: 'Sample name',
-    image: '/images/sample.jpg',
-    description: 'Sample description',
-    project: '5fc85f0d14a77c1154cb8a5a',
-    priority: 'Normal',
-    resolvedBy: '2019-01-31T10:00:00.000Z',
-    resolvedAt: '2019-01-31T10:00:00.000Z',
-    createdBy: req.user._id,
-    assignedTo: req.user._id,
-    comments: [],
+    name: req.body.name,
+    image: req.body.image,
+    description: req.body.description,
+    project: req.body.project,
+    priority: req.body.priority,
+    resolvedBy: req.body.resolvedBy,
+    createdBy: req.body.createdBy,
+    assignedTo: req.body.assignedTo,
   });
 
   const createdBug = await bug.save();

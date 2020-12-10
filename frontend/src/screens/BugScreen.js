@@ -6,12 +6,16 @@ import { listBugDetails } from '../actions/bugActions';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import CommentBox from '../components/CommentBox';
+import { userRegisterReducer } from '../reducers/userReducers';
 
 const BugScreen = ({ match }) => {
   const dispatch = useDispatch();
 
   const bugDetails = useSelector((state) => state.bugDetails);
   const { loading, error, bug } = bugDetails;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   useEffect(() => {
     dispatch(listBugDetails(match.params.id));
@@ -39,15 +43,19 @@ const BugScreen = ({ match }) => {
                       Bug Tracking
                     </span>
 
-                    {bug.Priority === 'High' ? (
+                    {bug.priority === 'High' ? (
                       <span className="badge badge-danger">High Priority</span>
-                    ) : bug.Priority === 'Normal' ? (
+                    ) : bug.priority === 'Normal' ? (
                       <span className="badge badge-warning">
                         Normal Priority
                       </span>
                     ) : (
                       <span className="badge badge-primary">Low Priority</span>
                     )}
+                  </Row>
+                  <Row>
+                    <p className="font-weight-bold mr-2">Project: </p>
+                    <p>{bug.project ? bug.project.name : ''}</p>
                   </Row>
                   <Row>
                     <p className="font-weight-bold mr-2">Issue: </p>
@@ -63,7 +71,7 @@ const BugScreen = ({ match }) => {
                     <p className="font-weight-bold mr-2">Assignee: </p>
                     <Image
                       className="mr-2"
-                      src="/images/profiles/profile2.jpg"
+                      src={bug.assignedTo ? bug.assignedTo.image : ''}
                       width="35"
                       height="35"
                       roundedCircle
