@@ -26,15 +26,12 @@ const DashboardScreen = ({ history }) => {
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    dispatch({ type: BUG_CREATE_RESET });
-
-    // if (!userInfo.isAdmin) {
-    //   setShowTable('hide trwidth');
-    // } else {
-    //   setShowTable('');
-    // }
-
-    dispatch(listBugs());
+    if (!userInfo) {
+      history.push('/login');
+    } else {
+      dispatch({ type: BUG_CREATE_RESET });
+      dispatch(listBugs());
+    }
   }, [dispatch, history, userInfo, successDelete]);
 
   const deleteHandler = (id) => {
@@ -44,7 +41,7 @@ const DashboardScreen = ({ history }) => {
   };
 
   const createBugHandler = () => {
-    history.push('/bug/create');
+    history.push('/auth/bug/create');
   };
 
   return (
@@ -114,7 +111,7 @@ const DashboardScreen = ({ history }) => {
                   </td>
                   <td>{bug.assignedTo.name}</td>
                   <td>
-                    <a href={`/bug/edit/${bug._id}`}>
+                    <a href={`/auth/bug/edit/${bug._id}`}>
                       <i className="fas fa-ellipsis-v"></i>
                     </a>
                   </td>

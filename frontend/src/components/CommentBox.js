@@ -9,41 +9,36 @@ const CommentBox = () => {
 
   return (
     <>
-      <Row>
-        <ListGroup variant="flush">
-          <ListGroup.Item>
-            <Row>
-              <Col sm={2}>
-                <Image
-                  className="mr-2"
-                  src={userInfo.image}
-                  width="35"
-                  height="35"
-                  roundedCircle
-                />
-              </Col>
-              <Col sm={10}>
-                <Form>
-                  <Form.Group controlId="exampleForm.ControlTextarea1">
-                    {/* <Form.Label className="font-weight-bold">Comment</Form.Label> */}
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Write a comment..."
-                      rows={5}
-                    />
-                  </Form.Group>
-                  <Button className="mr-2" variant="primary" type="submit">
-                    Submit
-                  </Button>
-                  <Link className="btn btn-dark my-3" to="/">
-                    Go Back
-                  </Link>
-                </Form>
-              </Col>
-            </Row>
-          </ListGroup.Item>
-        </ListGroup>
-      </Row>
+      <tr>
+        <td>
+          <Image
+            className="mr-2"
+            src={userInfo.image}
+            width="35"
+            height="35"
+            roundedCircle
+          />
+        </td>
+        <td width="100%">
+          <Form>
+            <Form.Group controlId="exampleForm.ControlTextarea1">
+              <Form.Control
+                className="mb-3"
+                as="textarea"
+                placeholder="Write a comment..."
+                rows={5}
+              />
+
+              <Button className="mr-2" variant="primary" type="submit">
+                Submit
+              </Button>
+              <Link className="btn btn-dark" to="/auth/dashboard">
+                Go Back
+              </Link>
+            </Form.Group>
+          </Form>
+        </td>
+      </tr>
     </>
   );
 };

@@ -16,7 +16,7 @@ const getBugs = asyncHandler(async (req, res) => {
 // @access  Public
 const getBugById = asyncHandler(async (req, res) => {
   const bug = await Bug.findById(req.params.id)
-    .populate('project', 'name')
+    .populate('project', 'name managerAssigned')
     .populate('assignedTo', 'name email image');
 
   if (bug) {

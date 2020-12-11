@@ -18,7 +18,13 @@ import {
   userUpdateReducer,
 } from './reducers/userReducers';
 
-import { projectListReducer } from './reducers/projectReducers';
+import {
+  projectListReducer,
+  projectDetailsReducer,
+  projectDeleteReducer,
+  projectCreateReducer,
+  projectUpdateReducer,
+} from './reducers/projectReducers';
 
 const reducer = combineReducers({
   bugList: bugListReducer,
@@ -34,6 +40,10 @@ const reducer = combineReducers({
   userDelete: userDeleteReducer,
   userUpdate: userUpdateReducer,
   projectList: projectListReducer,
+  projectDetails: projectDetailsReducer,
+  projectDelete: projectDeleteReducer,
+  projectCreate: projectCreateReducer,
+  projectUpdate: projectUpdateReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

@@ -54,7 +54,6 @@ const ProfileScreen = ({ history }) => {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match');
     } else {
-      console.log('dispatch image ' + image);
       dispatch(
         updateUserProfile({ id: user._id, name, email, password, image })
       );
@@ -75,9 +74,9 @@ const ProfileScreen = ({ history }) => {
       };
 
       const { data } = await axios.post('/api/upload', formData, config);
-      console.log('data ' + data);
+
       setImage(data);
-      console.log('image ' + image);
+
       setUploading(false);
     } catch (error) {
       console.error(error);
@@ -162,7 +161,7 @@ const ProfileScreen = ({ history }) => {
               <Button className="mr-2" type="submit" variant="primary">
                 Update
               </Button>
-              <Link className="btn btn-dark my-3" to="/">
+              <Link className="btn btn-dark my-3" to="/auth/dashboard">
                 Go Back
               </Link>
             </Form>

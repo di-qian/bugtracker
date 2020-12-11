@@ -42,14 +42,18 @@ const BugEditScreen = ({ history }) => {
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    dispatch(listProjects());
-    dispatch(listUsers());
+    if (!userInfo) {
+      history.push('/login');
+    } else {
+      dispatch(listProjects());
+      dispatch(listUsers());
 
-    if (successCreate) {
-      //dispatch({ type: BUG_CREATE_RESET });
-      history.push('/');
+      if (successCreate) {
+        //dispatch({ type: BUG_CREATE_RESET });
+        history.push('/auth/dashboard');
+      }
     }
-  }, [dispatch, history, successCreate]);
+  }, [dispatch, history, userInfo, successCreate]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -76,7 +80,7 @@ const BugEditScreen = ({ history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(assignedTo + 'assigned To');
+
     var dt = new Date();
     dt.setMonth(dt.getMonth() + 1);
 
@@ -234,7 +238,7 @@ const BugEditScreen = ({ history }) => {
             <Button className="mr-2" type="submit" variant="primary">
               Add
             </Button>
-            <Link className="btn btn-dark my-3" to="/">
+            <Link className="btn btn-dark my-3" to="/auth/dashboard">
               Go Back
             </Link>
           </Form>
