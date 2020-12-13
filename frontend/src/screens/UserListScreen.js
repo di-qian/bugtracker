@@ -32,9 +32,17 @@ const UserListScreen = ({ history }) => {
     }
   };
 
+  const createUserHandler = () => {
+    history.push('/admin/user/create');
+  };
+
   return (
     <>
-      <h1>Users</h1>
+      <h1>User List</h1>
+
+      <Button className="my-3" onClick={createUserHandler}>
+        <i className="fas fa-plus"></i> New User
+      </Button>
 
       {loading ? (
         <Loader />

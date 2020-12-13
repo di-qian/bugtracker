@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Row } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -38,7 +38,7 @@ const ProjectListScreen = ({ history }) => {
 
   return (
     <>
-      <h1>Projects</h1>
+      <h1>Project List</h1>
 
       <Button className="my-3" onClick={createProjectHandler}>
         <i className="fas fa-plus"></i> New Project

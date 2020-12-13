@@ -67,15 +67,27 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
 
-  if (user) {
+  if (req.body.image) {
+    user.image = req.body.image;
+  }
+  if (req.body.isAdmin) {
+    user.isAdmin = req.body.isAdmin;
+  }
+  if (req.body.isManager) {
+    user.isManager = req.body.isManager;
+  }
+
+  const updatedUser = await user.save();
+
+  if (updatedUser) {
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      isAdmin: user.isAdmin,
-      isManager: user.isManager,
-      token: generateToken(user._id),
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      image: updatedUser.image,
+      isAdmin: updatedUser.isAdmin,
+      isManager: updatedUser.isManager,
+      token: generateToken(updatedUser._id),
     });
   } else {
     res.status(400);
@@ -161,6 +173,12 @@ const updateUser = asyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+    if (req.body.image) {
+      user.image = req.body.image;
+    }
     user.isAdmin = req.body.isAdmin;
     user.isManager = req.body.isManager;
 

@@ -102,9 +102,11 @@ const ProjectCreateScreen = ({ history }) => {
               >
                 <option key="0">Choose...</option>
                 {users
-                  ? users.map((user) => (
-                      <option key={user._id}>{user.name}</option>
-                    ))
+                  ? users
+                      .filter((user) => user.isManager)
+                      .map((user) => (
+                        <option key={user._id}>{user.name}</option>
+                      ))
                   : ''}
               </Form.Control>
             </Form.Group>

@@ -10,6 +10,7 @@ import {
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 router.route('/').get(getProjects).post(protect, admin, createProject);
+
 router
   .route('/:id')
   .get(getProjectById)

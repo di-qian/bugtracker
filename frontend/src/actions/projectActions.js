@@ -15,7 +15,6 @@ import {
   PROJECT_UPDATE_REQUEST,
   PROJECT_UPDATE_SUCCESS,
   PROJECT_UPDATE_FAIL,
-  PROJECT_UPDATE_RESET,
 } from '../constants/projectConstants';
 import { logout } from './userActions';
 

@@ -1,13 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Image, Form, Button, Row, Col } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Image, Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getUserDetails, updateUserProfile } from '../actions/userActions';
-//import { listMyOrders } from '../actions/orderActions';
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
 
 const ProfileScreen = ({ history }) => {
@@ -45,6 +43,7 @@ const ProfileScreen = ({ history }) => {
       } else {
         setName(user.name);
         setEmail(user.email);
+        setImage(user.image);
       }
     }
   }, [dispatch, history, userInfo, user, success]);
@@ -87,13 +86,14 @@ const ProfileScreen = ({ history }) => {
   return (
     <>
       <Row>
-        <h2>User Profile</h2>
+        <Col>
+          <h2>User Profile</h2>
+        </Col>
       </Row>
 
       <Row>
         <Col md={6}>
           {message && <Message variant="danger">{message}</Message>}
-          {}
           {success && <Message variant="success">Profile Updated</Message>}
           {loading ? (
             <Loader />
@@ -102,7 +102,7 @@ const ProfileScreen = ({ history }) => {
           ) : (
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
-                <Form.Label>Name</Form.Label>
+                <Form.Label>Edit Name</Form.Label>
                 <Form.Control
                   type="name"
                   placeholder="Enter name"
@@ -112,7 +112,7 @@ const ProfileScreen = ({ history }) => {
               </Form.Group>
 
               <Form.Group controlId="email">
-                <Form.Label>Email Address</Form.Label>
+                <Form.Label>Edit Email Address</Form.Label>
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
@@ -122,10 +122,10 @@ const ProfileScreen = ({ history }) => {
               </Form.Group>
 
               <Form.Group controlId="password">
-                <Form.Label>Password</Form.Label>
+                <Form.Label>Edit Password</Form.Label>
                 <Form.Control
                   type="password"
-                  placeholder="Enter password"
+                  placeholder="Enter new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 ></Form.Control>
@@ -135,14 +135,14 @@ const ProfileScreen = ({ history }) => {
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
                   type="password"
-                  placeholder="Confirm password"
+                  placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 ></Form.Control>
               </Form.Group>
 
               <Form.Group controlId="image">
-                <Form.Label>Image</Form.Label>
+                <Form.Label>Edit Profile Image</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter image url"

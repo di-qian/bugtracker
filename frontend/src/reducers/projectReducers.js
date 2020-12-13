@@ -5,6 +5,7 @@ import {
   PROJECT_DETAILS_REQUEST,
   PROJECT_DETAILS_SUCCESS,
   PROJECT_DETAILS_FAIL,
+  PROJECT_DETAILS_RESET,
   PROJECT_CREATE_REQUEST,
   PROJECT_CREATE_SUCCESS,
   PROJECT_CREATE_FAIL,
@@ -39,6 +40,8 @@ export const projectDetailsReducer = (state = { project: {} }, action) => {
       return { loading: false, project: action.payload };
     case PROJECT_DETAILS_FAIL:
       return { loading: false, error: action.payload };
+    case PROJECT_DETAILS_RESET:
+      return { project: {} };
     default:
       return state;
   }
@@ -81,7 +84,7 @@ export const projectUpdateReducer = (state = { project: {} }, action) => {
     case PROJECT_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     case PROJECT_UPDATE_RESET:
-      return { product: {} };
+      return { project: {} };
     default:
       return state;
   }
