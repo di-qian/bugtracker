@@ -5,8 +5,16 @@ import Project from '../models/projectModel.js';
 // @route   GET /api/projects
 // @access  Public
 const getProjects = asyncHandler(async (req, res) => {
-  const projects = await Project.find({}).populate('managerAssigned', 'name');
-  res.json(projects);
+  const pageSize = 5;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const count = await Project.countDocuments({});
+
+  const projects = await Project.find({})
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .populate('managerAssigned', 'name');
+  res.json({ projects, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single project

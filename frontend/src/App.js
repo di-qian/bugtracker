@@ -28,12 +28,36 @@ const App = () => {
           <Route path="/auth/bug/create" component={BugEditScreen} />
 
           <Route path="/admin/project/create" component={ProjectCreateScreen} />
-          <Route path="/admin/projectlist" component={ProjectListScreen} />
+          <Route
+            path="/admin/projectlist/page/:pageNumber"
+            component={ProjectListScreen}
+            exact
+          />
+          <Route
+            path="/admin/projectlist"
+            component={ProjectListScreen}
+            exact
+          />
           <Route path="/admin/project/:id/edit" component={ProjectEditScreen} />
-          <Route path="/admin/userlist" component={UserListScreen} />
+          <Route
+            path="/admin/userlist/page/:pageNumber"
+            component={UserListScreen}
+            exact
+          />
+          <Route path="/admin/userlist" component={UserListScreen} exact />
           <Route path="/admin/user/create" component={UserCreateScreen} />
           <Route path="/admin/user/:id/edit" component={UserEditScreen} />
           <Route path="/auth/bug/edit/:id" component={BugScreen} exact />
+          <Route
+            path="/auth/dashboard/page/:pageNumber"
+            component={DashboardScreen}
+            exact
+          />
+          <Route
+            path="/auth/dashboard/search/:keyword/page/:pageNumber"
+            component={DashboardScreen}
+            exact
+          />
           <Route path="/auth/dashboard" component={DashboardScreen} exact />
         </Container>
       </main>

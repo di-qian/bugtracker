@@ -5,10 +5,26 @@ import Bug from '../models/bugModel.js';
 // @route   GET /api/bugs
 // @access  Public
 const getBugs = asyncHandler(async (req, res) => {
-  const bugs = await Bug.find({})
+  const pageSize = 5;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const count = await Bug.countDocuments({ ...keyword });
+  const bugs = await Bug.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
     .populate('project', 'name')
     .populate('assignedTo', 'name email');
-  res.json(bugs);
+
+  res.json({ bugs, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single bug

@@ -18,11 +18,11 @@ import {
 } from '../constants/projectConstants';
 import { logout } from './userActions';
 
-export const listProjects = () => async (dispatch) => {
+export const listProjects = (pageNumber = '') => async (dispatch) => {
   try {
     dispatch({ type: PROJECT_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/projects');
+    const { data } = await axios.get(`/api/projects?pageNumber=${pageNumber}`);
 
     dispatch({ type: PROJECT_LIST_SUCCESS, payload: data });
   } catch (error) {

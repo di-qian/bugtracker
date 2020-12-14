@@ -127,7 +127,11 @@ const BugEditScreen = ({ history }) => {
           <Col xs="auto" className="my-1">
             <Image
               className="mr-2"
-              src="/images/profiles/profile2.jpg"
+              src={
+                userInfo.image
+                  ? userInfo.image
+                  : '/images/profiles/profile2.jpg'
+              }
               width="35"
               height="35"
               roundedCircle

@@ -19,11 +19,13 @@ import {
 } from '../constants/bugConstants';
 import { logout } from './userActions';
 
-export const listBugs = () => async (dispatch) => {
+export const listBugs = (keyword = '', pageNumber = '') => async (dispatch) => {
   try {
     dispatch({ type: BUG_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/bugs');
+    const { data } = await axios.get(
+      `/api/bugs?keyword=${keyword}&pageNumber=${pageNumber}`
+    );
 
     dispatch({ type: BUG_LIST_SUCCESS, payload: data });
   } catch (error) {
