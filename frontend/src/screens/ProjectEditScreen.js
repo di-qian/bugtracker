@@ -71,12 +71,9 @@ const ProjectEditScreen = ({ history, match }) => {
   };
 
   const settingAssignedTo = (e) => {
-    console.log(managerAssigned);
     const user_assignedTo = users.find((x) => x.name === e);
     if (user_assignedTo) {
-      console.log('old ' + managerAssigned.name);
       setManagerAssigned(user_assignedTo);
-      console.log('new ' + managerAssigned.name);
     }
   };
 

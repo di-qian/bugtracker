@@ -4,8 +4,8 @@ import { Container } from 'react-bootstrap';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import DashboardScreen from './screens/DashboardScreen';
-import BugScreen from './screens/BugScreen';
 import BugEditScreen from './screens/BugEditScreen';
+import BugCreateScreen from './screens/BugCreateScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -25,8 +25,8 @@ const App = () => {
           <Route path="/login" component={LoginScreen} />
           <Route path="/register" component={RegisterScreen} />
           <Route path="/auth/profile" component={ProfileScreen} />
-          <Route path="/auth/bug/create" component={BugEditScreen} />
-
+          <Route path="/auth/bug/create" component={BugCreateScreen} />
+          <Route path="/auth/bug/edit/:id" component={BugEditScreen} exact />
           <Route path="/admin/project/create" component={ProjectCreateScreen} />
           <Route
             path="/admin/projectlist/page/:pageNumber"
@@ -47,7 +47,7 @@ const App = () => {
           <Route path="/admin/userlist" component={UserListScreen} exact />
           <Route path="/admin/user/create" component={UserCreateScreen} />
           <Route path="/admin/user/:id/edit" component={UserEditScreen} />
-          <Route path="/auth/bug/edit/:id" component={BugScreen} exact />
+
           <Route
             path="/auth/dashboard/page/:pageNumber"
             component={DashboardScreen}

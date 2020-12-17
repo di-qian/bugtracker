@@ -22,7 +22,7 @@ const getBugs = asyncHandler(async (req, res) => {
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .populate('project', 'name')
-    .populate('assignedTo', 'name email');
+    .populate('assignedTo', 'name email image');
 
   res.json({ bugs, page, pages: Math.ceil(count / pageSize) });
 });
@@ -32,7 +32,8 @@ const getBugs = asyncHandler(async (req, res) => {
 // @access  Public
 const getBugById = asyncHandler(async (req, res) => {
   const bug = await Bug.findById(req.params.id)
-    .populate('project', 'name managerAssigned')
+    .populate('project', 'name')
+    .populate({ path: 'project', populate: { path: 'managerAssigned' } })
     .populate('assignedTo', 'name email image');
 
   if (bug) {
@@ -62,6 +63,8 @@ const deleteBug = asyncHandler(async (req, res) => {
 // @route   POST /api/bugs
 // @access  Private
 const createBug = asyncHandler(async (req, res) => {
+  const temp_assignTo = req.body.assignedTo ? req.body.assignedTo : null;
+
   const bug = new Bug({
     name: req.body.name,
     image: req.body.image,
@@ -70,7 +73,7 @@ const createBug = asyncHandler(async (req, res) => {
     priority: req.body.priority,
     resolvedBy: req.body.resolvedBy,
     createdBy: req.body.createdBy,
-    assignedTo: req.body.assignedTo,
+    assignedTo: temp_assignTo,
   });
 
   const createdBug = await bug.save();
