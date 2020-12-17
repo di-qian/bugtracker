@@ -81,7 +81,6 @@ export const userUpdateProfileReducer = (state = {}, action) => {
     case USER_UPDATE_PROFILE_REQUEST:
       return { loading: true };
     case USER_UPDATE_PROFILE_SUCCESS:
-      console.log('here');
       return { loading: false, success: true, userInfo: action.payload };
     case USER_UPDATE_PROFILE_FAIL:
       return { loading: false, error: action.payload };
@@ -145,7 +144,7 @@ export const userUpdateReducer = (state = { user: {} }, action) => {
     case USER_UPDATE_REQUEST:
       return { loading: true };
     case USER_UPDATE_SUCCESS:
-      return { loading: false, success: true };
+      return { loading: false, success: true, userInfo: action.payload };
     case USER_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     case USER_UPDATE_RESET:

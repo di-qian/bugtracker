@@ -12,8 +12,6 @@ import {
   Button,
   Badge,
   Jumbotron,
-  InputGroup,
-  FormControl,
 } from 'react-bootstrap';
 import { listBugDetails } from '../actions/bugActions';
 import Message from '../components/Message';
@@ -33,6 +31,13 @@ const BugEditScreen = ({ history, match }) => {
   const [assignedToName, setAssignedToName] = useState('');
   const [startDate, setStartDate] = useState(new Date('1993/09/28'));
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditAssignee, setIsEditAssignee] = useState(false);
+  const [isEditProject, setIsEditProject] = useState(false);
+  const [isEditIssue, setIsEditIssue] = useState(false);
+  const [isEditPriority, setIsEditPriority] = useState(false);
+  const [isEditDueDate, setIsEditDueDate] = useState(false);
+  const [isEditDescription, setIsEditDescription] = useState(false);
+  const [isEditImage, setIsEditImage] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -88,6 +93,13 @@ const BugEditScreen = ({ history, match }) => {
     assignedToImage,
     assignedToName,
     isEditMode,
+    isEditAssignee,
+    isEditProject,
+    isEditIssue,
+    isEditPriority,
+    isEditDueDate,
+    isEditDescription,
+    isEditImage,
   ]);
 
   const submitHandler = (e) => {
@@ -121,6 +133,62 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditMode(false);
   };
 
+  const enableAssigneeEditButton = () => {
+    setIsEditAssignee(true);
+  };
+
+  const disableAssigneeEditButton = () => {
+    setIsEditAssignee(false);
+  };
+
+  const enableProjectEditButton = () => {
+    setIsEditProject(true);
+  };
+
+  const disableProjectEditButton = () => {
+    setIsEditProject(false);
+  };
+
+  const enableIssueEditButton = () => {
+    setIsEditIssue(true);
+  };
+
+  const disableIssueEditButton = () => {
+    setIsEditIssue(false);
+  };
+
+  const enablePriorityEditButton = () => {
+    setIsEditPriority(true);
+  };
+
+  const disablePriorityEditButton = () => {
+    setIsEditPriority(false);
+  };
+
+  const enableDueDateEditButton = () => {
+    setIsEditDueDate(true);
+  };
+
+  const disableDueDateEditButton = () => {
+    setIsEditDueDate(false);
+  };
+
+  const enableDescriptionEditButton = () => {
+    setIsEditDescription(true);
+  };
+
+  const disableDescriptionEditButton = () => {
+    setIsEditDescription(false);
+  };
+
+  const enableImageEditButton = () => {
+    setIsEditImage(true);
+  };
+
+  const disableImageEditButton = () => {
+    setIsEditImage(false);
+  };
+
   return (
     <>
       {loading ? (
@@ -139,47 +207,27 @@ const BugEditScreen = ({ history, match }) => {
                     </Badge>
                   </h5>
 
-                  {!isEditMode ? (
-                    <h5>
-                      {bug.priority === 'High' ? (
-                        <Badge
-                          className="font-weight-bold mr-2"
-                          variant="danger"
-                        >
-                          High Priority
-                        </Badge>
-                      ) : bug.priority === 'Normal' ? (
-                        <Badge
-                          className="font-weight-bold mr-2"
-                          variant="warning"
-                        >
-                          Normal Priority
-                        </Badge>
-                      ) : (
-                        <Badge
-                          className="font-weight-bold mr-2"
-                          variant="primary"
-                        >
-                          Low Priority
-                        </Badge>
-                      )}
-                    </h5>
-                  ) : (
-                    <Col xs="auto">
-                      <Form.Control
-                        as="select"
-                        size="sm"
-                        className="font-weight-bold my-1 mr-sm-2"
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
-                        custom
+                  <h5>
+                    {bug.priority === 'High' ? (
+                      <Badge className="font-weight-bold mr-2" variant="danger">
+                        High Priority
+                      </Badge>
+                    ) : bug.priority === 'Normal' ? (
+                      <Badge
+                        className="font-weight-bold mr-2"
+                        variant="warning"
                       >
-                        <option value="Low">Low Priority</option>
-                        <option value="Normal">Normal Priority</option>
-                        <option value="High">High Priority</option>
-                      </Form.Control>
-                    </Col>
-                  )}
+                        Normal Priority
+                      </Badge>
+                    ) : (
+                      <Badge
+                        className="font-weight-bold mr-2"
+                        variant="primary"
+                      >
+                        Low Priority
+                      </Badge>
+                    )}
+                  </h5>
 
                   <h5>
                     {bug.resolvedAt ? (
@@ -203,40 +251,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </h5>
                 </Row>
-              </Col>
-
-              <Col xs="auto">
-                {!isEditMode ? (
-                  <Button
-                    className="mr-2"
-                    type="button"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => enableEditButton()}
-                  >
-                    Edit
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      className="mr-2"
-                      type="button"
-                      variant="primary"
-                      size="sm"
-                    >
-                      OK
-                    </Button>
-                    <Button
-                      className="mr-2"
-                      type="submit"
-                      variant="primary"
-                      size="sm"
-                      onClick={() => disableEditButton()}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
               </Col>
             </Form.Row>
 
@@ -262,13 +276,13 @@ const BugEditScreen = ({ history, match }) => {
                 />
               </Col>
               <Col xs="auto">
-                {assignedTo || isEditMode ? (
+                {assignedTo || isEditAssignee ? (
                   <Form.Control
                     as="select"
                     className="my-1 mr-sm-2 text-dark"
                     value={assignedToName}
                     onChange={(e) => settingAssignee(e.target.value)}
-                    disabled={!isEditMode}
+                    disabled={!isEditAssignee}
                     custom
                   >
                     {users
@@ -286,13 +300,26 @@ const BugEditScreen = ({ history, match }) => {
                   </Badge>
                 )}
               </Col>
+              <Col xs="auto">
+                {!isEditAssignee ? (
+                  <i
+                    className="far fa-edit fa-lg"
+                    onClick={enableAssigneeEditButton}
+                  ></i>
+                ) : (
+                  <i
+                    className="fas fa-check fa-lg"
+                    onClick={disableAssigneeEditButton}
+                  ></i>
+                )}
+              </Col>
             </Form.Row>
 
             <hr />
 
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
-                <Form.Row>
+                <Form.Row className="align-items-center">
                   <Form.Label column lg={2} className="font-weight-bold mr-2">
                     Project:
                   </Form.Label>
@@ -300,7 +327,7 @@ const BugEditScreen = ({ history, match }) => {
                     <Form.Control
                       as="select"
                       className="my-1 mr-sm-2 text-dark "
-                      disabled={!isEditMode}
+                      disabled={!isEditProject}
                       value={project.name}
                       onChange={(e) => settingProject(e.target.value)}
                       custom
@@ -310,11 +337,24 @@ const BugEditScreen = ({ history, match }) => {
                       ))}
                     </Form.Control>
                   </Col>
+                  <Col xs="auto">
+                    {!isEditProject ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enableProjectEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disableProjectEditButton}
+                      ></i>
+                    )}
+                  </Col>
                 </Form.Row>
               </Form.Group>
 
               <Form.Group controlId="project">
-                <Form.Row>
+                <Form.Row className="align-items-center">
                   <Form.Label column lg={2} className="font-weight-bold mr-2">
                     Issue:
                   </Form.Label>
@@ -323,16 +363,65 @@ const BugEditScreen = ({ history, match }) => {
                     <Form.Control
                       type="name"
                       placeholder="Enter New Issue"
-                      disabled={!isEditMode}
+                      disabled={!isEditIssue}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     ></Form.Control>
+                  </Col>
+                  <Col xs="auto">
+                    {!isEditIssue ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enableIssueEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disableIssueEditButton}
+                      ></i>
+                    )}
+                  </Col>
+                </Form.Row>
+              </Form.Group>
+
+              <Form.Group controlId="priority">
+                <Form.Row className="align-items-center">
+                  <Form.Label column lg={2} className="font-weight-bold mr-2">
+                    Priority:
+                  </Form.Label>
+
+                  <Col>
+                    <Form.Control
+                      as="select"
+                      className="my-1 mr-sm-2 text-dark"
+                      disabled={!isEditPriority}
+                      value={priority}
+                      onChange={(e) => setPriority(e.target.value)}
+                      custom
+                    >
+                      <option value="Low">Low Priority</option>
+                      <option value="Normal">Normal Priority</option>
+                      <option value="High">High Priority</option>
+                    </Form.Control>
+                  </Col>
+                  <Col xs="auto">
+                    {!isEditPriority ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enablePriorityEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disablePriorityEditButton}
+                      ></i>
+                    )}
                   </Col>
                 </Form.Row>
               </Form.Group>
 
               <Form.Group>
-                <Form.Row>
+                <Form.Row className="align-items-center">
                   <Col>
                     <Form.Label className="font-weight-bold mr-2">
                       Manager:
@@ -356,9 +445,22 @@ const BugEditScreen = ({ history, match }) => {
                     </Form.Label>
                     <DatePicker
                       selected={startDate}
-                      disabled={!isEditMode}
+                      disabled={!isEditDueDate}
                       onChange={(date) => setStartDate(date)}
                     />
+                  </Col>
+                  <Col xs="auto">
+                    {!isEditDueDate ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enableDueDateEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disableDueDateEditButton}
+                      ></i>
+                    )}
                   </Col>
                 </Form.Row>
               </Form.Group>
@@ -376,10 +478,23 @@ const BugEditScreen = ({ history, match }) => {
                       as="textarea"
                       rows={3}
                       placeholder="Enter description"
-                      disabled={!isEditMode}
+                      disabled={!isEditDescription}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     ></Form.Control>
+                  </Col>
+                  <Col xs="auto">
+                    {!isEditDescription ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enableDescriptionEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disableDescriptionEditButton}
+                      ></i>
+                    )}
                   </Col>
                 </Form.Row>
               </Form.Group>
@@ -391,10 +506,23 @@ const BugEditScreen = ({ history, match }) => {
                       Image:
                     </Form.Label>
                   </Col>
-                  <Col>
+                  <Col xs={'auto'}>
                     <a href={bug.image}>
                       <i className="fas fa-paperclip" />{' '}
                     </a>
+                  </Col>
+                  <Col xs="auto">
+                    {!isEditImage ? (
+                      <i
+                        className="far fa-edit fa-lg"
+                        onClick={enableImageEditButton}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fas fa-check fa-lg"
+                        onClick={disableImageEditButton}
+                      ></i>
+                    )}
                   </Col>
                 </Form.Row>
               </Form.Group>
