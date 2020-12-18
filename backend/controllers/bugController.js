@@ -77,6 +77,17 @@ const createBug = asyncHandler(async (req, res) => {
   });
 
   const createdBug = await bug.save();
+
+  const bugComment = {
+    user: req.user._id,
+    name: req.user.name,
+    image: req.user.image,
+    comment: 'created task.',
+  };
+
+  createdBug.comments.push(bugComment);
+  await createdBug.save();
+
   res.status(201).json(createdBug);
 });
 
@@ -111,7 +122,13 @@ const updateBug = asyncHandler(async (req, res) => {
     bug.assignedTo = assignedTo;
     bug.comments = comments;
 
-    const updatedBug = await bug.save();
+    await bug.save();
+
+    const updatedBug = await Bug.findById(req.params.id)
+      .populate('project', 'name')
+      .populate({ path: 'project', populate: { path: 'managerAssigned' } })
+      .populate('assignedTo', 'name email image');
+
     res.json(updatedBug);
   } else {
     res.status(404);
@@ -119,4 +136,59 @@ const updateBug = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBugById, getBugs, deleteBug, createBug, updateBug };
+// @desc    Create new comment
+// @route   POST /api/bugs/:id/comments
+// @access  Private
+const createBugComment = asyncHandler(async (req, res) => {
+  const { combined_comment } = req.body;
+
+  const bug = await Bug.findById(req.params.id);
+
+  if (bug) {
+    // const alreadyReviewed = bug.comments.find(
+    //   (r) => r.user.toString() === req.user._id.toString()
+    // )
+
+    // if (alreadyReviewed) {
+    //   res.status(400)
+    //   throw new Error('commenter already commented')
+    // }
+
+    const bugComment = {
+      user: req.user._id,
+      name: req.user.name,
+      image: req.user.image,
+      comment: combined_comment,
+    };
+
+    bug.comments.push(bugComment);
+
+    //product.numReviews = product.reviews.length;
+
+    // product.rating =
+    //   product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    //   product.reviews.length;
+
+    await bug.save();
+
+    const updatedBug = await Bug.findById(req.params.id)
+      .populate('project', 'name')
+      .populate({ path: 'project', populate: { path: 'managerAssigned' } })
+      .populate('assignedTo', 'name email image');
+
+    res.json(updatedBug);
+    //res.status(201).json({ message: 'New track log item added' });
+  } else {
+    res.status(404);
+    throw new Error('Bug not found');
+  }
+});
+
+export {
+  getBugById,
+  getBugs,
+  deleteBug,
+  createBug,
+  updateBug,
+  createBugComment,
+};

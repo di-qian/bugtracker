@@ -69,10 +69,10 @@ const DashboardScreen = ({ history, match }) => {
             <thead>
               <tr>
                 <th>Project</th>
-                <th>Bug Title</th>
+                <th>Bug Summary</th>
                 <th>Staus</th>
-                <th>Created At</th>
-                <th>Due</th>
+                <th>Created On</th>
+                <th>Due On</th>
                 <th>Priority</th>
                 <th>Assignee</th>
                 <th>

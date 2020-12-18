@@ -12,8 +12,19 @@ import {
   BUG_CREATE_SUCCESS,
   BUG_CREATE_FAIL,
   BUG_CREATE_RESET,
+  BUG_CREATE_COMMENT_REQUEST,
+  BUG_CREATE_COMMENT_SUCCESS,
+  BUG_CREATE_COMMENT_FAIL,
+  BUG_CREATE_COMMENT_RESET,
   BUG_UPDATE_REQUEST,
-  BUG_UPDATE_SUCCESS,
+  BUG_UPDATE_ASSIGNEE_SUCCESS,
+  BUG_UPDATE_NAME_SUCCESS,
+  BUG_UPDATE_PROJECT_SUCCESS,
+  BUG_UPDATE_PRIORITY_SUCCESS,
+  BUG_UPDATE_DUEDATE_SUCCESS,
+  BUG_UPDATE_DESCRIPTION_SUCCESS,
+  BUG_UPDATE_IMAGE_SUCCESS,
+  BUG_UPDATE_COMMENT_SUCCESS,
   BUG_UPDATE_FAIL,
   BUG_UPDATE_RESET,
 } from '../constants/bugConstants';
@@ -84,12 +95,65 @@ export const bugUpdateReducer = (state = { bug: {} }, action) => {
   switch (action.type) {
     case BUG_UPDATE_REQUEST:
       return { loading: true };
-    case BUG_UPDATE_SUCCESS:
-      return { loading: false, success: true, bug: action.payload };
+    case BUG_UPDATE_ASSIGNEE_SUCCESS:
+      return {
+        loading: false,
+        successAssigneeUpdate: true,
+        bug: action.payload,
+      };
+    case BUG_UPDATE_NAME_SUCCESS:
+      return { loading: false, successNameUpdate: true, bug: action.payload };
+    case BUG_UPDATE_PROJECT_SUCCESS:
+      return {
+        loading: false,
+        successProjectUpdate: true,
+        bug: action.payload,
+      };
+    case BUG_UPDATE_PRIORITY_SUCCESS:
+      return {
+        loading: false,
+        successPriorityUpdate: true,
+        bug: action.payload,
+      };
+    case BUG_UPDATE_DUEDATE_SUCCESS:
+      return {
+        loading: false,
+        successDueDateUpdate: true,
+        bug: action.payload,
+      };
+    case BUG_UPDATE_DESCRIPTION_SUCCESS:
+      return {
+        loading: false,
+        successDescriptionUpdate: true,
+        bug: action.payload,
+      };
+    case BUG_UPDATE_IMAGE_SUCCESS:
+      return { loading: false, successImageUpdate: true, bug: action.payload };
+    case BUG_UPDATE_COMMENT_SUCCESS:
+      return {
+        loading: false,
+        successCommentUpdate: true,
+        bug: action.payload,
+      };
     case BUG_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     case BUG_UPDATE_RESET:
       return { bug: {} };
+    default:
+      return state;
+  }
+};
+
+export const bugCommentCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case BUG_CREATE_COMMENT_REQUEST:
+      return { loading: true };
+    case BUG_CREATE_COMMENT_SUCCESS:
+      return { loading: false, success: true };
+    case BUG_CREATE_COMMENT_FAIL:
+      return { loading: false, error: action.payload };
+    case BUG_CREATE_COMMENT_RESET:
+      return {};
     default:
       return state;
   }

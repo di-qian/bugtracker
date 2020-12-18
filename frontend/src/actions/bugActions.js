@@ -12,10 +12,22 @@ import {
   BUG_CREATE_REQUEST,
   BUG_CREATE_SUCCESS,
   BUG_CREATE_FAIL,
+  BUG_CREATE_COMMENT_REQUEST,
+  BUG_CREATE_COMMENT_SUCCESS,
+  BUG_CREATE_COMMENT_FAIL,
+  BUG_CREATE_COMMENT_RESET,
   BUG_UPDATE_REQUEST,
   BUG_UPDATE_SUCCESS,
   BUG_UPDATE_FAIL,
   BUG_UPDATE_RESET,
+  BUG_UPDATE_ASSIGNEE_SUCCESS,
+  BUG_UPDATE_NAME_SUCCESS,
+  BUG_UPDATE_PROJECT_SUCCESS,
+  BUG_UPDATE_PRIORITY_SUCCESS,
+  BUG_UPDATE_DUEDATE_SUCCESS,
+  BUG_UPDATE_DESCRIPTION_SUCCESS,
+  BUG_UPDATE_IMAGE_SUCCESS,
+  BUG_UPDATE_COMMENT_SUCCESS,
 } from '../constants/bugConstants';
 import { logout } from './userActions';
 
@@ -131,7 +143,7 @@ export const createBug = (newbug) => async (dispatch, getState) => {
   }
 };
 
-export const updateBug = (bug) => async (dispatch, getState) => {
+export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
   try {
     dispatch({
       type: BUG_UPDATE_REQUEST,
@@ -150,10 +162,57 @@ export const updateBug = (bug) => async (dispatch, getState) => {
 
     const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
 
-    dispatch({
-      type: BUG_UPDATE_SUCCESS,
-      payload: data,
-    });
+    switch (updatetype) {
+      case 'UPDATE_ASSIGNEE':
+        dispatch({
+          type: BUG_UPDATE_ASSIGNEE_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_NAME':
+        dispatch({
+          type: BUG_UPDATE_NAME_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_PROJECT':
+        dispatch({
+          type: BUG_UPDATE_PROJECT_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_PRIORITY':
+        dispatch({
+          type: BUG_UPDATE_PRIORITY_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_DUEDATE':
+        dispatch({
+          type: BUG_UPDATE_DUEDATE_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_DESCRIPTION':
+        dispatch({
+          type: BUG_UPDATE_DESCRIPTION_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_IMAGE':
+        dispatch({
+          type: BUG_UPDATE_IMAGE_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_COMMENT':
+        dispatch({
+          type: BUG_UPDATE_COMMENT_SUCCESS,
+          payload: data,
+        });
+        break;
+    }
+
     dispatch({ type: BUG_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     const message =
@@ -165,6 +224,52 @@ export const updateBug = (bug) => async (dispatch, getState) => {
     }
     dispatch({
       type: BUG_UPDATE_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const createBugComment = (bugId, tracker) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    dispatch({
+      type: BUG_CREATE_COMMENT_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/bugs/${bugId}/trackers`,
+      tracker,
+      config
+    );
+
+    dispatch({
+      type: BUG_CREATE_COMMENT_SUCCESS,
+    });
+
+    dispatch({ type: BUG_DETAILS_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
+    dispatch({
+      type: BUG_CREATE_COMMENT_FAIL,
       payload: message,
     });
   }

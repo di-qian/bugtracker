@@ -6,10 +6,12 @@ import {
   deleteBug,
   createBug,
   updateBug,
+  createBugComment,
 } from '../controllers/bugController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 router.route('/').get(getBugs).post(protect, createBug);
+router.route('/:id/trackers').post(protect, createBugComment);
 router
   .route('/:id')
   .get(getBugById)

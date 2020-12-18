@@ -12,8 +12,14 @@ import {
   Button,
   Badge,
   Jumbotron,
+  ListGroup,
 } from 'react-bootstrap';
-import { listBugDetails } from '../actions/bugActions';
+import {
+  listBugDetails,
+  updateBug,
+  createBugComment,
+} from '../actions/bugActions';
+import { BUG_CREATE_COMMENT_RESET } from '../constants/bugConstants';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 
@@ -29,7 +35,9 @@ const BugEditScreen = ({ history, match }) => {
   const [assignedTo, setAssignedTo] = useState('');
   const [assignedToImage, setAssignedToImage] = useState('');
   const [assignedToName, setAssignedToName] = useState('');
-  const [startDate, setStartDate] = useState(new Date('1993/09/28'));
+  const [resolvedBy, setResolvedBy] = useState(new Date('1993/09/28'));
+  const [comment, setComment] = useState('');
+  const [outgoingComment, setOutgoingComment] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [isEditAssignee, setIsEditAssignee] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
@@ -53,12 +61,39 @@ const BugEditScreen = ({ history, match }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const bugUpdate = useSelector((state) => state.bugUpdate);
+  const {
+    loading: updateLoading,
+    error: updateError,
+    bug: updatedBug,
+    successAssigneeUpdate,
+    successNameUpdate,
+    successProjectUpdate,
+    successPriorityUpdate,
+    successDueDateUpdate,
+    successDescriptionUpdate,
+    successImageUpdate,
+    successCommentUpdate,
+  } = bugUpdate;
+
+  const bugCommentCreate = useSelector((state) => state.bugCommentCreate);
+  const {
+    success: successBugTracker,
+    loading: loadingBugTracker,
+    error: errorBugTracker,
+  } = bugCommentCreate;
+
   useEffect(() => {
+    if (successBugTracker) {
+      setComment('');
+      dispatch({ type: BUG_CREATE_COMMENT_RESET });
+    }
     if (!userInfo) {
       history.push('/login');
     } else {
       if (!bug || !bug.name) {
         dispatch(listBugDetails(match.params.id));
+
         dispatch(listProjects());
         dispatch(listUsers());
       } else {
@@ -72,15 +107,13 @@ const BugEditScreen = ({ history, match }) => {
         } else {
           if (!assignedToName) {
             setAssignedToName(assignedTo.name);
-            console.log('here 2');
           }
           if (!assignedToImage) {
             setAssignedToImage(assignedTo.image);
-            console.log('here 3');
           }
         }
 
-        setStartDate(new Date(bug.resolvedBy));
+        setResolvedBy(new Date(bug.resolvedBy));
       }
     }
   }, [
@@ -100,12 +133,23 @@ const BugEditScreen = ({ history, match }) => {
     isEditDueDate,
     isEditDescription,
     isEditImage,
+    successBugTracker,
   ]);
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     //To be added
+  };
+
+  const submitCommentHandler = () => {
+    if (comment) {
+      var str1 = comment;
+      var str2 = 'commented: ';
+      var combined_comment = str2.concat(str1);
+
+      dispatch(createBugComment(match.params.id, { combined_comment }));
+    }
   };
 
   const settingProject = (e) => {
@@ -138,6 +182,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableAssigneeEditButton = () => {
+    dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
     setIsEditAssignee(false);
   };
 
@@ -146,6 +191,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableProjectEditButton = () => {
+    dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
     setIsEditProject(false);
   };
 
@@ -154,6 +200,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableIssueEditButton = () => {
+    dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
     setIsEditIssue(false);
   };
 
@@ -162,6 +209,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disablePriorityEditButton = () => {
+    dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
     setIsEditPriority(false);
   };
 
@@ -170,6 +218,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDueDateEditButton = () => {
+    dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
     setIsEditDueDate(false);
   };
 
@@ -178,6 +227,7 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDescriptionEditButton = () => {
+    dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
     setIsEditDescription(false);
   };
 
@@ -314,10 +364,12 @@ const BugEditScreen = ({ history, match }) => {
                 )}
               </Col>
             </Form.Row>
-
+            {successAssigneeUpdate && (
+              <Message variant="success">Assignee Updated</Message>
+            )}
             <hr />
 
-            <Form onSubmit={submitHandler}>
+            <Form disabled onSubmit={submitHandler}>
               <Form.Group controlId="name">
                 <Form.Row className="align-items-center">
                   <Form.Label column lg={2} className="font-weight-bold mr-2">
@@ -351,12 +403,15 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
+                {successProjectUpdate && (
+                  <Message variant="success">Project Updated</Message>
+                )}
               </Form.Group>
 
               <Form.Group controlId="project">
                 <Form.Row className="align-items-center">
                   <Form.Label column lg={2} className="font-weight-bold mr-2">
-                    Issue:
+                    Summary:
                   </Form.Label>
 
                   <Col>
@@ -382,6 +437,10 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
+
+                {successNameUpdate && (
+                  <Message variant="success">Summary Updated</Message>
+                )}
               </Form.Group>
 
               <Form.Group controlId="priority">
@@ -418,6 +477,9 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
+                {successPriorityUpdate && (
+                  <Message variant="success">Priority Updated</Message>
+                )}
               </Form.Group>
 
               <Form.Group>
@@ -428,14 +490,22 @@ const BugEditScreen = ({ history, match }) => {
                     </Form.Label>
                     <Image
                       className="mr-2"
-                      src={bug.project ? bug.project.managerAssigned.image : ''}
+                      src={
+                        bug.project
+                          ? bug.project.managerAssigned
+                            ? bug.project.managerAssigned.image
+                            : ''
+                          : ''
+                      }
                       width="35"
                       height="35"
                       roundedCircle
                     />
                     <Form.Label className="mr-2">
                       {bug.project
-                        ? bug.project.managerAssigned.name
+                        ? bug.project.managerAssigned
+                          ? bug.project.managerAssigned.name
+                          : 'PENDING'
                         : 'PENDING'}
                     </Form.Label>
                   </Col>
@@ -444,9 +514,9 @@ const BugEditScreen = ({ history, match }) => {
                       Due Date:
                     </Form.Label>
                     <DatePicker
-                      selected={startDate}
+                      selected={resolvedBy}
                       disabled={!isEditDueDate}
-                      onChange={(date) => setStartDate(date)}
+                      onChange={(date) => setResolvedBy(date)}
                     />
                   </Col>
                   <Col xs="auto">
@@ -463,6 +533,9 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
+                {successDueDateUpdate && (
+                  <Message variant="success">Due Date Updated</Message>
+                )}
               </Form.Group>
 
               <hr />
@@ -497,6 +570,9 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
+                {successDescriptionUpdate && (
+                  <Message variant="success">Description Updated</Message>
+                )}
               </Form.Group>
 
               <Form.Group controlId="imagefile">
@@ -532,21 +608,19 @@ const BugEditScreen = ({ history, match }) => {
                 <Form.Label lg={2} className="font-weight-bold mr-2 mb-3">
                   Tracker Logs:
                 </Form.Label>
-                <p className="font-weight-light font-italic">
-                  Created at: 2020/12/11 1:10 am by ABC
-                </p>
-
-                <p className="font-weight-light font-italic">
-                  Assigned at: 2020/12/11 1:10 am by ABC
-                </p>
-
-                <p className="font-weight-light font-italic">
-                  Comment at: 2020/12/11 1:10 am by ABC: This is the message
-                </p>
-
-                <p className="font-weight-light font-italic">
-                  Comment at: 2020/12/11 1:10 am by ABC: This is the message
-                </p>
+                <ListGroup variant="flush">
+                  {bug.comments.map((tracker) => (
+                    <ListGroup.Item key={tracker._id}>
+                      <p className="font-weight-light font-italic">
+                        <i className="far fa-comment"></i>
+                        <Moment format=" MM/DD/YYYY  hh:mm:ss A">
+                          {tracker.updatedAt}
+                        </Moment>
+                        {', ' + tracker.name + ' ' + tracker.comment}
+                      </p>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               </Form.Group>
               <hr />
 
@@ -567,10 +641,16 @@ const BugEditScreen = ({ history, match }) => {
                         className="mb-3"
                         as="textarea"
                         placeholder="Write a comment..."
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
                         rows={5}
                       />
 
-                      <Button variant="outline-primary" type="submit">
+                      <Button
+                        variant="outline-primary"
+                        type="submit"
+                        onClick={() => submitCommentHandler()}
+                      >
                         Submit
                       </Button>
                     </Col>
@@ -583,7 +663,7 @@ const BugEditScreen = ({ history, match }) => {
                 <Form.Row className="mt-4 ">
                   <Col></Col>
                   <Col xs={'auto'}>
-                    {!isEditMode ? (
+                    {/* {!isEditMode ? (
                       <Button
                         className="mr-2"
                         type="button"
@@ -610,7 +690,7 @@ const BugEditScreen = ({ history, match }) => {
                           Cancel
                         </Button>
                       </>
-                    )}
+                    )} */}
 
                     <Button className="mr-2" type="button" variant="success">
                       Resolved
