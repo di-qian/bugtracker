@@ -28,6 +28,7 @@ import {
   BUG_UPDATE_DESCRIPTION_SUCCESS,
   BUG_UPDATE_IMAGE_SUCCESS,
   BUG_UPDATE_COMMENT_SUCCESS,
+  BUG_UPDATE_RESOLVED_SUCCESS,
 } from '../constants/bugConstants';
 import { logout } from './userActions';
 
@@ -208,6 +209,12 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
       case 'UPDATE_COMMENT':
         dispatch({
           type: BUG_UPDATE_COMMENT_SUCCESS,
+          payload: data,
+        });
+        break;
+      case 'UPDATE_RESOLVEDAT':
+        dispatch({
+          type: BUG_UPDATE_RESOLVED_SUCCESS,
           payload: data,
         });
         break;

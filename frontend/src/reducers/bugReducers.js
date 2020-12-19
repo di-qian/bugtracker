@@ -25,6 +25,7 @@ import {
   BUG_UPDATE_DESCRIPTION_SUCCESS,
   BUG_UPDATE_IMAGE_SUCCESS,
   BUG_UPDATE_COMMENT_SUCCESS,
+  BUG_UPDATE_RESOLVED_SUCCESS,
   BUG_UPDATE_FAIL,
   BUG_UPDATE_RESET,
 } from '../constants/bugConstants';
@@ -125,6 +126,13 @@ export const bugUpdateReducer = (state = { bug: {} }, action) => {
       return {
         loading: false,
         successDescriptionUpdate: true,
+        bug: action.payload,
+      };
+
+    case BUG_UPDATE_RESOLVED_SUCCESS:
+      return {
+        loading: false,
+        successResolvedAtUpdate: true,
         bug: action.payload,
       };
     case BUG_UPDATE_IMAGE_SUCCESS:

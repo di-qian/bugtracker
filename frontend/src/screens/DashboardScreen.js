@@ -76,7 +76,7 @@ const DashboardScreen = ({ history, match }) => {
                 <th>Priority</th>
                 <th>Assignee</th>
                 <th>
-                  <i className="fas fa-ellipsis-v"></i>
+                  <i className="fas fa-list-ul"></i>
                 </th>
                 <th className={userInfo.isAdmin ? '' : 'hide'}>Remove</th>
               </tr>
@@ -119,7 +119,7 @@ const DashboardScreen = ({ history, match }) => {
                   </td>
                   <td>
                     <a href={`/auth/bug/edit/${bug._id}`}>
-                      <i className="fas fa-ellipsis-v"></i>
+                      <i className="fas fa-list-ul"></i>
                     </a>
                   </td>
 

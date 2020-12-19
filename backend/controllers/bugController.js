@@ -82,7 +82,7 @@ const createBug = asyncHandler(async (req, res) => {
     user: req.user._id,
     name: req.user.name,
     image: req.user.image,
-    comment: 'created task.',
+    comment: 'created the task.',
   };
 
   createdBug.comments.push(bugComment);

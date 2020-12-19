@@ -36,6 +36,7 @@ const BugEditScreen = ({ history, match }) => {
   const [assignedToImage, setAssignedToImage] = useState('');
   const [assignedToName, setAssignedToName] = useState('');
   const [resolvedBy, setResolvedBy] = useState(new Date('1993/09/28'));
+  const [resolvedAt, setResolvedAt] = useState(new Date('1993/09/28'));
   const [comment, setComment] = useState('');
   const [outgoingComment, setOutgoingComment] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
@@ -74,6 +75,7 @@ const BugEditScreen = ({ history, match }) => {
     successDescriptionUpdate,
     successImageUpdate,
     successCommentUpdate,
+    successResolvedAtUpdate,
   } = bugUpdate;
 
   const bugCommentCreate = useSelector((state) => state.bugCommentCreate);
@@ -88,6 +90,26 @@ const BugEditScreen = ({ history, match }) => {
       setComment('');
       dispatch({ type: BUG_CREATE_COMMENT_RESET });
     }
+
+    if (successNameUpdate) {
+      setName('');
+      dispatch({ type: BUG_CREATE_COMMENT_RESET });
+    }
+
+    if (successDescriptionUpdate) {
+      setDescription('');
+      dispatch({ type: BUG_CREATE_COMMENT_RESET });
+    }
+
+    if (
+      successDueDateUpdate ||
+      successPriorityUpdate ||
+      successAssigneeUpdate ||
+      successProjectUpdate
+    ) {
+      dispatch({ type: BUG_CREATE_COMMENT_RESET });
+    }
+
     if (!userInfo) {
       history.push('/login');
     } else {
@@ -134,6 +156,7 @@ const BugEditScreen = ({ history, match }) => {
     isEditDescription,
     isEditImage,
     successBugTracker,
+    resolvedAt,
   ]);
 
   const submitHandler = (e) => {
@@ -169,6 +192,15 @@ const BugEditScreen = ({ history, match }) => {
     }
   };
 
+  const settingResolvedAt = () => {
+    setResolvedAt(Date.now());
+    dispatch(updateBug('UPDATE_RESOLVEDAT', { ...bug, resolvedAt }));
+
+    const combined_comment = 'assigned the task status to RESOLVED!';
+
+    dispatch(createBugComment(match.params.id, { combined_comment }));
+  };
+
   const enableEditButton = () => {
     setIsEditMode(true);
   };
@@ -183,6 +215,12 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableAssigneeEditButton = () => {
     dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
+
+    const str1 = assignedTo.name;
+    const str2 = 'reassigned the task to ';
+    const combined_comment = str2.concat(str1) + '.';
+
+    dispatch(createBugComment(match.params.id, { combined_comment }));
     setIsEditAssignee(false);
   };
 
@@ -192,6 +230,16 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableProjectEditButton = () => {
     dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
+
+    const newproject = projects.find((x) => x._id === project);
+    if (newproject) {
+      const str1 = newproject.name;
+      const str2 = 'reassigned the task under project "';
+      const combined_comment = str2.concat(str1) + '".';
+
+      dispatch(createBugComment(match.params.id, { combined_comment }));
+    }
+
     setIsEditProject(false);
   };
 
@@ -201,6 +249,9 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableIssueEditButton = () => {
     dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
+
+    const combined_comment = ' updated the bug summary.';
+    dispatch(createBugComment(match.params.id, { combined_comment }));
     setIsEditIssue(false);
   };
 
@@ -210,6 +261,12 @@ const BugEditScreen = ({ history, match }) => {
 
   const disablePriorityEditButton = () => {
     dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
+
+    const str1 = priority;
+    const str2 = 'updated the priority to ';
+    const combined_comment = str2.concat(str1) + ' Priority.';
+
+    dispatch(createBugComment(match.params.id, { combined_comment }));
     setIsEditPriority(false);
   };
 
@@ -219,6 +276,12 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableDueDateEditButton = () => {
     dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
+
+    const str1 = resolvedBy;
+    const str2 = 'changed the due date to ';
+    const combined_comment = str2.concat(str1) + '.';
+
+    dispatch(createBugComment(match.params.id, { combined_comment }));
     setIsEditDueDate(false);
   };
 
@@ -228,6 +291,9 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableDescriptionEditButton = () => {
     dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
+
+    const combined_comment = ' updated the bug description.';
+    dispatch(createBugComment(match.params.id, { combined_comment }));
     setIsEditDescription(false);
   };
 
@@ -337,8 +403,7 @@ const BugEditScreen = ({ history, match }) => {
                   >
                     {users
                       ? users
-                          //.filter((user) => !user.isManager)
-
+                          .filter((user) => !user.isAdmin)
                           .map((user) => (
                             <option key={user._id}>{user.name}</option>
                           ))
@@ -353,7 +418,7 @@ const BugEditScreen = ({ history, match }) => {
               <Col xs="auto">
                 {!isEditAssignee ? (
                   <i
-                    className="far fa-edit fa-lg"
+                    className={bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'}
                     onClick={enableAssigneeEditButton}
                   ></i>
                 ) : (
@@ -392,7 +457,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditProject ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enableProjectEditButton}
                       ></i>
                     ) : (
@@ -426,7 +493,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditIssue ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enableIssueEditButton}
                       ></i>
                     ) : (
@@ -466,7 +535,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditPriority ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enablePriorityEditButton}
                       ></i>
                     ) : (
@@ -522,7 +593,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditDueDate ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enableDueDateEditButton}
                       ></i>
                     ) : (
@@ -559,7 +632,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditDescription ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enableDescriptionEditButton}
                       ></i>
                     ) : (
@@ -590,7 +665,9 @@ const BugEditScreen = ({ history, match }) => {
                   <Col xs="auto">
                     {!isEditImage ? (
                       <i
-                        className="far fa-edit fa-lg"
+                        className={
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                        }
                         onClick={enableImageEditButton}
                       ></i>
                     ) : (
@@ -644,11 +721,13 @@ const BugEditScreen = ({ history, match }) => {
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         rows={5}
+                        disabled={bug.resolvedAt ? true : false}
                       />
 
                       <Button
                         variant="outline-primary"
                         type="submit"
+                        disabled={bug.resolvedAt ? true : false}
                         onClick={() => submitCommentHandler()}
                       >
                         Submit
@@ -692,7 +771,13 @@ const BugEditScreen = ({ history, match }) => {
                       </>
                     )} */}
 
-                    <Button className="mr-2" type="button" variant="success">
+                    <Button
+                      className="mr-2"
+                      type="button"
+                      variant="success"
+                      disabled={bug.resolvedAt ? true : false}
+                      onClick={() => settingResolvedAt()}
+                    >
                       Resolved
                     </Button>
                     <Link className="btn btn-dark" to="/auth/dashboard">
