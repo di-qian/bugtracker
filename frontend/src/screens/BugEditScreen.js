@@ -38,8 +38,7 @@ const BugEditScreen = ({ history, match }) => {
   const [resolvedBy, setResolvedBy] = useState(new Date('1993/09/28'));
   const [resolvedAt, setResolvedAt] = useState(new Date('1993/09/28'));
   const [comment, setComment] = useState('');
-  const [outgoingComment, setOutgoingComment] = useState('');
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isConfirmMode, setIsConfirmMode] = useState(false);
   const [isEditAssignee, setIsEditAssignee] = useState(false);
   const [isEditProject, setIsEditProject] = useState(false);
   const [isEditIssue, setIsEditIssue] = useState(false);
@@ -74,7 +73,6 @@ const BugEditScreen = ({ history, match }) => {
     successDueDateUpdate,
     successDescriptionUpdate,
     successImageUpdate,
-    successCommentUpdate,
     successResolvedAtUpdate,
   } = bugUpdate;
 
@@ -147,7 +145,7 @@ const BugEditScreen = ({ history, match }) => {
     assignedTo,
     assignedToImage,
     assignedToName,
-    isEditMode,
+    isConfirmMode,
     isEditAssignee,
     isEditProject,
     isEditIssue,
@@ -156,6 +154,12 @@ const BugEditScreen = ({ history, match }) => {
     isEditDescription,
     isEditImage,
     successBugTracker,
+    successAssigneeUpdate,
+    successDueDateUpdate,
+    successPriorityUpdate,
+    successProjectUpdate,
+    successDescriptionUpdate,
+    successNameUpdate,
     resolvedAt,
   ]);
 
@@ -201,26 +205,30 @@ const BugEditScreen = ({ history, match }) => {
     dispatch(createBugComment(match.params.id, { combined_comment }));
   };
 
-  const enableEditButton = () => {
-    setIsEditMode(true);
+  const enableConfirmButton = () => {
+    setIsConfirmMode(true);
   };
 
-  const disableEditButton = () => {
-    setIsEditMode(false);
-  };
+  // const disableConfirmButton = () => {
+  //   setIsConfirmMode(false);
+  // };
 
   const enableAssigneeEditButton = () => {
     setIsEditAssignee(true);
   };
 
   const disableAssigneeEditButton = () => {
-    dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
+    if (bug.assignedTo) {
+      if (assignedToName !== bug.assignedTo.name) {
+        dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
 
-    const str1 = assignedTo.name;
-    const str2 = 'reassigned the task to ';
-    const combined_comment = str2.concat(str1) + '.';
+        const str1 = assignedTo.name;
+        const str2 = 'reassigned the task to ';
+        const combined_comment = str2.concat(str1) + '.';
 
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+        dispatch(createBugComment(match.params.id, { combined_comment }));
+      }
+    }
     setIsEditAssignee(false);
   };
 
@@ -229,15 +237,17 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableProjectEditButton = () => {
-    dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
+    if (bug.project.name !== project.name) {
+      dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
 
-    const newproject = projects.find((x) => x._id === project);
-    if (newproject) {
-      const str1 = newproject.name;
-      const str2 = 'reassigned the task under project "';
-      const combined_comment = str2.concat(str1) + '".';
+      const newproject = projects.find((x) => x._id === project);
+      if (newproject) {
+        const str1 = newproject.name;
+        const str2 = 'reassigned the task under project "';
+        const combined_comment = str2.concat(str1) + '".';
 
-      dispatch(createBugComment(match.params.id, { combined_comment }));
+        dispatch(createBugComment(match.params.id, { combined_comment }));
+      }
     }
 
     setIsEditProject(false);
@@ -248,10 +258,15 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableIssueEditButton = () => {
-    dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
+    if (name !== bug.name) {
+      dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
 
-    const combined_comment = ' updated the bug summary.';
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+      if (successNameUpdate) {
+        const combined_comment = ' updated the bug summary.';
+        dispatch(createBugComment(match.params.id, { combined_comment }));
+      }
+    }
+
     setIsEditIssue(false);
   };
 
@@ -260,13 +275,15 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disablePriorityEditButton = () => {
-    dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
+    if (priority !== bug.priority) {
+      dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
 
-    const str1 = priority;
-    const str2 = 'updated the priority to ';
-    const combined_comment = str2.concat(str1) + ' Priority.';
+      const str1 = priority;
+      const str2 = 'updated the priority to ';
+      const combined_comment = str2.concat(str1) + ' Priority.';
 
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+      dispatch(createBugComment(match.params.id, { combined_comment }));
+    }
     setIsEditPriority(false);
   };
 
@@ -275,13 +292,20 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDueDateEditButton = () => {
-    dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
+    const resolvedByString = Date.parse(resolvedBy);
+    const bugresolvedByString = Date.parse(bug.resolvedBy);
+    if (resolvedByString !== bugresolvedByString) {
+      if (resolvedBy !== bug.resolvedBy) {
+        dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
 
-    const str1 = resolvedBy;
-    const str2 = 'changed the due date to ';
-    const combined_comment = str2.concat(str1) + '.';
+        const str1 = resolvedBy;
+        const str2 = 'changed the due date to ';
+        const combined_comment = str2.concat(str1) + '.';
 
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+        dispatch(createBugComment(match.params.id, { combined_comment }));
+      }
+    }
+
     setIsEditDueDate(false);
   };
 
@@ -290,10 +314,12 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDescriptionEditButton = () => {
-    dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
+    if (description !== bug.description) {
+      dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
 
-    const combined_comment = ' updated the bug description.';
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+      const combined_comment = ' updated the bug description.';
+      dispatch(createBugComment(match.params.id, { combined_comment }));
+    }
     setIsEditDescription(false);
   };
 
@@ -307,7 +333,7 @@ const BugEditScreen = ({ history, match }) => {
 
   return (
     <>
-      {loading ? (
+      {loading || updateLoading || loadingBugTracker ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
@@ -369,7 +395,6 @@ const BugEditScreen = ({ history, match }) => {
                 </Row>
               </Col>
             </Form.Row>
-
             <Form.Row className="align-items-center mb-3">
               <Col>
                 <i className="far fa-clock fa-lg mr-2"></i>
@@ -429,11 +454,13 @@ const BugEditScreen = ({ history, match }) => {
                 )}
               </Col>
             </Form.Row>
-            {successAssigneeUpdate && (
+
+            {successAssigneeUpdate ? (
               <Message variant="success">Assignee Updated</Message>
+            ) : (
+              updateError && <Message variant="danger">{updateError}</Message>
             )}
             <hr />
-
             <Form disabled onSubmit={submitHandler}>
               <Form.Group controlId="name">
                 <Form.Row className="align-items-center">
@@ -470,8 +497,13 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-                {successProjectUpdate && (
+
+                {successProjectUpdate ? (
                   <Message variant="success">Project Updated</Message>
+                ) : (
+                  updateError && (
+                    <Message variant="danger">{updateError}</Message>
+                  )
                 )}
               </Form.Group>
 
@@ -507,8 +539,12 @@ const BugEditScreen = ({ history, match }) => {
                   </Col>
                 </Form.Row>
 
-                {successNameUpdate && (
+                {successNameUpdate ? (
                   <Message variant="success">Summary Updated</Message>
+                ) : (
+                  updateError && (
+                    <Message variant="danger">{updateError}</Message>
+                  )
                 )}
               </Form.Group>
 
@@ -548,8 +584,13 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-                {successPriorityUpdate && (
+
+                {successPriorityUpdate ? (
                   <Message variant="success">Priority Updated</Message>
+                ) : (
+                  updateError && (
+                    <Message variant="danger">{updateError}</Message>
+                  )
                 )}
               </Form.Group>
 
@@ -606,8 +647,13 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-                {successDueDateUpdate && (
+
+                {successDueDateUpdate ? (
                   <Message variant="success">Due Date Updated</Message>
+                ) : (
+                  updateError && (
+                    <Message variant="danger">{updateError}</Message>
+                  )
                 )}
               </Form.Group>
 
@@ -645,8 +691,13 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-                {successDescriptionUpdate && (
+
+                {successDescriptionUpdate ? (
                   <Message variant="success">Description Updated</Message>
+                ) : (
+                  updateError && (
+                    <Message variant="danger">{updateError}</Message>
+                  )
                 )}
               </Form.Group>
 
@@ -726,7 +777,7 @@ const BugEditScreen = ({ history, match }) => {
 
                       <Button
                         variant="outline-primary"
-                        type="submit"
+                        type="button"
                         disabled={bug.resolvedAt ? true : false}
                         onClick={() => submitCommentHandler()}
                       >
@@ -742,44 +793,27 @@ const BugEditScreen = ({ history, match }) => {
                 <Form.Row className="mt-4 ">
                   <Col></Col>
                   <Col xs={'auto'}>
-                    {/* {!isEditMode ? (
+                    {!isConfirmMode ? (
                       <Button
                         className="mr-2"
                         type="button"
-                        variant="primary"
-                        onClick={() => enableEditButton()}
+                        variant="success"
+                        onClick={() => enableConfirmButton()}
                       >
-                        Edit Tracker
+                        Resolved
                       </Button>
                     ) : (
-                      <>
-                        <Button
-                          className="mr-2"
-                          type="button"
-                          variant="primary"
-                          onClick={() => disableEditButton()}
-                        >
-                          Update
-                        </Button>
-                        <Button
-                          className="mr-2"
-                          type="submit"
-                          variant="primary"
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    )} */}
+                      <Button
+                        className="mr-2"
+                        type="button"
+                        variant="success"
+                        disabled={bug.resolvedAt ? true : false}
+                        onClick={() => settingResolvedAt()}
+                      >
+                        Confirm
+                      </Button>
+                    )}
 
-                    <Button
-                      className="mr-2"
-                      type="button"
-                      variant="success"
-                      disabled={bug.resolvedAt ? true : false}
-                      onClick={() => settingResolvedAt()}
-                    >
-                      Resolved
-                    </Button>
                     <Link className="btn btn-dark" to="/auth/dashboard">
                       Go Back
                     </Link>

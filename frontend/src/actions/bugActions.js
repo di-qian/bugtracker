@@ -15,11 +15,8 @@ import {
   BUG_CREATE_COMMENT_REQUEST,
   BUG_CREATE_COMMENT_SUCCESS,
   BUG_CREATE_COMMENT_FAIL,
-  BUG_CREATE_COMMENT_RESET,
   BUG_UPDATE_REQUEST,
-  BUG_UPDATE_SUCCESS,
   BUG_UPDATE_FAIL,
-  BUG_UPDATE_RESET,
   BUG_UPDATE_ASSIGNEE_SUCCESS,
   BUG_UPDATE_NAME_SUCCESS,
   BUG_UPDATE_PROJECT_SUCCESS,
@@ -218,6 +215,7 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
           payload: data,
         });
         break;
+      default:
     }
 
     dispatch({ type: BUG_DETAILS_SUCCESS, payload: data });
@@ -261,7 +259,7 @@ export const createBugComment = (bugId, tracker) => async (
       tracker,
       config
     );
-
+    console.log(data);
     dispatch({
       type: BUG_CREATE_COMMENT_SUCCESS,
     });
