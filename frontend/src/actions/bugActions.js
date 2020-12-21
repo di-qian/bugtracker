@@ -157,7 +157,7 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-
+    console.log(bug._id);
     const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
 
     switch (updatetype) {

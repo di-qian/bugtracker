@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Moment from 'react-moment';
+import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,10 @@ import {
   updateBug,
   createBugComment,
 } from '../actions/bugActions';
-import { BUG_CREATE_COMMENT_RESET } from '../constants/bugConstants';
+import {
+  BUG_CREATE_COMMENT_RESET,
+  BUG_UPDATE_RESET,
+} from '../constants/bugConstants';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 
@@ -86,17 +90,23 @@ const BugEditScreen = ({ history, match }) => {
   useEffect(() => {
     if (successBugTracker) {
       setComment('');
+      console.log('here1');
       dispatch({ type: BUG_CREATE_COMMENT_RESET });
+      dispatch({ type: BUG_UPDATE_RESET });
     }
 
     if (successNameUpdate) {
       setName('');
+      console.log('here2');
       dispatch({ type: BUG_CREATE_COMMENT_RESET });
+      dispatch({ type: BUG_UPDATE_RESET });
     }
 
     if (successDescriptionUpdate) {
       setDescription('');
+      console.log('here3');
       dispatch({ type: BUG_CREATE_COMMENT_RESET });
+      dispatch({ type: BUG_UPDATE_RESET });
     }
 
     if (
@@ -105,7 +115,9 @@ const BugEditScreen = ({ history, match }) => {
       successAssigneeUpdate ||
       successProjectUpdate
     ) {
+      console.log('here4');
       dispatch({ type: BUG_CREATE_COMMENT_RESET });
+      dispatch({ type: BUG_UPDATE_RESET });
     }
 
     if (!userInfo) {
@@ -196,13 +208,13 @@ const BugEditScreen = ({ history, match }) => {
     }
   };
 
-  const settingResolvedAt = () => {
+  const settingResolvedAt = async () => {
     setResolvedAt(Date.now());
-    dispatch(updateBug('UPDATE_RESOLVEDAT', { ...bug, resolvedAt }));
+    await dispatch(updateBug('UPDATE_RESOLVEDAT', { ...bug, resolvedAt }));
 
     const combined_comment = 'assigned the task status to RESOLVED!';
 
-    dispatch(createBugComment(match.params.id, { combined_comment }));
+    await dispatch(createBugComment(match.params.id, { combined_comment }));
   };
 
   const enableConfirmButton = () => {
@@ -216,18 +228,25 @@ const BugEditScreen = ({ history, match }) => {
   const enableAssigneeEditButton = () => {
     setIsEditAssignee(true);
   };
-
-  const disableAssigneeEditButton = () => {
+  const disableAssigneeEditButton = async () => {
     if (bug.assignedTo) {
       if (assignedToName !== bug.assignedTo.name) {
-        dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
+        await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
 
         const str1 = assignedTo.name;
         const str2 = 'reassigned the task to ';
         const combined_comment = str2.concat(str1) + '.';
 
-        dispatch(createBugComment(match.params.id, { combined_comment }));
+        await dispatch(createBugComment(match.params.id, { combined_comment }));
       }
+    } else {
+      await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
+
+      const str1 = assignedTo.name;
+      const str2 = 'reassigned the task to ';
+      const combined_comment = str2.concat(str1) + '.';
+
+      await dispatch(createBugComment(match.params.id, { combined_comment }));
     }
     setIsEditAssignee(false);
   };
@@ -236,9 +255,9 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditProject(true);
   };
 
-  const disableProjectEditButton = () => {
+  const disableProjectEditButton = async () => {
     if (bug.project.name !== project.name) {
-      dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
+      await dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
 
       const newproject = projects.find((x) => x._id === project);
       if (newproject) {
@@ -246,7 +265,7 @@ const BugEditScreen = ({ history, match }) => {
         const str2 = 'reassigned the task under project "';
         const combined_comment = str2.concat(str1) + '".';
 
-        dispatch(createBugComment(match.params.id, { combined_comment }));
+        await dispatch(createBugComment(match.params.id, { combined_comment }));
       }
     }
 
@@ -257,13 +276,13 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditIssue(true);
   };
 
-  const disableIssueEditButton = () => {
+  const disableIssueEditButton = async () => {
     if (name !== bug.name) {
-      dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
+      await dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
 
       if (successNameUpdate) {
         const combined_comment = ' updated the bug summary.';
-        dispatch(createBugComment(match.params.id, { combined_comment }));
+        await dispatch(createBugComment(match.params.id, { combined_comment }));
       }
     }
 
@@ -274,15 +293,15 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditPriority(true);
   };
 
-  const disablePriorityEditButton = () => {
+  const disablePriorityEditButton = async () => {
     if (priority !== bug.priority) {
-      dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
+      await dispatch(updateBug('UPDATE_PRIORITY', { ...bug, priority }));
 
       const str1 = priority;
       const str2 = 'updated the priority to ';
       const combined_comment = str2.concat(str1) + ' Priority.';
 
-      dispatch(createBugComment(match.params.id, { combined_comment }));
+      await dispatch(createBugComment(match.params.id, { combined_comment }));
     }
     setIsEditPriority(false);
   };
@@ -291,19 +310,18 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditDueDate(true);
   };
 
-  const disableDueDateEditButton = () => {
+  const disableDueDateEditButton = async () => {
     const resolvedByString = Date.parse(resolvedBy);
     const bugresolvedByString = Date.parse(bug.resolvedBy);
     if (resolvedByString !== bugresolvedByString) {
-      if (resolvedBy !== bug.resolvedBy) {
-        dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
+      await dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
 
-        const str1 = resolvedBy;
-        const str2 = 'changed the due date to ';
-        const combined_comment = str2.concat(str1) + '.';
+      const convdate = moment(resolvedBy).format('MMMM Do YYYY');
 
-        dispatch(createBugComment(match.params.id, { combined_comment }));
-      }
+      const str2 = 'changed the due date to ';
+      const combined_comment = str2.concat(convdate) + '.';
+
+      await dispatch(createBugComment(match.params.id, { combined_comment }));
     }
 
     setIsEditDueDate(false);
@@ -313,12 +331,12 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditDescription(true);
   };
 
-  const disableDescriptionEditButton = () => {
+  const disableDescriptionEditButton = async () => {
     if (description !== bug.description) {
-      dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
+      await dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
 
       const combined_comment = ' updated the bug description.';
-      dispatch(createBugComment(match.params.id, { combined_comment }));
+      await dispatch(createBugComment(match.params.id, { combined_comment }));
     }
     setIsEditDescription(false);
   };

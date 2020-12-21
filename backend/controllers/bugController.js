@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Bug from '../models/bugModel.js';
+import User from '../models/userModel.js';
 
 // @desc    Fetch all bugs
 // @route   GET /api/bugs
@@ -78,14 +79,26 @@ const createBug = asyncHandler(async (req, res) => {
 
   const createdBug = await bug.save();
 
-  const bugComment = {
+  const bugCreateComment = {
     user: req.user._id,
     name: req.user.name,
     image: req.user.image,
     comment: 'created the task.',
   };
 
-  createdBug.comments.push(bugComment);
+  createdBug.comments.push(bugCreateComment);
+
+  if (temp_assignTo) {
+    const assignedTo_user = await User.findById(temp_assignTo);
+    const bugAssignComment = {
+      user: req.user._id,
+      name: req.user.name,
+      image: req.user.image,
+      comment: 'assigned the task to ' + assignedTo_user.name + '.',
+    };
+    createdBug.comments.push(bugAssignComment);
+  }
+
   await createdBug.save();
 
   res.status(201).json(createdBug);
