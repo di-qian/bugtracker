@@ -1,6 +1,11 @@
 import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
+import isEmpty from 'is-empty';
 import User from '../models/userModel.js';
+import {
+  validateRegisterInput,
+  validateLoginInput,
+} from '../utils/validateForm.js';
 
 // @desc    Fetch Users
 // @route   GET /api/users
@@ -35,36 +40,78 @@ const getUserById = asyncHandler(async (req, res) => {
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const { errors, isValid } = validateLoginInput(req.body);
 
   const user = await User.findOne({ email });
 
-  if (user && (await user.matchPassword(password))) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      isAdmin: user.isAdmin,
-      isManager: user.isManager,
-      token: generateToken(user._id),
-    });
+  if (user) {
+    if (await user.matchPassword(password)) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        isAdmin: user.isAdmin,
+        isManager: user.isManager,
+        token: generateToken(user._id),
+      });
+    } else {
+      if (!errors.password) {
+        errors.password = 'Password is incorrect';
+        res.status(400);
+      }
+    }
   } else {
-    res.status(401);
-    throw new Error('Invalid email or password');
+    if (!errors.email) {
+      errors.email = 'Email not found';
+      res.status(400);
+    }
   }
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
+  // if (user && (await user.matchPassword(password))) {
+  //   res.json({
+  //     _id: user._id,
+  //     name: user.name,
+  //     email: user.email,
+  //     image: user.image,
+  //     isAdmin: user.isAdmin,
+  //     isManager: user.isManager,
+  //     token: generateToken(user._id),
+  //   });
+  // } else {
+  //   res.status(401);
+  //   throw new Error('Invalid email or password');
+  // }
 });
 
 // @desc    Register a new user
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-
+  const { name, email, password, confirmPassword } = req.body;
+  const { errors } = validateRegisterInput({
+    name,
+    email,
+    password,
+    confirmPassword,
+  });
   const userExists = await User.findOne({ email });
 
   if (userExists) {
+    errors.email = 'User email is already registered';
+    //isValid: isEmpty(errors);
     res.status(400);
-    throw new Error('User already exists');
+    //throw new Error('User already exists');
+  }
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
   }
 
   const user = await User.create({

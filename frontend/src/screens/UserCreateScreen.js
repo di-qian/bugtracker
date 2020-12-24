@@ -84,7 +84,8 @@ const UserCreateScreen = ({ location, history }) => {
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
+              <Form.Label className="mr-1">Name</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="name"
                 placeholder="Enter name"
@@ -94,7 +95,8 @@ const UserCreateScreen = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group controlId="email">
-              <Form.Label>Email Address</Form.Label>
+              <Form.Label className="mr-1">Email Address</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
@@ -104,7 +106,8 @@ const UserCreateScreen = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group controlId="password">
-              <Form.Label>Temporary Password</Form.Label>
+              <Form.Label className="mr-1">Temporary Password</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="password"
                 placeholder="Enter password"
@@ -114,7 +117,10 @@ const UserCreateScreen = ({ location, history }) => {
             </Form.Group>
 
             <Form.Group controlId="confirmPassword">
-              <Form.Label>Confirm Temporary Password</Form.Label>
+              <Form.Label className="mr-1">
+                Confirm Temporary Password
+              </Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="password"
                 placeholder="Confirm password"

@@ -78,7 +78,7 @@ const DashboardScreen = ({ history, match }) => {
                 <th>
                   <i className="fas fa-list-ul"></i>
                 </th>
-                <th className={userInfo.isAdmin ? '' : 'hide'}>Remove</th>
+                <th className={!userInfo.isAdmin && 'hide'}>Remove</th>
               </tr>
             </thead>
             <tbody>

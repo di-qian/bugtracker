@@ -83,7 +83,8 @@ const ProjectCreateScreen = ({ history }) => {
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="name">
-              <Form.Label>Project Name</Form.Label>
+              <Form.Label className="mr-1">Project Name</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="name"
                 placeholder="Enter New Project Name"
@@ -93,7 +94,8 @@ const ProjectCreateScreen = ({ history }) => {
             </Form.Group>
 
             <Form.Group controlId="assignedTo">
-              <Form.Label>Project Manager</Form.Label>
+              <Form.Label className="mr-1">Project Manager</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"

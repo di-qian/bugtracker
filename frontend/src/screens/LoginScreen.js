@@ -6,29 +6,47 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 import { login } from '../actions/userActions';
+import { USER_LOGIN_ERRORS_RESET } from '../constants/userConstants';
 
 const LoginScreen = ({ location, history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailEdit, setEmailEdit] = useState(false);
+  const [passwordEdit, setPasswordEdit] = useState(false);
 
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { loading, error, userInfo } = userLogin;
+  const { loading, error, errors, userInfo } = userLogin;
 
   const redirect = location.search
     ? location.search.split('=')[1]
     : '/auth/dashboard';
 
   useEffect(() => {
+    console.log(userInfo);
     if (userInfo) {
       history.push(redirect);
+    } else {
+      dispatch({ type: USER_LOGIN_ERRORS_RESET });
     }
-  }, [history, userInfo, redirect]);
+  }, [history, userInfo, redirect, dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setEmailEdit(false);
+    setPasswordEdit(false);
     dispatch(login(email, password));
+  };
+
+  const settingEmail = (e) => {
+    setEmail(e);
+    setEmailEdit(true);
+  };
+
+  const settingPassword = (e) => {
+    setPassword(e);
+    setPasswordEdit(true);
   };
 
   return (
@@ -37,24 +55,42 @@ const LoginScreen = ({ location, history }) => {
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
       <Form onSubmit={submitHandler}>
-        <Form.Group controlId="email">
-          <Form.Label>Email Address</Form.Label>
+        <Form.Group className="groupposition" controlId="email">
+          <Form.Label className="mr-1">Email Address</Form.Label>
+          <i className="fas fa-asterisk fa-xs fh"></i>
           <Form.Control
             type="email"
             placeholder="Enter email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => settingEmail(e.target.value)}
+            isInvalid={errors && errors.email && !emailEdit}
           ></Form.Control>
+          <Form.Control.Feedback
+            className="tooltipposition"
+            type="invalid"
+            tooltip
+          >
+            {errors && errors.email}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
+        <Form.Group className="groupposition" controlId="password">
+          <Form.Label className="mr-1">Password</Form.Label>
+          <i className="fas fa-asterisk fa-xs fh"></i>
           <Form.Control
             type="password"
             placeholder="Enter password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => settingPassword(e.target.value)}
+            isInvalid={errors && errors.password && !passwordEdit}
           ></Form.Control>
+          <Form.Control.Feedback
+            className="tooltipposition"
+            type="invalid"
+            tooltip
+          >
+            {errors && errors.password}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Button type="submit" variant="primary">

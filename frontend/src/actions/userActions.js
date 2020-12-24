@@ -7,6 +7,7 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
+  GET_ERRORS,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
@@ -27,6 +28,7 @@ import {
   USER_CREATE_REQUEST,
   USER_CREATE_SUCCESS,
   USER_CREATE_FAIL,
+  USER_LOGIN_ERRORS,
 } from '../constants/userConstants';
 
 export const login = (email, password) => async (dispatch) => {
@@ -54,12 +56,16 @@ export const login = (email, password) => async (dispatch) => {
 
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
+    // dispatch({
+    //   type: USER_LOGIN_FAIL,
+    //   payload:
+    //     error.response && error.response.data.message
+    //       ? error.response.data.message
+    //       : error.message,
+    // });
     dispatch({
-      type: USER_LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      type: USER_LOGIN_ERRORS,
+      payload: error.response.data,
     });
   }
 };
@@ -74,7 +80,9 @@ export const logout = () => (dispatch) => {
   document.location.href = '/login';
 };
 
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (name, email, password, confirmPassword) => async (
+  dispatch
+) => {
   try {
     dispatch({
       type: USER_REGISTER_REQUEST,
@@ -88,7 +96,7 @@ export const register = (name, email, password) => async (dispatch) => {
 
     const { data } = await axios.post(
       '/api/users',
-      { name, email, password },
+      { name, email, password, confirmPassword },
       config
     );
 
@@ -104,12 +112,16 @@ export const register = (name, email, password) => async (dispatch) => {
 
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
+    // dispatch({
+    //   type: USER_REGISTER_FAIL,
+    //   payload:
+    //     error.response && error.response.data.message
+    //       ? error.response.data.message
+    //       : error.message,
+    // });
     dispatch({
-      type: USER_REGISTER_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      type: GET_ERRORS,
+      payload: error.response.data,
     });
   }
 };

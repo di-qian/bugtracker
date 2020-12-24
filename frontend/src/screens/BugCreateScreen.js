@@ -156,7 +156,8 @@ const BugEditScreen = ({ history }) => {
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="name">
-              <Form.Label>Issue</Form.Label>
+              <Form.Label className="mr-1">Issue</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="name"
                 placeholder="Enter New Issue"
@@ -166,7 +167,8 @@ const BugEditScreen = ({ history }) => {
             </Form.Group>
 
             <Form.Group controlId="description">
-              <Form.Label>Description</Form.Label>
+              <Form.Label className="mr-1">Description</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -177,7 +179,8 @@ const BugEditScreen = ({ history }) => {
             </Form.Group>
 
             <Form.Group controlId="priority">
-              <Form.Label>Priority</Form.Label>
+              <Form.Label className="mr-1">Priority</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"
@@ -192,7 +195,8 @@ const BugEditScreen = ({ history }) => {
             </Form.Group>
 
             <Form.Group controlId="project">
-              <Form.Label>Project</Form.Label>
+              <Form.Label className="mr-1">Project</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 as="select"
                 className="my-1 mr-sm-2"

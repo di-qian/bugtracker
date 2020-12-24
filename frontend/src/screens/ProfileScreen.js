@@ -100,7 +100,8 @@ const ProfileScreen = ({ history }) => {
           ) : (
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
-                <Form.Label>Edit Name</Form.Label>
+                <Form.Label className="mr-1">Edit Name</Form.Label>
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="name"
                   placeholder="Enter name"
@@ -110,7 +111,8 @@ const ProfileScreen = ({ history }) => {
               </Form.Group>
 
               <Form.Group controlId="email">
-                <Form.Label>Edit Email Address</Form.Label>
+                <Form.Label className="mr-1">Edit Email Address</Form.Label>
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="email"
                   placeholder="Enter email"

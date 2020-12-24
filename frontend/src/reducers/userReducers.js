@@ -6,6 +6,7 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
+  GET_ERRORS,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
@@ -29,6 +30,9 @@ import {
   USER_CREATE_SUCCESS,
   USER_CREATE_FAIL,
   USER_CREATE_RESET,
+  GET_ERRORS_RESET,
+  USER_LOGIN_ERRORS_RESET,
+  USER_LOGIN_ERRORS,
 } from '../constants/userConstants';
 
 export const userLoginReducer = (state = {}, action) => {
@@ -39,6 +43,10 @@ export const userLoginReducer = (state = {}, action) => {
       return { loading: false, userInfo: action.payload };
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
+    case USER_LOGIN_ERRORS:
+      return { loading: false, errors: action.payload };
+    case USER_LOGIN_ERRORS_RESET:
+      return { errors: {} };
     case USER_LOGOUT:
       return {};
     default:
@@ -54,6 +62,10 @@ export const userRegisterReducer = (state = {}, action) => {
       return { loading: false, success: true, userInfo: action.payload };
     case USER_REGISTER_FAIL:
       return { loading: false, error: action.payload };
+    case GET_ERRORS:
+      return { loading: false, errors: action.payload };
+    case GET_ERRORS_RESET:
+      return { errors: {} };
     case USER_LOGOUT:
       return {};
     default:
