@@ -203,7 +203,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     }
     dispatch({
       type: USER_UPDATE_PROFILE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };
@@ -252,6 +252,7 @@ export const createUser = (
   name,
   email,
   password,
+  confirmPassword,
   image,
   isAdmin,
   isManager
@@ -269,7 +270,7 @@ export const createUser = (
 
     const { data } = await axios.post(
       '/api/users',
-      { name, email, password, image, isAdmin, isManager },
+      { name, email, password, confirmPassword, image, isAdmin, isManager },
       config
     );
 
@@ -282,10 +283,10 @@ export const createUser = (
   } catch (error) {
     dispatch({
       type: USER_CREATE_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
+      payload: error.response.data,
+      // error.response && error.response.data.message
+      //   ? error.response.data.message
+      //   : error.message,
     });
   }
 };
@@ -343,7 +344,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
 
     const { data } = await axios.put(`/api/users/${user._id}`, user, config);
 
-    dispatch({ type: USER_UPDATE_SUCCESS });
+    dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
 
     dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
 
@@ -358,7 +359,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
     }
     dispatch({
       type: USER_UPDATE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };

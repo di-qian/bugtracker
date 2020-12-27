@@ -1,7 +1,11 @@
 import asyncHandler from 'express-async-handler';
+import isEmpty from 'is-empty';
 import Bug from '../models/bugModel.js';
 import User from '../models/userModel.js';
-
+import {
+  validateNewBugInput,
+  validateEditBugInput,
+} from '../utils/validateForm.js';
 // @desc    Fetch all bugs
 // @route   GET /api/bugs
 // @access  Public
@@ -66,6 +70,18 @@ const deleteBug = asyncHandler(async (req, res) => {
 const createBug = asyncHandler(async (req, res) => {
   const temp_assignTo = req.body.assignedTo ? req.body.assignedTo : null;
 
+  const { errors } = validateNewBugInput({
+    name: req.body.name,
+    description: req.body.description,
+    project: req.body.project,
+    priority: req.body.priority,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
   const bug = new Bug({
     name: req.body.name,
     image: req.body.image,
@@ -120,6 +136,17 @@ const updateBug = asyncHandler(async (req, res) => {
     assignedTo,
     comments,
   } = req.body;
+  console.log(name);
+  const { errors } = validateEditBugInput({
+    name,
+    description,
+    resolvedBy,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
 
   const bug = await Bug.findById(req.params.id);
 

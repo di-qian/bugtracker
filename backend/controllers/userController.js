@@ -4,6 +4,7 @@ import isEmpty from 'is-empty';
 import User from '../models/userModel.js';
 import {
   validateRegisterInput,
+  validateProfileInput,
   validateLoginInput,
 } from '../utils/validateForm.js';
 
@@ -173,6 +174,21 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, email, password, confirmPassword, image } = req.body;
+
+  const { errors } = validateProfileInput({
+    name,
+    email,
+    password,
+    confirmPassword,
+    image,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -221,6 +237,21 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
+  const { name, email, password, confirmPassword, image } = req.body;
+  console.log(req.body);
+  const { errors } = validateProfileInput({
+    name,
+    email,
+    password,
+    confirmPassword,
+    image,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
   const user = await User.findById(req.params.id);
 
   if (user) {

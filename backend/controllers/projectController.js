@@ -1,5 +1,10 @@
 import asyncHandler from 'express-async-handler';
+import isEmpty from 'is-empty';
 import Project from '../models/projectModel.js';
+import {
+  validateNewProjectInput,
+  validateEditProjectInput,
+} from '../utils/validateForm.js';
 
 // @desc    Fetch all projects
 // @route   GET /api/projects
@@ -54,6 +59,16 @@ const deleteProject = asyncHandler(async (req, res) => {
 // @route   POST /api/projects
 // @access  Private/Admin
 const createProject = asyncHandler(async (req, res) => {
+  const { errors } = validateNewProjectInput({
+    name: req.body.name,
+    managerAssigned: req.body.managerAssigned,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
   const project = new Project({
     name: req.body.name,
     managerAssigned: req.body.managerAssigned,
@@ -68,6 +83,15 @@ const createProject = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const updateProject = asyncHandler(async (req, res) => {
   const { name, managerAssigned, members } = req.body;
+
+  const { errors } = validateEditProjectInput({
+    name,
+  });
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
 
   const project = await Project.findById(req.params.id);
 

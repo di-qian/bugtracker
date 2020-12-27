@@ -136,7 +136,7 @@ export const createBug = (newbug) => async (dispatch, getState) => {
     }
     dispatch({
       type: BUG_CREATE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };
@@ -157,9 +157,9 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    console.log(bug._id);
-    const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
 
+    const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
+    console.log('i am here ' + data);
     switch (updatetype) {
       case 'UPDATE_ASSIGNEE':
         dispatch({
@@ -229,7 +229,7 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
     }
     dispatch({
       type: BUG_UPDATE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };
@@ -253,7 +253,7 @@ export const createBugComment = (bugId, tracker) => async (
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-
+    console.log(tracker);
     const { data } = await axios.post(
       `/api/bugs/${bugId}/trackers`,
       tracker,

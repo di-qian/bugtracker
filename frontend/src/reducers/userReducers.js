@@ -130,7 +130,7 @@ export const userCreateReducer = (state = {}, action) => {
     case USER_CREATE_SUCCESS:
       return { loading: false, success: true, userInfo: action.payload };
     case USER_CREATE_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, errors: action.payload };
     case USER_CREATE_RESET:
       return {};
     default:

@@ -89,7 +89,7 @@ export const createProject = (newProject) => async (dispatch, getState) => {
     }
     dispatch({
       type: PROJECT_CREATE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };
@@ -164,7 +164,7 @@ export const updateProject = (project) => async (dispatch, getState) => {
     }
     dispatch({
       type: PROJECT_UPDATE_FAIL,
-      payload: message,
+      payload: error.response.data,
     });
   }
 };

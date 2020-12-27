@@ -1,21 +1,26 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Image, Form, Button, Row, Col } from 'react-bootstrap';
+import { Alert, Image, Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getUserDetails, updateUserProfile } from '../actions/userActions';
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
+import { set } from 'mongoose';
 
 const ProfileScreen = ({ history }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState(null);
   const [image, setImage] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [emailEdit, setEmailEdit] = useState(false);
+  const [passwordEdit, setPasswordEdit] = useState(false);
+  const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -26,35 +31,65 @@ const ProfileScreen = ({ history }) => {
   const { userInfo } = userLogin;
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  const { success } = userUpdateProfile;
-
-  //   const orderListMy = useSelector((state) => state.orderListMy);
-  // const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
+  const { success, error: errorProfile } = userUpdateProfile;
 
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
     } else {
       if (!user || !user.name || success) {
+        setUpdateSuccess(success);
+        setShow(true);
+        //setTimeout(() => setShow(false), 2000);
         dispatch({ type: USER_UPDATE_PROFILE_RESET });
         dispatch(getUserDetails('profile'));
       } else {
+        if (success) {
+          setUpdateSuccess(false);
+        }
         setName(user.name);
         setEmail(user.email);
         setImage(user.image);
       }
     }
-  }, [dispatch, history, userInfo, user, success]);
+  }, [dispatch, history, userInfo, user, success, updateSuccess]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-    } else {
-      dispatch(
-        updateUserProfile({ id: user._id, name, email, password, image })
-      );
-    }
+    setShow(false);
+    setEmailEdit(false);
+    setPasswordEdit(false);
+    setConfirmPasswordEdit(false);
+
+    // if (password !== confirmPassword) {
+    //   setMessage('Passwords do not match');
+    // } else {
+    dispatch(
+      updateUserProfile({
+        id: user._id,
+        name,
+        email,
+        password,
+        confirmPassword,
+        image,
+      })
+    );
+    //}
+  };
+
+  const settingEmail = (e) => {
+    setEmail(e);
+    setEmailEdit(true);
+  };
+
+  const settingPassword = (e) => {
+    setPassword(e);
+    setPasswordEdit(true);
+  };
+
+  const settingConfirmPassword = (e) => {
+    setConfirmPassword(e);
+    setConfirmPasswordEdit(true);
   };
 
   const uploadFileHandler = async (e) => {
@@ -91,8 +126,17 @@ const ProfileScreen = ({ history }) => {
 
       <Row>
         <Col md={6}>
-          {message && <Message variant="danger">{message}</Message>}
-          {success && <Message variant="success">Profile Updated</Message>}
+          {updateSuccess && (
+            <Alert
+              variant="success"
+              dismissible
+              transition
+              show={show}
+              onClose={() => setShow(false)}
+            >
+              Profile Updated
+            </Alert>
+          )}
           {loading ? (
             <Loader />
           ) : error ? (
@@ -101,24 +145,40 @@ const ProfileScreen = ({ history }) => {
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
                 <Form.Label className="mr-1">Edit Name</Form.Label>
-                <i className="fas fa-asterisk fa-xs fh"></i>
+
                 <Form.Control
                   type="name"
                   placeholder="Enter name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  isInvalid={errorProfile && errorProfile.name && !name}
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorProfile && errorProfile.name}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="email">
                 <Form.Label className="mr-1">Edit Email Address</Form.Label>
-                <i className="fas fa-asterisk fa-xs fh"></i>
+
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => settingEmail(e.target.value)}
+                  isInvalid={errorProfile && errorProfile.email && !emailEdit}
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorProfile && errorProfile.email}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="password">
@@ -127,8 +187,18 @@ const ProfileScreen = ({ history }) => {
                   type="password"
                   placeholder="Enter new password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => settingPassword(e.target.value)}
+                  isInvalid={
+                    errorProfile && errorProfile.password && !passwordEdit
+                  }
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorProfile && errorProfile.password}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="confirmPassword">
@@ -137,8 +207,20 @@ const ProfileScreen = ({ history }) => {
                   type="password"
                   placeholder="Confirm new password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => settingConfirmPassword(e.target.value)}
+                  isInvalid={
+                    errorProfile &&
+                    errorProfile.confirmPassword &&
+                    !confirmPasswordEdit
+                  }
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorProfile && errorProfile.confirmPassword}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="image">
@@ -172,7 +254,7 @@ const ProfileScreen = ({ history }) => {
             className="mr-2"
             width="100%"
             // src="/images/profiles/profile2.jpg"
-            src={user.image}
+            src={user && user.image}
           />
         </Col>
       </Row>

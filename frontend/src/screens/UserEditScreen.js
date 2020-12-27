@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Button, Image, Row, Col } from 'react-bootstrap';
+import { Alert, Form, Button, Image, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -15,11 +15,15 @@ const UserEditScreen = ({ match, history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState(null);
   const [image, setImage] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isManager, setIsManager] = useState(false);
+  const [emailEdit, setEmailEdit] = useState(false);
+  const [passwordEdit, setPasswordEdit] = useState(false);
+  const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -40,23 +44,24 @@ const UserEditScreen = ({ match, history }) => {
     if (!userInfo.isAdmin) {
       history.push('/login');
     } else {
-      if (successUpdate) {
+      if (!user.name || user._id !== userId || successUpdate) {
+        setUpdateSuccess(successUpdate);
+        setShow(true);
         dispatch({ type: USER_UPDATE_RESET });
-        setMessage('User Profile Updated');
+        dispatch(getUserDetails(userId));
         //history.push('/admin/userlist');
       } else {
-        if (!user.name || user._id !== userId) {
-          dispatch(getUserDetails(userId));
-        } else {
-          setName(user.name);
-          setEmail(user.email);
-          setIsAdmin(user.isAdmin);
-          setIsManager(user.isManager);
-          setImage(user.image);
+        if (successUpdate) {
+          setUpdateSuccess(false);
         }
+        setName(user.name);
+        setEmail(user.email);
+        setIsAdmin(user.isAdmin);
+        setIsManager(user.isManager);
+        setImage(user.image);
       }
     }
-  }, [dispatch, history, userInfo, userId, user, successUpdate]);
+  }, [dispatch, history, userInfo, userId, user, successUpdate, updateSuccess]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -84,13 +89,41 @@ const UserEditScreen = ({ match, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-    } else {
-      dispatch(
-        updateUser({ _id: userId, name, email, isAdmin, isManager, image })
-      );
-    }
+    setShow(false);
+    setEmailEdit(false);
+    setPasswordEdit(false);
+    setConfirmPasswordEdit(false);
+    // if (password !== confirmPassword) {
+    //   setMessage('Passwords do not match');
+    // } else {
+    dispatch(
+      updateUser({
+        _id: userId,
+        name,
+        email,
+        password,
+        confirmPassword,
+        isAdmin,
+        isManager,
+        image,
+      })
+    );
+    //}
+  };
+
+  const settingEmail = (e) => {
+    setEmail(e);
+    setEmailEdit(true);
+  };
+
+  const settingPassword = (e) => {
+    setPassword(e);
+    setPasswordEdit(true);
+  };
+
+  const settingConfirmPassword = (e) => {
+    setConfirmPassword(e);
+    setConfirmPasswordEdit(true);
   };
 
   return (
@@ -103,11 +136,17 @@ const UserEditScreen = ({ match, history }) => {
 
       <Row>
         <Col md={6}>
-          {loadingUpdate && <Loader />}
-          {message && <Message variant="danger">{message}</Message>}
-
-          {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
-          {successUpdate && <Message variant="success">{message}</Message>}
+          {updateSuccess && (
+            <Alert
+              variant="success"
+              dismissible
+              transition
+              show={show}
+              onClose={() => setShow(false)}
+            >
+              User Profile Updated
+            </Alert>
+          )}
 
           {loading ? (
             <Loader />
@@ -122,7 +161,16 @@ const UserEditScreen = ({ match, history }) => {
                   placeholder="Enter name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  isInvalid={errorUpdate && errorUpdate.name && !name}
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {console.log(errorUpdate)}
+                  {errorUpdate && errorUpdate.name}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="email">
@@ -131,8 +179,16 @@ const UserEditScreen = ({ match, history }) => {
                   type="email"
                   placeholder="Enter email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => settingEmail(e.target.value)}
+                  isInvalid={errorUpdate && errorUpdate.email && !emailEdit}
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorUpdate && errorUpdate.email}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="password">
@@ -141,8 +197,18 @@ const UserEditScreen = ({ match, history }) => {
                   type="password"
                   placeholder="Enter new password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => settingPassword(e.target.value)}
+                  isInvalid={
+                    errorUpdate && errorUpdate.password && !passwordEdit
+                  }
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorUpdate && errorUpdate.password}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="confirmPassword">
@@ -151,8 +217,20 @@ const UserEditScreen = ({ match, history }) => {
                   type="password"
                   placeholder="Confirm new password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => settingConfirmPassword(e.target.value)}
+                  isInvalid={
+                    errorUpdate &&
+                    errorUpdate.confirmPassword &&
+                    !confirmPasswordEdit
+                  }
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorUpdate && errorUpdate.confirmPassword}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="isadmin">
@@ -204,7 +282,7 @@ const UserEditScreen = ({ match, history }) => {
             className="mr-2"
             width="100%"
             // src="/images/profiles/profile2.jpg"
-            src={user.image}
+            src={user && user.image}
           />
         </Col>
       </Row>

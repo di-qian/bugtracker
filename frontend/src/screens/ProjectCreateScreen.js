@@ -37,9 +37,8 @@ const ProjectCreateScreen = ({ history }) => {
     } else {
       dispatch(listProjects());
       dispatch(listUsers());
-
+      dispatch({ type: PROJECT_CREATE_RESET });
       if (successCreate) {
-        dispatch({ type: PROJECT_CREATE_RESET });
         history.push('/admin/projectlist');
       }
     }
@@ -60,6 +59,8 @@ const ProjectCreateScreen = ({ history }) => {
     const manager_assignedTo = users.find((x) => x.name === e);
     if (manager_assignedTo) {
       setManagerAssigned(manager_assignedTo._id);
+    } else {
+      setManagerAssigned('');
     }
   };
 
@@ -75,7 +76,7 @@ const ProjectCreateScreen = ({ history }) => {
         <hr />
 
         {loadingCreate && <Loader />}
-        {errorCreate && <Message variant="danger">{errorCreate}</Message>}
+
         {loading ? (
           <Loader />
         ) : error ? (
@@ -90,7 +91,15 @@ const ProjectCreateScreen = ({ history }) => {
                 placeholder="Enter New Project Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                isInvalid={errorCreate && errorCreate.name && !name}
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.name}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="assignedTo">
@@ -100,9 +109,12 @@ const ProjectCreateScreen = ({ history }) => {
                 as="select"
                 className="my-1 mr-sm-2"
                 onChange={(e) => settingAssignedTo(e.target.value)}
+                isInvalid={
+                  errorCreate && errorCreate.managerAssigned && !managerAssigned
+                }
                 custom
               >
-                <option key="0">Choose...</option>
+                <option key="">Choose...</option>
                 {users
                   ? users
                       .filter((user) => user.isManager)
@@ -111,6 +123,13 @@ const ProjectCreateScreen = ({ history }) => {
                       ))
                   : ''}
               </Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.managerAssigned}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Button className="mr-2" type="submit" variant="primary">

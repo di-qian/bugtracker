@@ -57,3 +57,15 @@ hr.solid {
 .tooltipposition {
   position: relative;
 }
+
+.descriptionposition {
+  left: 5px;
+}
+
+.buttonwidth {
+  width: 250px;
+}
+
+h2.homefont {
+  font-family: 'Montserrat', sans-serif;
+}

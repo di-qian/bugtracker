@@ -32,7 +32,7 @@ const RegisterScreen = ({ location, history }) => {
       history.push(redirect);
     }
     dispatch({ type: GET_ERRORS_RESET });
-  }, [history, userInfo, redirect]);
+  }, [history, userInfo, redirect, dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -79,7 +79,6 @@ const RegisterScreen = ({ location, history }) => {
             type="text"
             placeholder="Enter name"
             value={name}
-            id="name"
             onChange={(e) => setName(e.target.value)}
             isInvalid={errors && errors.name && !name}
           ></Form.Control>
@@ -99,7 +98,6 @@ const RegisterScreen = ({ location, history }) => {
             type="email"
             placeholder="Enter email"
             value={email}
-            id="email"
             onChange={(e) => settingEmail(e.target.value)}
             isInvalid={errors && errors.email && !emailEdit}
           ></Form.Control>
@@ -119,7 +117,6 @@ const RegisterScreen = ({ location, history }) => {
             type="password"
             placeholder="Enter password"
             value={password}
-            id="password"
             onChange={(e) => settingPassword(e.target.value)}
             isInvalid={errors && errors.password && !passwordEdit}
           ></Form.Control>
@@ -139,7 +136,6 @@ const RegisterScreen = ({ location, history }) => {
             type="password"
             placeholder="Confirm password"
             value={confirmPassword}
-            id="confirmPassword"
             onChange={(e) => settingConfirmPassword(e.target.value)}
             isInvalid={errors && errors.confirmPassword && !confirmPasswordEdit}
           ></Form.Control>

@@ -10,6 +10,7 @@ import FormContainer from '../components/FormContainer';
 import { createBug } from '../actions/bugActions';
 import { listProjects } from '../actions/projectActions';
 import { listUsers } from '../actions/userActions';
+import { BUG_CREATE_RESET } from '../constants/bugConstants';
 
 const BugEditScreen = ({ history }) => {
   const [name, setName] = useState('');
@@ -47,9 +48,8 @@ const BugEditScreen = ({ history }) => {
     } else {
       dispatch(listProjects());
       dispatch(listUsers());
-
+      dispatch({ type: BUG_CREATE_RESET });
       if (successCreate) {
-        //dispatch({ type: BUG_CREATE_RESET });
         history.push('/auth/dashboard');
       }
     }
@@ -102,6 +102,8 @@ const BugEditScreen = ({ history }) => {
     const newproject = projects.find((x) => x.name === e);
     if (newproject) {
       setProject(newproject._id);
+    } else {
+      setProject('');
     }
   };
 
@@ -148,7 +150,7 @@ const BugEditScreen = ({ history }) => {
         <hr />
 
         {loadingCreate && <Loader />}
-        {errorCreate && <Message variant="danger">{errorCreate}</Message>}
+
         {loading ? (
           <Loader />
         ) : error ? (
@@ -163,7 +165,15 @@ const BugEditScreen = ({ history }) => {
                 placeholder="Enter New Issue"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                isInvalid={errorCreate && errorCreate.name && !name}
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.name}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="description">
@@ -175,7 +185,17 @@ const BugEditScreen = ({ history }) => {
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-              />
+                isInvalid={
+                  errorCreate && errorCreate.description && !description
+                }
+              ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.description}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="priority">
@@ -185,13 +205,21 @@ const BugEditScreen = ({ history }) => {
                 as="select"
                 className="my-1 mr-sm-2"
                 onChange={(e) => setPriority(e.target.value)}
+                isInvalid={errorCreate && errorCreate.priority && !priority}
                 custom
               >
-                <option value="0">Choose...</option>
+                <option value="">Choose...</option>
                 <option value="Low">Low</option>
                 <option value="Normal">Normal</option>
                 <option value="High">High</option>
               </Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.priority}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="project">
@@ -201,6 +229,7 @@ const BugEditScreen = ({ history }) => {
                 as="select"
                 className="my-1 mr-sm-2"
                 onChange={(e) => settingProject(e.target.value)}
+                isInvalid={errorCreate && errorCreate.project && !project}
                 custom
               >
                 <option key="0">Choose...</option>
@@ -208,6 +237,13 @@ const BugEditScreen = ({ history }) => {
                   <option key={project._id}>{project.name}</option>
                 ))}
               </Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.project}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="image">

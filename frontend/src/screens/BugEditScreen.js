@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  Modal,
   Form,
   Row,
   Col,
@@ -50,6 +51,7 @@ const BugEditScreen = ({ history, match }) => {
   const [isEditDueDate, setIsEditDueDate] = useState(false);
   const [isEditDescription, setIsEditDescription] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -87,39 +89,10 @@ const BugEditScreen = ({ history, match }) => {
     error: errorBugTracker,
   } = bugCommentCreate;
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   useEffect(() => {
-    if (successBugTracker) {
-      setComment('');
-      console.log('here1');
-      dispatch({ type: BUG_CREATE_COMMENT_RESET });
-      dispatch({ type: BUG_UPDATE_RESET });
-    }
-
-    if (successNameUpdate) {
-      setName('');
-      console.log('here2');
-      dispatch({ type: BUG_CREATE_COMMENT_RESET });
-      dispatch({ type: BUG_UPDATE_RESET });
-    }
-
-    if (successDescriptionUpdate) {
-      setDescription('');
-      console.log('here3');
-      dispatch({ type: BUG_CREATE_COMMENT_RESET });
-      dispatch({ type: BUG_UPDATE_RESET });
-    }
-
-    if (
-      successDueDateUpdate ||
-      successPriorityUpdate ||
-      successAssigneeUpdate ||
-      successProjectUpdate
-    ) {
-      console.log('here4');
-      dispatch({ type: BUG_CREATE_COMMENT_RESET });
-      dispatch({ type: BUG_UPDATE_RESET });
-    }
-
     if (!userInfo) {
       history.push('/login');
     } else {
@@ -129,6 +102,52 @@ const BugEditScreen = ({ history, match }) => {
         dispatch(listProjects());
         dispatch(listUsers());
       } else {
+        if (successBugTracker) {
+          setComment('');
+          console.log('here1');
+          dispatch({ type: BUG_CREATE_COMMENT_RESET });
+        }
+
+        if (successNameUpdate) {
+          setName('');
+          console.log('here2');
+          const combined_comment = ' updated the bug summary.';
+          dispatch(createBugComment(match.params.id, { combined_comment }));
+          setIsEditIssue(false);
+          // dispatch({ type: BUG_CREATE_COMMENT_RESET });
+          dispatch({ type: BUG_UPDATE_RESET });
+        }
+
+        if (successDescriptionUpdate) {
+          setDescription('');
+          console.log('here3');
+          const combined_comment = ' updated the bug description.';
+          dispatch(createBugComment(match.params.id, { combined_comment }));
+          setIsEditDescription(false);
+          // dispatch({ type: BUG_CREATE_COMMENT_RESET });
+          dispatch({ type: BUG_UPDATE_RESET });
+        }
+
+        if (successDueDateUpdate) {
+          const convdate = moment(resolvedBy).format('MMMM Do YYYY');
+
+          const str2 = 'changed the due date to ';
+          const combined_comment = str2.concat(convdate) + '.';
+
+          dispatch(createBugComment(match.params.id, { combined_comment }));
+          setIsEditDueDate(false);
+          dispatch({ type: BUG_UPDATE_RESET });
+        }
+
+        if (
+          successPriorityUpdate ||
+          successAssigneeUpdate ||
+          successProjectUpdate
+        ) {
+          console.log('here4');
+          //dispatch({ type: BUG_CREATE_COMMENT_RESET });
+          dispatch({ type: BUG_UPDATE_RESET });
+        }
         setName(bug.name);
         setProject(bug.project);
         setPriority(bug.priority);
@@ -158,13 +177,13 @@ const BugEditScreen = ({ history, match }) => {
     assignedToImage,
     assignedToName,
     isConfirmMode,
-    isEditAssignee,
-    isEditProject,
-    isEditIssue,
-    isEditPriority,
-    isEditDueDate,
-    isEditDescription,
-    isEditImage,
+    // isEditAssignee,
+    // isEditProject,
+    // isEditIssue,
+    // isEditPriority,
+    // isEditDueDate,
+    // isEditDescription,
+    // isEditImage,
     successBugTracker,
     successAssigneeUpdate,
     successDueDateUpdate,
@@ -215,14 +234,12 @@ const BugEditScreen = ({ history, match }) => {
     const combined_comment = 'assigned the task status to RESOLVED!';
 
     await dispatch(createBugComment(match.params.id, { combined_comment }));
-  };
-
-  const enableConfirmButton = () => {
     setIsConfirmMode(true);
+    handleClose();
   };
 
-  // const disableConfirmButton = () => {
-  //   setIsConfirmMode(false);
+  // const enableConfirmButton = () => {
+  //   setIsConfirmMode(true);
   // };
 
   const enableAssigneeEditButton = () => {
@@ -279,14 +296,10 @@ const BugEditScreen = ({ history, match }) => {
   const disableIssueEditButton = async () => {
     if (name !== bug.name) {
       await dispatch(updateBug('UPDATE_NAME', { ...bug, name }));
-
-      if (successNameUpdate) {
-        const combined_comment = ' updated the bug summary.';
-        await dispatch(createBugComment(match.params.id, { combined_comment }));
-      }
+    } else {
+      dispatch({ type: BUG_UPDATE_RESET });
+      setIsEditIssue(false);
     }
-
-    setIsEditIssue(false);
   };
 
   const enablePriorityEditButton = () => {
@@ -311,20 +324,22 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDueDateEditButton = async () => {
-    const resolvedByString = Date.parse(resolvedBy);
-    const bugresolvedByString = Date.parse(bug.resolvedBy);
-    if (resolvedByString !== bugresolvedByString) {
+    // const resolvedByString = Date.parse(resolvedBy);
+    // const bugresolvedByString = Date.parse(bug.resolvedBy);
+    const resolvedByString = new Date(resolvedBy);
+    const bugresolvedByString = new Date(bug.resolvedBy);
+    console.log(
+      resolvedByString.toDateString() + ' ' + bugresolvedByString.toDateString()
+    );
+    if (
+      resolvedByString.toDateString() !== bugresolvedByString.toDateString()
+    ) {
       await dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
-
-      const convdate = moment(resolvedBy).format('MMMM Do YYYY');
-
-      const str2 = 'changed the due date to ';
-      const combined_comment = str2.concat(convdate) + '.';
-
-      await dispatch(createBugComment(match.params.id, { combined_comment }));
+    } else {
+      console.log('hello');
+      dispatch({ type: BUG_UPDATE_RESET });
+      setIsEditDueDate(false);
     }
-
-    setIsEditDueDate(false);
   };
 
   const enableDescriptionEditButton = () => {
@@ -334,11 +349,10 @@ const BugEditScreen = ({ history, match }) => {
   const disableDescriptionEditButton = async () => {
     if (description !== bug.description) {
       await dispatch(updateBug('UPDATE_DESCRIPTION', { ...bug, description }));
-
-      const combined_comment = ' updated the bug description.';
-      await dispatch(createBugComment(match.params.id, { combined_comment }));
+    } else {
+      dispatch({ type: BUG_UPDATE_RESET });
+      setIsEditDescription(false);
     }
-    setIsEditDescription(false);
   };
 
   const enableImageEditButton = () => {
@@ -473,11 +487,6 @@ const BugEditScreen = ({ history, match }) => {
               </Col>
             </Form.Row>
 
-            {successAssigneeUpdate ? (
-              <Message variant="success">Assignee Updated</Message>
-            ) : (
-              updateError && <Message variant="danger">{updateError}</Message>
-            )}
             <hr />
             <Form disabled onSubmit={submitHandler}>
               <Form.Group controlId="name">
@@ -515,14 +524,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-
-                {successProjectUpdate ? (
-                  <Message variant="success">Project Updated</Message>
-                ) : (
-                  updateError && (
-                    <Message variant="danger">{updateError}</Message>
-                  )
-                )}
               </Form.Group>
 
               <Form.Group controlId="project">
@@ -538,7 +539,15 @@ const BugEditScreen = ({ history, match }) => {
                       disabled={!isEditIssue}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      isInvalid={updateError && updateError.name && !name}
                     ></Form.Control>
+                    <Form.Control.Feedback
+                      className="tooltipposition"
+                      type="invalid"
+                      tooltip
+                    >
+                      {updateError && updateError.name}
+                    </Form.Control.Feedback>
                   </Col>
                   <Col xs="auto">
                     {!isEditIssue ? (
@@ -556,14 +565,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-
-                {successNameUpdate ? (
-                  <Message variant="success">Summary Updated</Message>
-                ) : (
-                  updateError && (
-                    <Message variant="danger">{updateError}</Message>
-                  )
-                )}
               </Form.Group>
 
               <Form.Group controlId="priority">
@@ -602,14 +603,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-
-                {successPriorityUpdate ? (
-                  <Message variant="success">Priority Updated</Message>
-                ) : (
-                  updateError && (
-                    <Message variant="danger">{updateError}</Message>
-                  )
-                )}
               </Form.Group>
 
               <Form.Group>
@@ -640,15 +633,29 @@ const BugEditScreen = ({ history, match }) => {
                     </Form.Label>
                   </Col>
                   <Col xs="auto">
+                    <Form.Check.Input
+                      className="hide"
+                      type={'checkbox'}
+                      isInvalid={updateError && updateError.duedate}
+                    />
                     <Form.Label className="font-weight-bold mr-2">
                       Due Date:
                     </Form.Label>
+
                     <DatePicker
                       selected={resolvedBy}
                       disabled={!isEditDueDate}
                       onChange={(date) => setResolvedBy(date)}
                     />
+                    <Form.Control.Feedback
+                      className="tooltipposition"
+                      type="invalid"
+                      tooltip
+                    >
+                      {updateError && updateError.duedate}
+                    </Form.Control.Feedback>
                   </Col>
+
                   <Col xs="auto">
                     {!isEditDueDate ? (
                       <i
@@ -665,14 +672,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-
-                {successDueDateUpdate ? (
-                  <Message variant="success">Due Date Updated</Message>
-                ) : (
-                  updateError && (
-                    <Message variant="danger">{updateError}</Message>
-                  )
-                )}
               </Form.Group>
 
               <hr />
@@ -685,13 +684,24 @@ const BugEditScreen = ({ history, match }) => {
 
                   <Col>
                     <Form.Control
+                      className="textareaposition"
                       as="textarea"
-                      rows={3}
+                      rows={5}
                       placeholder="Enter description"
                       disabled={!isEditDescription}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                      isInvalid={
+                        updateError && updateError.description && !description
+                      }
                     ></Form.Control>
+                    <Form.Control.Feedback
+                      className="descriptionposition"
+                      type="invalid"
+                      tooltip
+                    >
+                      {updateError && updateError.description}
+                    </Form.Control.Feedback>
                   </Col>
                   <Col xs="auto">
                     {!isEditDescription ? (
@@ -709,14 +719,6 @@ const BugEditScreen = ({ history, match }) => {
                     )}
                   </Col>
                 </Form.Row>
-
-                {successDescriptionUpdate ? (
-                  <Message variant="success">Description Updated</Message>
-                ) : (
-                  updateError && (
-                    <Message variant="danger">{updateError}</Message>
-                  )
-                )}
               </Form.Group>
 
               <Form.Group controlId="imagefile">
@@ -811,16 +813,18 @@ const BugEditScreen = ({ history, match }) => {
                 <Form.Row className="mt-4 ">
                   <Col></Col>
                   <Col xs={'auto'}>
-                    {!isConfirmMode ? (
-                      <Button
-                        className="mr-2"
-                        type="button"
-                        variant="success"
-                        onClick={() => enableConfirmButton()}
-                      >
-                        Resolved
-                      </Button>
-                    ) : (
+                    {/* {!isConfirmMode ? ( */}
+                    <Button
+                      className="mr-2"
+                      type="button"
+                      variant="success"
+                      disabled={bug.resolvedAt ? true : false}
+                      //onClick={() => enableConfirmButton()}
+                      onClick={handleShow}
+                    >
+                      Resolved
+                    </Button>
+                    {/* ) : (
                       <Button
                         className="mr-2"
                         type="button"
@@ -830,7 +834,7 @@ const BugEditScreen = ({ history, match }) => {
                       >
                         Confirm
                       </Button>
-                    )}
+                    )} */}
 
                     <Link className="btn btn-dark" to="/auth/dashboard">
                       Go Back
@@ -843,6 +847,23 @@ const BugEditScreen = ({ history, match }) => {
           </FormContainer>
         </>
       )}
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm issue is resolved</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Once confirmed, the form can no longer be edited!
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={settingResolvedAt}>
+            Confirm
+          </Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

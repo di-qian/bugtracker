@@ -16,29 +16,60 @@ const UserCreateScreen = ({ location, history }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isManager, setIsManager] = useState(false);
-  const [message, setMessage] = useState(null);
   const [image, setImage] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [emailEdit, setEmailEdit] = useState(false);
+  const [passwordEdit, setPasswordEdit] = useState(false);
+  const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
 
   const dispatch = useDispatch();
 
   const userCreate = useSelector((state) => state.userCreate);
-  const { loading, error, success } = userCreate;
+  const { loading, errors, success } = userCreate;
 
   useEffect(() => {
+    dispatch({ type: USER_CREATE_RESET });
     if (success) {
-      dispatch({ type: USER_CREATE_RESET });
       history.push('/admin/userlist');
     }
   }, [dispatch, history, success]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-    } else {
-      dispatch(createUser(name, email, password, image, isAdmin, isManager));
-    }
+    setEmailEdit(false);
+    setPasswordEdit(false);
+    setConfirmPasswordEdit(false);
+
+    // if (password !== confirmPassword) {
+    //   setMessage('Passwords do not match');
+    // } else {
+    dispatch(
+      createUser(
+        name,
+        email,
+        password,
+        confirmPassword,
+        image,
+        isAdmin,
+        isManager
+      )
+    );
+    //}
+  };
+
+  const settingEmail = (e) => {
+    setEmail(e);
+    setEmailEdit(true);
+  };
+
+  const settingPassword = (e) => {
+    setPassword(e);
+    setPasswordEdit(true);
+  };
+
+  const settingConfirmPassword = (e) => {
+    setConfirmPassword(e);
+    setConfirmPasswordEdit(true);
   };
 
   const uploadFileHandler = async (e) => {
@@ -60,7 +91,6 @@ const UserCreateScreen = ({ location, history }) => {
 
       setUploading(false);
     } catch (error) {
-      console.error(error);
       setUploading(false);
     }
   };
@@ -74,16 +104,11 @@ const UserCreateScreen = ({ location, history }) => {
           </Col>
         </Form.Row>
 
-        {message && <Message variant="danger">{message}</Message>}
-        {}
-        {success && <Message variant="success">Profile Updated</Message>}
         {loading ? (
           <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
         ) : (
           <Form onSubmit={submitHandler}>
-            <Form.Group controlId="name">
+            <Form.Group className="groupposition" controlId="name">
               <Form.Label className="mr-1">Name</Form.Label>
               <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
@@ -91,32 +116,56 @@ const UserCreateScreen = ({ location, history }) => {
                 placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                isInvalid={errors && errors.name && !name}
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.name}
+              </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="email">
+            <Form.Group className="groupposition" controlId="email">
               <Form.Label className="mr-1">Email Address</Form.Label>
               <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => settingEmail(e.target.value)}
+                isInvalid={errors && errors.email && !emailEdit}
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.email}
+              </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="password">
+            <Form.Group className="groupposition" controlId="password">
               <Form.Label className="mr-1">Temporary Password</Form.Label>
               <i className="fas fa-asterisk fa-xs fh"></i>
               <Form.Control
                 type="password"
                 placeholder="Enter password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => settingPassword(e.target.value)}
+                isInvalid={errors && errors.password && !passwordEdit}
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.password}
+              </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="confirmPassword">
+            <Form.Group className="groupposition" controlId="confirmPassword">
               <Form.Label className="mr-1">
                 Confirm Temporary Password
               </Form.Label>
@@ -125,8 +174,18 @@ const UserCreateScreen = ({ location, history }) => {
                 type="password"
                 placeholder="Confirm password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => settingConfirmPassword(e.target.value)}
+                isInvalid={
+                  errors && errors.confirmPassword && !confirmPasswordEdit
+                }
               ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.confirmPassword}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="isadmin">

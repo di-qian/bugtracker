@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Alert, Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { listProjectDetails, updateProject } from '../actions/projectActions';
-//import { listMyOrders } from '../actions/orderActions';
-import {
-  PROJECT_UPDATE_RESET,
-  PROJECT_DETAILS_RESET,
-} from '../constants/projectConstants';
+import { PROJECT_UPDATE_RESET } from '../constants/projectConstants';
 import { listUsers } from '../actions/userActions';
 
 const ProjectEditScreen = ({ history, match }) => {
   const projectId = match.params.id;
   const [name, setName] = useState('');
   const [managerAssigned, setManagerAssigned] = useState('');
-  const [message, setMessage] = useState(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -30,44 +27,53 @@ const ProjectEditScreen = ({ history, match }) => {
   const { userInfo } = userLogin;
 
   const projectUpdate = useSelector((state) => state.projectUpdate);
-  const { success } = projectUpdate;
+  const { success, error: errorUpdate } = projectUpdate;
 
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
     } else {
-      if (success) {
-        dispatch({ type: PROJECT_DETAILS_RESET });
+      if (!project.name || project._id !== projectId || success) {
+        setUpdateSuccess(success);
+        setShow(true);
         dispatch({ type: PROJECT_UPDATE_RESET });
-        history.push('/admin/projectlist');
+        dispatch(listUsers());
+        dispatch(listProjectDetails(projectId));
+        //history.push('/admin/projectlist');
       } else {
-        if (!project.name || project._id !== projectId) {
-          console.log('here1');
-          dispatch(listUsers());
-          dispatch(listProjectDetails(projectId));
-        } else {
-          console.log('here2 ' + project.managerAssigned.name);
-          setName(project.name);
-          setManagerAssigned(project.managerAssigned);
+        if (success) {
+          setUpdateSuccess(false);
         }
+        setName(project.name);
+        setManagerAssigned(project.managerAssigned);
       }
     }
-  }, [dispatch, history, match, userInfo, project, success, projectId]);
+  }, [
+    dispatch,
+    history,
+    match,
+    userInfo,
+    project,
+    success,
+    updateSuccess,
+    projectId,
+  ]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (project.name) {
-      console.log(project._id + ' ' + name + ' ' + managerAssigned);
-      dispatch(
-        updateProject({
-          _id: project._id,
-          name,
-          managerAssigned: managerAssigned._id,
-        })
-      );
-    } else {
-      setMessage('No project name');
-    }
+    setShow(false);
+    // if (project.name) {
+
+    dispatch(
+      updateProject({
+        _id: project._id,
+        name,
+        managerAssigned: managerAssigned._id,
+      })
+    );
+    // } else {
+    //   setMessage('No project name');
+    // }
   };
 
   const settingAssignedTo = (e) => {
@@ -87,9 +93,17 @@ const ProjectEditScreen = ({ history, match }) => {
 
       <Row>
         <Col md={6}>
-          {message && <Message variant="danger">{message}</Message>}
-          {}
-          {success && <Message variant="success">Project Updated</Message>}
+          {updateSuccess && (
+            <Alert
+              variant="success"
+              dismissible
+              transition
+              show={show}
+              onClose={() => setShow(false)}
+            >
+              User Profile Updated
+            </Alert>
+          )}
           {loading ? (
             <Loader />
           ) : error ? (
@@ -103,7 +117,16 @@ const ProjectEditScreen = ({ history, match }) => {
                   placeholder="Enter new project name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  isInvalid={errorUpdate && errorUpdate.name && !name}
                 ></Form.Control>
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {console.log(errorUpdate)}
+                  {errorUpdate && errorUpdate.name}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="managerAssignedTo">
