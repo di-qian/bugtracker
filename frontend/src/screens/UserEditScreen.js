@@ -41,8 +41,8 @@ const UserEditScreen = ({ match, history }) => {
   } = userUpdate;
 
   useEffect(() => {
-    if (!userInfo.isAdmin) {
-      history.push('/login');
+    if (!userInfo || (userInfo && !userInfo.isAdmin)) {
+      history.push('/auth/fail');
     } else {
       if (!user.name || user._id !== userId || successUpdate) {
         setUpdateSuccess(successUpdate);

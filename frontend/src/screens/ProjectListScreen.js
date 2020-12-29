@@ -25,7 +25,7 @@ const ProjectListScreen = ({ history, match }) => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listProjects(pageNumber));
     } else {
-      history.push('/login');
+      history.push('/auth/fail');
     }
   }, [dispatch, history, successDelete, userInfo, pageNumber]);
 

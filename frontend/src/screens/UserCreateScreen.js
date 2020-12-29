@@ -27,10 +27,17 @@ const UserCreateScreen = ({ location, history }) => {
   const userCreate = useSelector((state) => state.userCreate);
   const { loading, errors, success } = userCreate;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
-    dispatch({ type: USER_CREATE_RESET });
-    if (success) {
-      history.push('/admin/userlist');
+    if (!userInfo || (userInfo && !userInfo.isAdmin)) {
+      history.push('/auth/fail');
+    } else {
+      dispatch({ type: USER_CREATE_RESET });
+      if (success) {
+        history.push('/admin/userlist');
+      }
     }
   }, [dispatch, history, success]);
 

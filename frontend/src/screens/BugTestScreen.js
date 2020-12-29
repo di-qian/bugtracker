@@ -22,7 +22,7 @@ const BugTestScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      history.push('/auth/fail');
     } else {
       dispatch(listBugDetails(match.params.id));
     }

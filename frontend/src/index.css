@@ -18,9 +18,13 @@ main {
   visibility: hidden;
 }
 
+.hideAdmin {
+  display: none;
+}
+
 span {
   display: inline-block;
-  vertical-align: middle;
+
   line-height: normal;
 }
 
@@ -66,6 +70,97 @@ hr.solid {
   width: 250px;
 }
 
-h2.homefont {
-  font-family: 'Montserrat', sans-serif;
+.carousel h4 {
+  color: black;
+}
+
+.carousel p {
+  color: black;
+}
+
+/* carousel */
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: block;
+}
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
+
+.carousel .carousel-indicators li {
+  background-color: #fff;
+  background-color: rgba(70, 70, 70, 0.25);
+}
+
+.carousel .carousel-indicators .active {
+  background-color: #444;
+}
+
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+  filter: invert(100%);
+}
+
+@media screen and (min-width: 601px) {
+  h2.homefont {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 50px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  h2.homefont {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 1225px) and (min-width: 1045px) {
+  .display-createdAt {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1045px) and (min-width: 835px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 565px) and (min-width: 330px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+  .display-assignedTo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 330px) {
+  .display-project {
+    display: none;
+  }
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+  .display-assignedTo {
+    display: none;
+  }
 }

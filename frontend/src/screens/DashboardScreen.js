@@ -31,7 +31,7 @@ const DashboardScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      history.push('/auth/fail');
     } else {
       dispatch({ type: BUG_CREATE_RESET });
       dispatch(listBugs(keyword, pageNumber));
@@ -68,25 +68,27 @@ const DashboardScreen = ({ history, match }) => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Project</th>
-                <th>Bug Summary</th>
-                <th>Staus</th>
-                <th>Created On</th>
-                <th>Due On</th>
-                <th>Priority</th>
-                <th>Assignee</th>
-                <th>
+                <th className="display-project">Project</th>
+                <th className="display-summary">Bug Summary</th>
+                <th className="display-status">Staus</th>
+                <th className="display-createdAt">Created On</th>
+                <th className="display-resolvedBy">Due On</th>
+                <th className="display-priority">Priority</th>
+                <th className="display-assignedTo">Assignee</th>
+                <th className="display-edit">
                   <i className="fas fa-list-ul"></i>
                 </th>
-                <th className={!userInfo.isAdmin && 'hide'}>Remove</th>
+                <th className={userInfo && !userInfo.isAdmin && 'hideAdmin'}>
+                  Del
+                </th>
               </tr>
             </thead>
             <tbody>
               {bugs.map((bug) => (
                 <tr key={bug._id}>
-                  <td>{bug.project.name}</td>
-                  <td>{bug.name}</td>
-                  <td>
+                  <td className="display-project">{bug.project.name}</td>
+                  <td className="display-summary">{bug.name}</td>
+                  <td className="display-status">
                     {bug.resolvedAt ? (
                       <Badge variant="success">CLOSED</Badge>
                     ) : Date.parse(bug.resolvedBy) > Date.now() ? (
@@ -95,13 +97,13 @@ const DashboardScreen = ({ history, match }) => {
                       <Badge variant="danger">OVERDUE</Badge>
                     )}
                   </td>
-                  <td>
+                  <td className="display-createdAt">
                     <Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>
                   </td>
-                  <td>
+                  <td className="display-resolvedBy">
                     <Moment format="MM/DD/YYYY">{bug.resolvedBy}</Moment>
                   </td>
-                  <td>
+                  <td className="display-priority">
                     {bug.priority === 'High' ? (
                       <i className="fas fa-bolt fh"> High</i>
                     ) : bug.priority === 'Normal' ? (
@@ -110,20 +112,20 @@ const DashboardScreen = ({ history, match }) => {
                       <i className="fas fa-bolt fl"> Low</i>
                     )}
                   </td>
-                  <td>
+                  <td className="display-assignedTo">
                     {bug.assignedTo ? (
                       bug.assignedTo.name
                     ) : (
                       <Badge variant="warning">PENDING</Badge>
                     )}
                   </td>
-                  <td>
+                  <td className="display-edit">
                     <a href={`/auth/bug/edit/${bug._id}`}>
                       <i className="fas fa-list-ul"></i>
                     </a>
                   </td>
 
-                  <td className={userInfo.isAdmin ? '' : 'hide'}>
+                  <td className={userInfo.isAdmin ? '' : 'hideAdmin'}>
                     {/* <LinkContainer to={`/admin/bug/${bug._id}/edit`}>
                       <Button variant="light" className="btn-sm">
                         <i className="fas fa-edit"></i>

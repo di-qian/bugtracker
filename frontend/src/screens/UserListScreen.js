@@ -25,7 +25,7 @@ const UserListScreen = ({ history, match }) => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listUsers(pageNumber));
     } else {
-      history.push('/login');
+      history.push('/auth/fail');
     }
   }, [dispatch, history, successDelete, userInfo, pageNumber]);
 

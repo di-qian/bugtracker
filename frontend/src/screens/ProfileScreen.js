@@ -35,7 +35,7 @@ const ProfileScreen = ({ history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      history.push('/auth/fail');
     } else {
       if (!user || !user.name || success) {
         setUpdateSuccess(success);

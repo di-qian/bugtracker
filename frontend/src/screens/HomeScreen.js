@@ -1,36 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import { LinkContainer } from 'react-router-bootstrap';
+import HomeCarousel from '../components/HomeCarousel';
+import { USER_LOGIN_ERRORS_RESET } from '../constants/userConstants';
 
-const HomeScreen = () => {
+const HomeScreen = ({ location, history }) => {
+  const dispatch = useDispatch();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const redirect = location.search
+    ? location.search.split('=')[1]
+    : '/auth/dashboard';
+
+  useEffect(() => {
+    if (userInfo) {
+      history.push(redirect);
+    } else {
+      dispatch({ type: USER_LOGIN_ERRORS_RESET });
+    }
+  }, [history, userInfo, redirect, dispatch]);
+
   return (
-    <FormContainer>
-      <Row className=" justify-content-md-center">
-        <h2 className="homefont">Welcome to</h2>
+    <Container className="h-100 d-flex align-items-center justify-content-center">
+      <Row className="h-100 d-flex align-items-center justify-content-center">
+        <Col xs={8} sm={8} md={8}>
+          <Row className="d-flex align-items-center justify-content-center">
+            <h2 className="homefont text-nowrap">Welcome to</h2>
+          </Row>
+          <Row className="d-flex align-items-center justify-content-center">
+            <h2 className="homefont text-nowrap">BugTracker</h2>
+          </Row>
+          <Row className="d-flex align-items-center justify-content-center">
+            <HomeCarousel />
+          </Row>
+          <Row className="d-flex align-items-center justify-content-center">
+            <i className="fas fa-bug fa-3x mb-4"></i>
+          </Row>
+
+          <Row className="mb-3 d-flex align-items-center justify-content-center">
+            <LinkContainer to="/login">
+              <Button variant="outline-dark" className="buttonwidth">
+                SIGN IN
+              </Button>
+            </LinkContainer>
+          </Row>
+          <Row className="d-flex align-items-center justify-content-center">
+            <LinkContainer to="/register">
+              <Button variant="outline-dark" className="buttonwidth">
+                CREATE ACCOUNT
+              </Button>
+            </LinkContainer>
+          </Row>
+        </Col>
       </Row>
-      <Row className="justify-content-md-center">
-        <h2 className="homefont">BugTracker</h2>
-      </Row>
-      <Row className="justify-content-md-center">
-        <i className="fas fa-bug fa-3x mb-4"></i>
-      </Row>
-      <Row className="justify-content-md-center mb-4">
-        <LinkContainer to="/register">
-          <Button variant="outline-dark" className="buttonwidth">
-            CREATE ACCOUNT
-          </Button>
-        </LinkContainer>
-      </Row>
-      <Row className="justify-content-md-center">
-        <LinkContainer to="/login">
-          <Button variant="outline-dark" className="buttonwidth">
-            SIGN IN
-          </Button>
-        </LinkContainer>
-      </Row>
-    </FormContainer>
+    </Container>
   );
 };
 

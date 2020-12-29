@@ -44,7 +44,7 @@ const BugEditScreen = ({ history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login');
+      history.push('/auth/fail');
     } else {
       dispatch(listProjects());
       dispatch(listUsers());

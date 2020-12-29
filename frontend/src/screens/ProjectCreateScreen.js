@@ -32,8 +32,8 @@ const ProjectCreateScreen = ({ history }) => {
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (!userInfo) {
-      history.push('/login');
+    if (!userInfo || (userInfo && !userInfo.isAdmin)) {
+      history.push('/auth/fail');
     } else {
       dispatch(listProjects());
       dispatch(listUsers());

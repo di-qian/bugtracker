@@ -30,8 +30,8 @@ const ProjectEditScreen = ({ history, match }) => {
   const { success, error: errorUpdate } = projectUpdate;
 
   useEffect(() => {
-    if (!userInfo) {
-      history.push('/login');
+    if (!userInfo || (userInfo && !userInfo.isAdmin)) {
+      history.push('/auth/fail');
     } else {
       if (!project.name || project._id !== projectId || success) {
         setUpdateSuccess(success);
