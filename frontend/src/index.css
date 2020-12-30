@@ -54,6 +54,10 @@ hr.solid {
   padding-bottom: 25px;
 }
 
+.vertalign {
+  vertical-align: middle;
+}
+
 .groupposition {
   position: relative;
 }
@@ -83,10 +87,25 @@ hr.solid {
 .carousel-item-prev,
 .carousel-item.active {
   display: block;
+  height: 250px;
 }
+
 .carousel-caption {
   position: absolute;
   top: 0;
+
+  /* text-align: left;
+  top: 50%;
+  left: 35%;
+  bottom: auto;
+  -webkit-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  transform: translate(0, -50%); */
+}
+
+.wrapper {
+  max-width: 200px;
+  width: 100%;
 }
 
 .carousel .carousel-indicators li {
@@ -117,6 +136,20 @@ hr.solid {
   }
 }
 
+@media screen and (min-width: 601px) {
+  .pagetitlefont {
+    font-family: 'Poppins', sans-serif;
+    font-size: 40px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .pagetitlefont {
+    font-family: 'Poppins', sans-serif;
+    font-size: 30px;
+  }
+}
+
 @media screen and (max-width: 1225px) and (min-width: 1045px) {
   .display-createdAt {
     display: none;
@@ -132,7 +165,19 @@ hr.solid {
   }
 }
 
-@media screen and (max-width: 565px) and (min-width: 330px) {
+@media screen and (max-width: 835px) and (min-width: 565px) {
+  .display-createdAt {
+    display: none;
+  }
+  .display-resolvedBy {
+    display: none;
+  }
+  .display-priority {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 565px) and (min-width: 415px) {
   .display-createdAt {
     display: none;
   }
@@ -147,7 +192,7 @@ hr.solid {
   }
 }
 
-@media screen and (max-width: 330px) {
+@media screen and (max-width: 415px) {
   .display-project {
     display: none;
   }
@@ -161,6 +206,12 @@ hr.solid {
     display: none;
   }
   .display-assignedTo {
+    display: none;
+  }
+  .display-manager {
+    display: none;
+  }
+  .display-admin {
     display: none;
   }
 }

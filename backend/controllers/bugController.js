@@ -24,6 +24,7 @@ const getBugs = asyncHandler(async (req, res) => {
 
   const count = await Bug.countDocuments({ ...keyword });
   const bugs = await Bug.find({ ...keyword })
+    .sort({ createdAt: -1 })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .populate('project', 'name')
@@ -136,7 +137,7 @@ const updateBug = asyncHandler(async (req, res) => {
     assignedTo,
     comments,
   } = req.body;
-  console.log(name);
+
   const { errors } = validateEditBugInput({
     name,
     description,

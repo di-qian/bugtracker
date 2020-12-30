@@ -50,7 +50,7 @@ const DashboardScreen = ({ history, match }) => {
 
   return (
     <>
-      <h1>Latest Bugs</h1>
+      <h3 className="pagetitlefont">Latest Bugs</h3>
 
       <Button className="my-3" onClick={createBugHandler}>
         <i className="fas fa-plus"></i> New Issue

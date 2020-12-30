@@ -45,11 +45,12 @@ const UserEditScreen = ({ match, history }) => {
       history.push('/auth/fail');
     } else {
       if (!user.name || user._id !== userId || successUpdate) {
-        setUpdateSuccess(successUpdate);
-        setShow(true);
+        if (successUpdate) {
+          setUpdateSuccess(successUpdate);
+          setShow(true);
+        }
         dispatch({ type: USER_UPDATE_RESET });
         dispatch(getUserDetails(userId));
-        //history.push('/admin/userlist');
       } else {
         if (successUpdate) {
           setUpdateSuccess(false);
@@ -72,6 +73,7 @@ const UserEditScreen = ({ match, history }) => {
     try {
       const config = {
         headers: {
+          Authorization: `Bearer ${userInfo.token}`,
           'Content-Type': 'multipart/form-data',
         },
       };
@@ -130,12 +132,13 @@ const UserEditScreen = ({ match, history }) => {
     <>
       <Row>
         <Col>
-          <h2>Edit User</h2>
+          <h3 className="pagetitlefont">Edit User (by Admin)</h3>
         </Col>
       </Row>
 
       <Row>
         <Col md={6}>
+          <hr />
           {updateSuccess && (
             <Alert
               variant="success"

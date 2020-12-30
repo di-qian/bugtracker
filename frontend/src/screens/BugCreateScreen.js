@@ -64,6 +64,7 @@ const BugEditScreen = ({ history }) => {
     try {
       const config = {
         headers: {
+          Authorization: `Bearer ${userInfo.token}`,
           'Content-Type': 'multipart/form-data',
         },
       };

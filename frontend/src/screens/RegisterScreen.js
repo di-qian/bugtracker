@@ -67,7 +67,7 @@ const RegisterScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
-      <h1>Sign Up</h1>
+      <h3 className="pagetitlefont">Sign Up</h3> <hr />
       {message && <Message variant="success">{message}</Message>}
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
@@ -152,7 +152,6 @@ const RegisterScreen = ({ location, history }) => {
           Register
         </Button>
       </Form>
-
       <Row className="py-3">
         <Col>
           Have an Account?{' '}

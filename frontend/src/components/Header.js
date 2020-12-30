@@ -19,7 +19,7 @@ const Header = () => {
       <Navbar bg="primary" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <Navbar.Brand href={userInfo ? '/auth/dashboard' : '/'}>
-            Bug Tracker
+            {userInfo ? 'Dashboard' : 'Bug Tracker'}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

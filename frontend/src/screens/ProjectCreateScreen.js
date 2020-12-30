@@ -67,11 +67,7 @@ const ProjectCreateScreen = ({ history }) => {
   return (
     <>
       <FormContainer>
-        <Form.Row className="align-items-center mb-3">
-          <Col sm={3} className="my-1">
-            <h4>New Project</h4>
-          </Col>
-        </Form.Row>
+        <h3 className="pagetitlefont mb-3">New Project</h3>
 
         <hr />
 

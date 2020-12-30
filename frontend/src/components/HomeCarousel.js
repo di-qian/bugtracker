@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import Moment from 'react-moment';
-import { Carousel, Image } from 'react-bootstrap';
+import { Carousel, Image, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from './Loader';
 import Message from './Message';
 import { listBugs } from '../actions/bugActions';
+import { BUG_UPDATE_ASSIGNEE_SUCCESS } from '../constants/bugConstants';
 
 const HomeCarousel = () => {
   const dispatch = useDispatch();
@@ -21,27 +22,45 @@ const HomeCarousel = () => {
   ) : error ? (
     <Message variant="danger">{error}</Message>
   ) : (
-    <Carousel pause="hover" interval="7500" className="groupposition mb-4">
-      {bugs.map((bug) => (
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/images/slide.png"
-            alt="First slide"
-          />
-          <Carousel.Caption>
-            <p>Bug Summary: {bug.name}</p>
-            <p>
-              Created On: {<Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>}
-            </p>
-            <p>Created By: {bug.createdBy.name}</p>
-            <p>
-              Due Date: {<Moment format="MM/DD/YYYY">{bug.resolvedBy}</Moment>}
-            </p>
-          </Carousel.Caption>
-        </Carousel.Item>
-      ))}
-    </Carousel>
+    <>
+      <p className="groupposition font-weight-bold font-italic">
+        Latest Bugs Added:
+      </p>
+      <Carousel pause="hover" interval="10000" indicators="false">
+        {bugs.map((bug) => (
+          <Carousel.Item>
+            <img class="d-block img-fluid" src="/images/slide.png" />
+
+            <Carousel.Caption>
+              <p>
+                {/* <b>Created On: </b> */}
+                <i>{<Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>}</i>
+              </p>
+              <p>
+                <b>New Issue: </b> {bug.name}
+              </p>
+              {/* <p>
+                <b>Created On: </b>
+                {<Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>}
+              </p> */}
+
+              <p>
+                <b>Due Date: </b>
+                {<Moment format="MM/DD/YYYY">{bug.resolvedBy}</Moment>}
+              </p>
+              <p className="vertalign">
+                <b>Assigned To: </b>
+                {bug.assignedTo ? (
+                  bug.assignedTo.name
+                ) : (
+                  <Badge variant="warning">PENDING</Badge>
+                )}
+              </p>
+            </Carousel.Caption>
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    </>
   );
 };
 

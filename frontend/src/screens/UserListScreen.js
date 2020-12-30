@@ -41,7 +41,7 @@ const UserListScreen = ({ history, match }) => {
 
   return (
     <>
-      <h1>User List</h1>
+      <h3 className="pagetitlefont">User List</h3>
 
       <Button className="my-3" onClick={createUserHandler}>
         <i className="fas fa-plus"></i> New User
@@ -59,8 +59,8 @@ const UserListScreen = ({ history, match }) => {
                 {/* <th>ID</th> */}
                 <th>NAME</th>
                 <th>EMAIL</th>
-                <th>ADMIN</th>
-                <th>MANAGER</th>
+                <th className="display-admin">ADMIN</th>
+                <th className="display-manager">MANAGER</th>
                 <th></th>
               </tr>
             </thead>
@@ -72,7 +72,7 @@ const UserListScreen = ({ history, match }) => {
                   <td>
                     <a href={`mailto:${user.email}`}>{user.email}</a>
                   </td>
-                  <td>
+                  <td className="display-admin">
                     {user.isAdmin ? (
                       <i
                         className="fas fa-check"
@@ -82,7 +82,7 @@ const UserListScreen = ({ history, match }) => {
                       <i className="fas fa-times" style={{ color: 'red' }}></i>
                     )}
                   </td>
-                  <td>
+                  <td className="display-manager">
                     {user.isManager ? (
                       <i
                         className="fas fa-check"

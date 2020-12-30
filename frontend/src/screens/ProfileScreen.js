@@ -93,14 +93,18 @@ const ProfileScreen = ({ history }) => {
   };
 
   const uploadFileHandler = async (e) => {
+    console.log(e.target.files);
     const file = e.target.files[0];
+
     const formData = new FormData();
     formData.append('image', file);
+    console.log(formData);
     setUploading(true);
 
     try {
       const config = {
         headers: {
+          Authorization: `Bearer ${userInfo.token}`,
           'Content-Type': 'multipart/form-data',
         },
       };
@@ -120,12 +124,13 @@ const ProfileScreen = ({ history }) => {
     <>
       <Row>
         <Col>
-          <h2>User Profile</h2>
+          <h3 className="pagetitlefont">User Profile</h3>
         </Col>
       </Row>
 
       <Row>
         <Col md={6}>
+          <hr />
           {updateSuccess && (
             <Alert
               variant="success"
@@ -134,7 +139,7 @@ const ProfileScreen = ({ history }) => {
               show={show}
               onClose={() => setShow(false)}
             >
-              Profile Updated
+              User Profile Updated
             </Alert>
           )}
           {loading ? (

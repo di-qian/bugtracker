@@ -24,7 +24,6 @@ const LoginScreen = ({ location, history }) => {
     : '/auth/dashboard';
 
   useEffect(() => {
-    console.log(userInfo);
     if (userInfo) {
       history.push(redirect);
     } else {
@@ -51,7 +50,8 @@ const LoginScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
-      <h1>Sign In</h1>
+      <h3 className="pagetitlefont mb-3">Sign In</h3>
+      <hr />
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
       <Form onSubmit={submitHandler}>

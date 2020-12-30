@@ -88,6 +88,7 @@ const UserCreateScreen = ({ location, history }) => {
     try {
       const config = {
         headers: {
+          Authorization: `Bearer ${userInfo.token}`,
           'Content-Type': 'multipart/form-data',
         },
       };
@@ -105,12 +106,8 @@ const UserCreateScreen = ({ location, history }) => {
   return (
     <>
       <FormContainer>
-        <Form.Row className="align-items-center mb-3">
-          <Col sm={3} className="my-1">
-            <h4>New User</h4>
-          </Col>
-        </Form.Row>
-
+        <h3 className="pagetitlefont mb-3">New User</h3>
+        <hr />
         {loading ? (
           <Loader />
         ) : (

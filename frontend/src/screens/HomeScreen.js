@@ -26,7 +26,7 @@ const HomeScreen = ({ location, history }) => {
   }, [history, userInfo, redirect, dispatch]);
 
   return (
-    <Container className="h-100 d-flex align-items-center justify-content-center">
+    <Container>
       <Row className="h-100 d-flex align-items-center justify-content-center">
         <Col xs={8} sm={8} md={8}>
           <Row className="d-flex align-items-center justify-content-center">
@@ -35,9 +35,11 @@ const HomeScreen = ({ location, history }) => {
           <Row className="d-flex align-items-center justify-content-center">
             <h2 className="homefont text-nowrap">BugTracker</h2>
           </Row>
-          <Row className="d-flex align-items-center justify-content-center">
+          <hr />
+          <Row className="d-flex align-items-center justify-content-center my-4">
             <HomeCarousel />
           </Row>
+          <hr />
           <Row className="d-flex align-items-center justify-content-center">
             <i className="fas fa-bug fa-3x mb-4"></i>
           </Row>

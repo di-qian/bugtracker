@@ -41,7 +41,7 @@ const ProjectListScreen = ({ history, match }) => {
 
   return (
     <>
-      <h1>Project List</h1>
+      <h3 className="pagetitlefont">Project List</h3>
 
       <Button className="my-3" onClick={createProjectHandler}>
         <i className="fas fa-plus"></i> New Project
@@ -53,13 +53,13 @@ const ProjectListScreen = ({ history, match }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          <Table striped bordered hover responsive className="table-sm">
+          <Table striped bordered hover>
             <thead>
               <tr>
                 <th>NAME</th>
-                <th>MANAGER</th>
+                <th className="display-manager">MANAGER</th>
 
-                <th></th>
+                <th>Edit/Del</th>
               </tr>
             </thead>
             <tbody>
@@ -67,7 +67,9 @@ const ProjectListScreen = ({ history, match }) => {
                 <tr key={project._id}>
                   <td>{project.name}</td>
 
-                  <td>{project.managerAssigned.name}</td>
+                  <td className="display-manager">
+                    {project.managerAssigned.name}
+                  </td>
 
                   <td>
                     <LinkContainer to={`/admin/project/${project._id}/edit`}>

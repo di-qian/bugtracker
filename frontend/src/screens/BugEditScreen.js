@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import Moment from 'react-moment';
 import moment from 'moment';
@@ -15,6 +16,8 @@ import {
   Badge,
   Jumbotron,
   ListGroup,
+  Accordion,
+  Card,
 } from 'react-bootstrap';
 import {
   listBugDetails,
@@ -36,6 +39,7 @@ const BugEditScreen = ({ history, match }) => {
   const [name, setName] = useState('');
   const [project, setProject] = useState('');
   const [priority, setPriority] = useState('');
+  const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [assignedToImage, setAssignedToImage] = useState('');
@@ -52,6 +56,7 @@ const BugEditScreen = ({ history, match }) => {
   const [isEditDescription, setIsEditDescription] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
   const [show, setShow] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -139,6 +144,16 @@ const BugEditScreen = ({ history, match }) => {
           dispatch({ type: BUG_UPDATE_RESET });
         }
 
+        if (successImageUpdate) {
+          setImage('');
+
+          const combined_comment = ' updated the bug image attachment.';
+          dispatch(createBugComment(match.params.id, { combined_comment }));
+          setIsEditImage(false);
+          // dispatch({ type: BUG_CREATE_COMMENT_RESET });
+          dispatch({ type: BUG_UPDATE_RESET });
+        }
+
         if (
           successPriorityUpdate ||
           successAssigneeUpdate ||
@@ -152,6 +167,7 @@ const BugEditScreen = ({ history, match }) => {
         setProject(bug.project);
         setPriority(bug.priority);
         setDescription(bug.description);
+        setImage(bug.image);
 
         if (!assignedTo) {
           setAssignedTo(bug.assignedTo);
@@ -191,13 +207,32 @@ const BugEditScreen = ({ history, match }) => {
     successProjectUpdate,
     successDescriptionUpdate,
     successNameUpdate,
+    successImageUpdate,
     resolvedAt,
   ]);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    setUploading(true);
 
-    //To be added
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const { data } = await axios.post('/api/upload', formData, config);
+
+      setImage(data);
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+    }
   };
 
   const submitCommentHandler = () => {
@@ -324,19 +359,14 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const disableDueDateEditButton = async () => {
-    // const resolvedByString = Date.parse(resolvedBy);
-    // const bugresolvedByString = Date.parse(bug.resolvedBy);
     const resolvedByString = new Date(resolvedBy);
     const bugresolvedByString = new Date(bug.resolvedBy);
-    console.log(
-      resolvedByString.toDateString() + ' ' + bugresolvedByString.toDateString()
-    );
+
     if (
       resolvedByString.toDateString() !== bugresolvedByString.toDateString()
     ) {
       await dispatch(updateBug('UPDATE_DUEDATE', { ...bug, resolvedBy }));
     } else {
-      console.log('hello');
       dispatch({ type: BUG_UPDATE_RESET });
       setIsEditDueDate(false);
     }
@@ -359,8 +389,13 @@ const BugEditScreen = ({ history, match }) => {
     setIsEditImage(true);
   };
 
-  const disableImageEditButton = () => {
-    setIsEditImage(false);
+  const disableImageEditButton = async () => {
+    if (image !== bug.image) {
+      await dispatch(updateBug('UPDATE_IMAGE', { ...bug, image }));
+    } else {
+      dispatch({ type: BUG_UPDATE_RESET });
+      setIsEditImage(false);
+    }
   };
 
   return (
@@ -488,7 +523,7 @@ const BugEditScreen = ({ history, match }) => {
             </Form.Row>
 
             <hr />
-            <Form disabled onSubmit={submitHandler}>
+            <Form disabled>
               <Form.Group controlId="name">
                 <Form.Row className="align-items-center">
                   <Form.Label column lg={2} className="font-weight-bold mr-2">
@@ -723,16 +758,62 @@ const BugEditScreen = ({ history, match }) => {
 
               <Form.Group controlId="imagefile">
                 <Form.Row>
-                  <Col xs={'auto'}>
-                    <Form.Label lg={2} className="font-weight-bold mr-2">
-                      Image:
-                    </Form.Label>
+                  {/* <Col xs={'auto'}> */}
+                  <Form.Label column lg={2} className="font-weight-bold mr-2">
+                    Image:
+                  </Form.Label>
+                  {/* </Col> */}
+
+                  <Col>
+                    {isEditImage ? (
+                      <>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter image url"
+                          value={image}
+                          onChange={(e) => setImage(e.target.value)}
+                        ></Form.Control>
+                        <Form.File
+                          id="image-file"
+                          label="Choose File"
+                          custom
+                          onChange={uploadFileHandler}
+                        ></Form.File>
+                      </>
+                    ) : (
+                      <Accordion
+                        // defaultActiveKey="0"
+                        className="textareaposition"
+                      >
+                        <Card>
+                          <Accordion.Toggle as={Card.Header} eventKey="0">
+                            {bug.image ? (
+                              <i className="fas fa-paperclip" />
+                            ) : (
+                              'No image'
+                            )}
+                          </Accordion.Toggle>
+                          <Accordion.Collapse eventKey="0">
+                            <Card.Body>
+                              <Image
+                                className="mr-2"
+                                width="100%"
+                                // src="/images/profiles/profile2.jpg"
+                                src={bug.image}
+                              />
+                            </Card.Body>
+                          </Accordion.Collapse>
+                        </Card>
+                      </Accordion>
+                    )}
+
+                    {uploading && <Loader />}
+
+                    {/* <a href={bug.image}>
+                        <i className="fas fa-paperclip" />{' '}
+                      </a> */}
                   </Col>
-                  <Col xs={'auto'}>
-                    <a href={bug.image}>
-                      <i className="fas fa-paperclip" />{' '}
-                    </a>
-                  </Col>
+
                   <Col xs="auto">
                     {!isEditImage ? (
                       <i

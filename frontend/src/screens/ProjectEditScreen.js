@@ -87,12 +87,13 @@ const ProjectEditScreen = ({ history, match }) => {
     <>
       <Row>
         <Col>
-          <h2>Edit Project</h2>
+          <h3 className="pagetitlefont">Edit Project</h3>
         </Col>
       </Row>
 
       <Row>
         <Col md={6}>
+          <hr />
           {updateSuccess && (
             <Alert
               variant="success"
@@ -101,7 +102,7 @@ const ProjectEditScreen = ({ history, match }) => {
               show={show}
               onClose={() => setShow(false)}
             >
-              User Profile Updated
+              Project Updated
             </Alert>
           )}
           {loading ? (
@@ -109,52 +110,54 @@ const ProjectEditScreen = ({ history, match }) => {
           ) : error ? (
             <Message variant="danger">{error}</Message>
           ) : (
-            <Form onSubmit={submitHandler}>
-              <Form.Group controlId="name">
-                <Form.Label>Edit Project Name</Form.Label>
-                <Form.Control
-                  type="name"
-                  placeholder="Enter new project name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  isInvalid={errorUpdate && errorUpdate.name && !name}
-                ></Form.Control>
-                <Form.Control.Feedback
-                  className="tooltipposition"
-                  type="invalid"
-                  tooltip
-                >
-                  {console.log(errorUpdate)}
-                  {errorUpdate && errorUpdate.name}
-                </Form.Control.Feedback>
-              </Form.Group>
+            <>
+              <Form onSubmit={submitHandler}>
+                <Form.Group controlId="name">
+                  <Form.Label>Edit Project Name</Form.Label>
+                  <Form.Control
+                    type="name"
+                    placeholder="Enter new project name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    isInvalid={errorUpdate && errorUpdate.name && !name}
+                  ></Form.Control>
+                  <Form.Control.Feedback
+                    className="tooltipposition"
+                    type="invalid"
+                    tooltip
+                  >
+                    {console.log(errorUpdate)}
+                    {errorUpdate && errorUpdate.name}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-              <Form.Group controlId="managerAssignedTo">
-                <Form.Label>Edit Project Manager</Form.Label>
-                <Form.Control
-                  as="select"
-                  className="my-1 mr-sm-2"
-                  onChange={(e) => settingAssignedTo(e.target.value)}
-                  value={managerAssigned.name ? managerAssigned.name : ''}
-                  custom
-                >
-                  {users
-                    ? users
-                        .filter((user) => user.isManager)
-                        .map((user) => (
-                          <option key={user._id}>{user.name}</option>
-                        ))
-                    : ''}
-                </Form.Control>
-              </Form.Group>
+                <Form.Group controlId="managerAssignedTo">
+                  <Form.Label>Edit Project Manager</Form.Label>
+                  <Form.Control
+                    as="select"
+                    className="my-1 mr-sm-2"
+                    onChange={(e) => settingAssignedTo(e.target.value)}
+                    value={managerAssigned.name ? managerAssigned.name : ''}
+                    custom
+                  >
+                    {users
+                      ? users
+                          .filter((user) => user.isManager)
+                          .map((user) => (
+                            <option key={user._id}>{user.name}</option>
+                          ))
+                      : ''}
+                  </Form.Control>
+                </Form.Group>
 
-              <Button className="mr-2" type="submit" variant="primary">
-                Update
-              </Button>
-              <Link className="btn btn-dark my-3" to="/admin/projectlist">
-                Go Back
-              </Link>
-            </Form>
+                <Button className="mr-2" type="submit" variant="primary">
+                  Update
+                </Button>
+                <Link className="btn btn-dark my-3" to="/admin/projectlist">
+                  Go Back
+                </Link>
+              </Form>
+            </>
           )}
         </Col>
       </Row>
