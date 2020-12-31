@@ -20,6 +20,7 @@ const UserEditScreen = ({ match, history }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isManager, setIsManager] = useState(false);
   const [emailEdit, setEmailEdit] = useState(false);
+  const [imageEdit, setImageEdit] = useState(false);
   const [passwordEdit, setPasswordEdit] = useState(false);
   const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -49,7 +50,6 @@ const UserEditScreen = ({ match, history }) => {
           setUpdateSuccess(successUpdate);
           setShow(true);
         }
-        dispatch({ type: USER_UPDATE_RESET });
         dispatch(getUserDetails(userId));
       } else {
         if (successUpdate) {
@@ -61,6 +61,7 @@ const UserEditScreen = ({ match, history }) => {
         setIsManager(user.isManager);
         setImage(user.image);
       }
+      dispatch({ type: USER_UPDATE_RESET });
     }
   }, [dispatch, history, userInfo, userId, user, successUpdate, updateSuccess]);
 
@@ -80,7 +81,7 @@ const UserEditScreen = ({ match, history }) => {
 
       const { data } = await axios.post('/api/upload', formData, config);
 
-      setImage(data);
+      settingImage(data);
 
       setUploading(false);
     } catch (error) {
@@ -95,6 +96,7 @@ const UserEditScreen = ({ match, history }) => {
     setEmailEdit(false);
     setPasswordEdit(false);
     setConfirmPasswordEdit(false);
+    setImageEdit(false);
     // if (password !== confirmPassword) {
     //   setMessage('Passwords do not match');
     // } else {
@@ -128,11 +130,16 @@ const UserEditScreen = ({ match, history }) => {
     setConfirmPasswordEdit(true);
   };
 
+  const settingImage = (e) => {
+    setImage(e);
+    setImageEdit(true);
+  };
+
   return (
     <>
       <Row>
         <Col>
-          <h3 className="pagetitlefont">Edit User (by Admin)</h3>
+          <h3 className="pagetitlefont">Edit User</h3>
         </Col>
       </Row>
 
@@ -260,7 +267,8 @@ const UserEditScreen = ({ match, history }) => {
                   type="text"
                   placeholder="Enter image url"
                   value={image}
-                  onChange={(e) => setImage(e.target.value)}
+                  onChange={(e) => settingImage(e.target.value)}
+                  isInvalid={errorUpdate && errorUpdate.image && !imageEdit}
                 ></Form.Control>
                 <Form.File
                   id="image-file"
@@ -268,7 +276,14 @@ const UserEditScreen = ({ match, history }) => {
                   custom
                   onChange={uploadFileHandler}
                 ></Form.File>
-                {uploading && <Loader />}
+                {loadingUpdate && <Loader />}
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorUpdate && errorUpdate.image}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Button className="mr-2" type="submit" variant="primary">
@@ -281,12 +296,7 @@ const UserEditScreen = ({ match, history }) => {
           )}
         </Col>
         <Col md={6}>
-          <Image
-            className="mr-2"
-            width="100%"
-            // src="/images/profiles/profile2.jpg"
-            src={user && user.image}
-          />
+          <Image className="mr-2" width="100%" src={user && user.image} />
         </Col>
       </Row>
     </>

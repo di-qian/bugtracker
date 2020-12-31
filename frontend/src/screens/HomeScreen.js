@@ -26,41 +26,42 @@ const HomeScreen = ({ location, history }) => {
   }, [history, userInfo, redirect, dispatch]);
 
   return (
-    <Container>
-      <Row className="h-100 d-flex align-items-center justify-content-center">
-        <Col xs={8} sm={8} md={8}>
-          <Row className="d-flex align-items-center justify-content-center">
-            <h2 className="homefont text-nowrap">Welcome to</h2>
-          </Row>
-          <Row className="d-flex align-items-center justify-content-center">
-            <h2 className="homefont text-nowrap">BugTracker</h2>
-          </Row>
-          <hr />
-          <Row className="d-flex align-items-center justify-content-center my-4">
-            <HomeCarousel />
-          </Row>
-          <hr />
-          <Row className="d-flex align-items-center justify-content-center">
-            <i className="fas fa-bug fa-3x mb-4"></i>
-          </Row>
+    <Row className="h-100 d-flex align-items-center justify-content-center">
+      <Col className="align-items-center justify-content-center">
+        <Row className="d-flex align-items-center justify-content-center">
+          <h2 className="homefont text-nowrap">Welcome to</h2>
+        </Row>
+        <Row className="d-flex align-items-center justify-content-center">
+          <h2 className="homefont text-nowrap">BugTracker</h2>
+        </Row>
+        <hr />
+        <Row className="d-flex align-items-center justify-content-center ">
+          <p className="font-weight-bold font-italic">Latest Bugs Added:</p>
+        </Row>
+        <Row className="d-flex align-items-center justify-content-center mb-4">
+          <HomeCarousel />
+        </Row>
+        <hr />
+        <Row className="d-flex align-items-center justify-content-center">
+          <i className="fas fa-bug fa-3x mb-4"></i>
+        </Row>
 
-          <Row className="mb-3 d-flex align-items-center justify-content-center">
-            <LinkContainer to="/login">
-              <Button variant="outline-dark" className="buttonwidth">
-                SIGN IN
-              </Button>
-            </LinkContainer>
-          </Row>
-          <Row className="d-flex align-items-center justify-content-center">
-            <LinkContainer to="/register">
-              <Button variant="outline-dark" className="buttonwidth">
-                CREATE ACCOUNT
-              </Button>
-            </LinkContainer>
-          </Row>
-        </Col>
-      </Row>
-    </Container>
+        <Row className="mb-3 d-flex align-items-center justify-content-center">
+          <LinkContainer to="/login">
+            <Button variant="outline-dark" className="buttonwidth">
+              SIGN IN
+            </Button>
+          </LinkContainer>
+        </Row>
+        <Row className="d-flex align-items-center justify-content-center">
+          <LinkContainer to="/register">
+            <Button variant="outline-dark" className="buttonwidth">
+              CREATE ACCOUNT
+            </Button>
+          </LinkContainer>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

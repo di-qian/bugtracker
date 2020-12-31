@@ -94,12 +94,13 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password, confirmPassword, image } = req.body;
   const { errors } = validateRegisterInput({
     name,
     email,
     password,
     confirmPassword,
+    image,
   });
   const userExists = await User.findOne({ email });
 
@@ -176,7 +177,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const { name, email, password, confirmPassword, image } = req.body;
 
-  const { errors } = validateProfileInput({
+  const { errors } = await validateProfileInput({
     name,
     email,
     password,

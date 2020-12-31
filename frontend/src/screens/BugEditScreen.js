@@ -23,6 +23,7 @@ import {
   listBugDetails,
   updateBug,
   createBugComment,
+  removeBugAssignee,
 } from '../actions/bugActions';
 import {
   BUG_CREATE_COMMENT_RESET,
@@ -55,6 +56,8 @@ const BugEditScreen = ({ history, match }) => {
   const [isEditDueDate, setIsEditDueDate] = useState(false);
   const [isEditDescription, setIsEditDescription] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
+  const [imageEdit, setImageEdit] = useState(false);
+
   const [show, setShow] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -227,7 +230,7 @@ const BugEditScreen = ({ history, match }) => {
 
       const { data } = await axios.post('/api/upload', formData, config);
 
-      setImage(data);
+      settingImage(data);
       setUploading(false);
     } catch (error) {
       console.error(error);
@@ -259,7 +262,16 @@ const BugEditScreen = ({ history, match }) => {
       setAssignedTo(newAssignee);
       setAssignedToName(newAssignee.name);
       setAssignedToImage(newAssignee.image);
+    } else {
+      setAssignedTo('');
+      setAssignedToName(e);
+      setAssignedToImage('');
     }
+  };
+
+  const settingImage = (e) => {
+    setImage(e);
+    setImageEdit(true);
   };
 
   const settingResolvedAt = async () => {
@@ -283,6 +295,29 @@ const BugEditScreen = ({ history, match }) => {
   const disableAssigneeEditButton = async () => {
     if (bug.assignedTo) {
       if (assignedToName !== bug.assignedTo.name) {
+        if (assignedToName !== 'Choose...') {
+          await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
+
+          const str1 = assignedTo.name;
+          const str2 = 'reassigned the task to ';
+          const combined_comment = str2.concat(str1) + '.';
+
+          await dispatch(
+            createBugComment(match.params.id, { combined_comment })
+          );
+        } else {
+          console.log('i am ready to remove assignee');
+          await dispatch(removeBugAssignee(match.params.id));
+
+          const combined_comment = 'unassigned the task.';
+
+          await dispatch(
+            createBugComment(match.params.id, { combined_comment })
+          );
+        }
+      }
+    } else {
+      if (assignedToName !== '' && assignedToName !== 'Choose...') {
         await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
 
         const str1 = assignedTo.name;
@@ -291,14 +326,6 @@ const BugEditScreen = ({ history, match }) => {
 
         await dispatch(createBugComment(match.params.id, { combined_comment }));
       }
-    } else {
-      await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
-
-      const str1 = assignedTo.name;
-      const str2 = 'reassigned the task to ';
-      const combined_comment = str2.concat(str1) + '.';
-
-      await dispatch(createBugComment(match.params.id, { combined_comment }));
     }
     setIsEditAssignee(false);
   };
@@ -391,6 +418,7 @@ const BugEditScreen = ({ history, match }) => {
 
   const disableImageEditButton = async () => {
     if (image !== bug.image) {
+      setImageEdit(false);
       await dispatch(updateBug('UPDATE_IMAGE', { ...bug, image }));
     } else {
       dispatch({ type: BUG_UPDATE_RESET });
@@ -474,7 +502,7 @@ const BugEditScreen = ({ history, match }) => {
                 <Image
                   className="mr-2"
                   src={
-                    assignedTo
+                    bug.assignedTo
                       ? assignedToImage
                       : '/images/profiles/profile1.png'
                   }
@@ -484,7 +512,7 @@ const BugEditScreen = ({ history, match }) => {
                 />
               </Col>
               <Col xs="auto">
-                {assignedTo || isEditAssignee ? (
+                {bug.assignedTo || isEditAssignee ? (
                   <Form.Control
                     as="select"
                     className="my-1 mr-sm-2 text-dark"
@@ -493,6 +521,7 @@ const BugEditScreen = ({ history, match }) => {
                     disabled={!isEditAssignee}
                     custom
                   >
+                    <option key="0">Choose...</option>
                     {users
                       ? users
                           .filter((user) => !user.isAdmin)
@@ -768,10 +797,14 @@ const BugEditScreen = ({ history, match }) => {
                     {isEditImage ? (
                       <>
                         <Form.Control
+                          className="textareaposition"
                           type="text"
                           placeholder="Enter image url"
                           value={image}
-                          onChange={(e) => setImage(e.target.value)}
+                          onChange={(e) => settingImage(e.target.value)}
+                          isInvalid={
+                            updateError && updateError.image && !imageEdit
+                          }
                         ></Form.Control>
                         <Form.File
                           id="image-file"
@@ -779,6 +812,14 @@ const BugEditScreen = ({ history, match }) => {
                           custom
                           onChange={uploadFileHandler}
                         ></Form.File>
+                        {updateLoading && <Loader />}
+                        <Form.Control.Feedback
+                          className="descriptionposition"
+                          type="invalid"
+                          tooltip
+                        >
+                          {updateError && updateError.image}
+                        </Form.Control.Feedback>
                       </>
                     ) : (
                       <Accordion

@@ -23,9 +23,6 @@ const HomeCarousel = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <>
-      <p className="groupposition font-weight-bold font-italic">
-        Latest Bugs Added:
-      </p>
       <Carousel pause="hover" interval="10000" indicators="false">
         {bugs.map((bug) => (
           <Carousel.Item>

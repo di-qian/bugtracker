@@ -21,6 +21,7 @@ const UserCreateScreen = ({ location, history }) => {
   const [emailEdit, setEmailEdit] = useState(false);
   const [passwordEdit, setPasswordEdit] = useState(false);
   const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
+  const [imageEdit, setImageEdit] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -46,6 +47,7 @@ const UserCreateScreen = ({ location, history }) => {
     setEmailEdit(false);
     setPasswordEdit(false);
     setConfirmPasswordEdit(false);
+    setImageEdit(false);
 
     // if (password !== confirmPassword) {
     //   setMessage('Passwords do not match');
@@ -79,6 +81,11 @@ const UserCreateScreen = ({ location, history }) => {
     setConfirmPasswordEdit(true);
   };
 
+  const settingImage = (e) => {
+    setImage(e);
+    setImageEdit(true);
+  };
+
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -95,7 +102,7 @@ const UserCreateScreen = ({ location, history }) => {
 
       const { data } = await axios.post('/api/upload', formData, config);
 
-      setImage(data);
+      settingImage(data);
 
       setUploading(false);
     } catch (error) {
@@ -216,7 +223,8 @@ const UserCreateScreen = ({ location, history }) => {
                 type="text"
                 placeholder="Enter image url"
                 value={image}
-                onChange={(e) => setImage(e.target.value)}
+                onChange={(e) => settingImage(e.target.value)}
+                isInvalid={errors && errors.image && !imageEdit}
               ></Form.Control>
               <Form.File
                 id="image-file"
@@ -225,6 +233,13 @@ const UserCreateScreen = ({ location, history }) => {
                 onChange={uploadFileHandler}
               ></Form.File>
               {uploading && <Loader />}
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.image}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Button className="mr-2" type="submit" variant="primary">

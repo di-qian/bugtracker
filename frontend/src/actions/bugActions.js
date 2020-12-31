@@ -26,6 +26,9 @@ import {
   BUG_UPDATE_IMAGE_SUCCESS,
   BUG_UPDATE_COMMENT_SUCCESS,
   BUG_UPDATE_RESOLVED_SUCCESS,
+  BUG_UPDATE_RMASSIGNEE_REQUEST,
+  BUG_UPDATE_RMASSIGNEE_SUCCESS,
+  BUG_UPDATE_RMASSIGNEE_FAIL,
 } from '../constants/bugConstants';
 import { logout } from './userActions';
 
@@ -150,14 +153,14 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
-
+    console.log(userInfo.token);
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-
+    console.log('before updatebug: ' + config);
     const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
     console.log('i am here ' + data);
     switch (updatetype) {
@@ -253,13 +256,13 @@ export const createBugComment = (bugId, tracker) => async (
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    console.log(tracker);
+
     const { data } = await axios.post(
       `/api/bugs/${bugId}/trackers`,
       tracker,
       config
     );
-    console.log(data);
+
     dispatch({
       type: BUG_CREATE_COMMENT_SUCCESS,
     });
@@ -275,6 +278,49 @@ export const createBugComment = (bugId, tracker) => async (
     }
     dispatch({
       type: BUG_CREATE_COMMENT_FAIL,
+      payload: message,
+    });
+  }
+};
+
+export const removeBugAssignee = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: BUG_UPDATE_RMASSIGNEE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    console.log(userInfo.token);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    console.log('before: ' + config);
+    const { data } = await axios.put(
+      `/api/bugs/${id}/rmassignedto`,
+      {},
+      config
+    );
+
+    dispatch({
+      type: BUG_UPDATE_RMASSIGNEE_SUCCESS,
+    });
+
+    dispatch({ type: BUG_DETAILS_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout());
+    }
+    dispatch({
+      type: BUG_UPDATE_RMASSIGNEE_FAIL,
       payload: message,
     });
   }

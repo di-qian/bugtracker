@@ -18,9 +18,15 @@ const Header = () => {
     <header>
       <Navbar bg="primary" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <Navbar.Brand href={userInfo ? '/auth/dashboard' : '/'}>
+          <LinkContainer to={userInfo ? '/auth/dashboard' : '/'}>
+            <Navbar.Brand>
+              {userInfo ? 'Dashboard' : 'Bug Tracker'}
+            </Navbar.Brand>
+          </LinkContainer>
+
+          {/* <Navbar.Brand href={userInfo ? '/auth/dashboard' : '/'}>
             {userInfo ? 'Dashboard' : 'Bug Tracker'}
-          </Navbar.Brand>
+          </Navbar.Brand> */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">

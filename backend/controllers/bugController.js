@@ -76,6 +76,7 @@ const createBug = asyncHandler(async (req, res) => {
     description: req.body.description,
     project: req.body.project,
     priority: req.body.priority,
+    image: req.body.image,
   });
 
   // Check validation
@@ -142,6 +143,7 @@ const updateBug = asyncHandler(async (req, res) => {
     name,
     description,
     resolvedBy,
+    image,
   });
 
   // Check validation
@@ -177,8 +179,23 @@ const updateBug = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Remove assignedTo from a bug
+// @route   PUT /api/bugs/:id/rmassignedto
+// @access  Private
+const removeBugAssignee = asyncHandler(async (req, res) => {
+  const bug = await Bug.findById(req.params.id);
+  if (bug) {
+    await Bug.update({ _id: req.params.id }, { $unset: { assignedTo: '' } });
+    const updatedbug = await Bug.findById(req.params.id);
+    res.json(updatedbug);
+  } else {
+    res.status(404);
+    throw new Error('(Unassignee) Bug not found');
+  }
+});
+
 // @desc    Create new comment
-// @route   POST /api/bugs/:id/comments
+// @route   POST /api/bugs/:id/trackers
 // @access  Private
 const createBugComment = asyncHandler(async (req, res) => {
   const { combined_comment } = req.body;
@@ -231,5 +248,6 @@ export {
   deleteBug,
   createBug,
   updateBug,
+  removeBugAssignee,
   createBugComment,
 };

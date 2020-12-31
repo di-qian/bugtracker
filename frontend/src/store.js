@@ -8,6 +8,7 @@ import {
   bugCreateReducer,
   bugUpdateReducer,
   bugCommentCreateReducer,
+  bugRmAssigneeReducer,
 } from './reducers/bugReducers';
 import {
   userLoginReducer,
@@ -35,6 +36,7 @@ const reducer = combineReducers({
   bugCreate: bugCreateReducer,
   bugUpdate: bugUpdateReducer,
   bugCommentCreate: bugCommentCreateReducer,
+  bugRmAssignee: bugRmAssigneeReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,

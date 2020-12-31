@@ -50,60 +50,66 @@ const LoginScreen = ({ location, history }) => {
 
   return (
     <FormContainer>
-      <h3 className="pagetitlefont mb-3">Sign In</h3>
-      <hr />
-      {error && <Message variant="danger">{error}</Message>}
-      {loading && <Loader />}
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="groupposition" controlId="email">
-          <Form.Label className="mr-1">Email Address</Form.Label>
-          <i className="fas fa-asterisk fa-xs fh"></i>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => settingEmail(e.target.value)}
-            isInvalid={errors && errors.email && !emailEdit}
-          ></Form.Control>
-          <Form.Control.Feedback
-            className="tooltipposition"
-            type="invalid"
-            tooltip
-          >
-            {errors && errors.email}
-          </Form.Control.Feedback>
-        </Form.Group>
+      <Row className="justify-content-md-center">
+        <Col md={8}>
+          <h3 className="pagetitlefont mb-3">Sign In</h3>
+          <hr />
+          {error && <Message variant="danger">{error}</Message>}
+          {loading && <Loader />}
+          <Form onSubmit={submitHandler}>
+            <Form.Group className="groupposition" controlId="email">
+              <Form.Label className="mr-1">Email Address</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => settingEmail(e.target.value)}
+                isInvalid={errors && errors.email && !emailEdit}
+              ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.email}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group className="groupposition" controlId="password">
-          <Form.Label className="mr-1">Password</Form.Label>
-          <i className="fas fa-asterisk fa-xs fh"></i>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => settingPassword(e.target.value)}
-            isInvalid={errors && errors.password && !passwordEdit}
-          ></Form.Control>
-          <Form.Control.Feedback
-            className="tooltipposition"
-            type="invalid"
-            tooltip
-          >
-            {errors && errors.password}
-          </Form.Control.Feedback>
-        </Form.Group>
+            <Form.Group className="groupposition" controlId="password">
+              <Form.Label className="mr-1">Password</Form.Label>
+              <i className="fas fa-asterisk fa-xs fh"></i>
+              <Form.Control
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => settingPassword(e.target.value)}
+                isInvalid={errors && errors.password && !passwordEdit}
+              ></Form.Control>
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errors && errors.password}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Button type="submit" variant="primary">
-          Sign In
-        </Button>
-      </Form>
+            <Button type="submit" variant="primary">
+              Sign In
+            </Button>
+          </Form>
 
-      <Row className="py-3">
-        <Col>
-          New User?
-          <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
-            Register
-          </Link>
+          <Row className="py-3">
+            <Col>
+              New User?{' '}
+              <Link
+                to={redirect ? `/register?redirect=${redirect}` : '/register'}
+              >
+                Register
+              </Link>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </FormContainer>

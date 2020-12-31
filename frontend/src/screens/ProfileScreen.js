@@ -7,7 +7,6 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getUserDetails, updateUserProfile } from '../actions/userActions';
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
-import { set } from 'mongoose';
 
 const ProfileScreen = ({ history }) => {
   const [name, setName] = useState('');
@@ -19,6 +18,7 @@ const ProfileScreen = ({ history }) => {
   const [emailEdit, setEmailEdit] = useState(false);
   const [passwordEdit, setPasswordEdit] = useState(false);
   const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
+  const [imageEdit, setImageEdit] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -41,16 +41,18 @@ const ProfileScreen = ({ history }) => {
         setUpdateSuccess(success);
         setShow(true);
         //setTimeout(() => setShow(false), 2000);
-        dispatch({ type: USER_UPDATE_PROFILE_RESET });
+
         dispatch(getUserDetails('profile'));
       } else {
         if (success) {
           setUpdateSuccess(false);
         }
+
         setName(user.name);
         setEmail(user.email);
         setImage(user.image);
       }
+      dispatch({ type: USER_UPDATE_PROFILE_RESET });
     }
   }, [dispatch, history, userInfo, user, success, updateSuccess]);
 
@@ -60,6 +62,7 @@ const ProfileScreen = ({ history }) => {
     setEmailEdit(false);
     setPasswordEdit(false);
     setConfirmPasswordEdit(false);
+    setImageEdit(false);
 
     // if (password !== confirmPassword) {
     //   setMessage('Passwords do not match');
@@ -90,6 +93,11 @@ const ProfileScreen = ({ history }) => {
   const settingConfirmPassword = (e) => {
     setConfirmPassword(e);
     setConfirmPasswordEdit(true);
+  };
+
+  const settingImage = (e) => {
+    setImage(e);
+    setImageEdit(true);
   };
 
   const uploadFileHandler = async (e) => {
@@ -234,15 +242,26 @@ const ProfileScreen = ({ history }) => {
                   type="text"
                   placeholder="Enter image url"
                   value={image}
-                  onChange={(e) => setImage(e.target.value)}
+                  onChange={(e) => settingImage(e.target.value)}
+                  isInvalid={errorProfile && errorProfile.image && !imageEdit}
                 ></Form.Control>
+
                 <Form.File
                   id="image-file"
                   label="Choose File"
                   custom
                   onChange={uploadFileHandler}
                 ></Form.File>
+
                 {uploading && <Loader />}
+
+                <Form.Control.Feedback
+                  className="tooltipposition"
+                  type="invalid"
+                  tooltip
+                >
+                  {errorProfile && errorProfile.image}
+                </Form.Control.Feedback>
               </Form.Group>
 
               <Button className="mr-2" type="submit" variant="primary">

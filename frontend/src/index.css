@@ -74,6 +74,10 @@ hr.solid {
   width: 250px;
 }
 
+.toastwidth {
+  width: 225px;
+}
+
 .carousel h4 {
   color: black;
 }
@@ -93,14 +97,6 @@ hr.solid {
 .carousel-caption {
   position: absolute;
   top: 0;
-
-  /* text-align: left;
-  top: 50%;
-  left: 35%;
-  bottom: auto;
-  -webkit-transform: translate(0, -50%);
-  -ms-transform: translate(0, -50%);
-  transform: translate(0, -50%); */
 }
 
 .wrapper {

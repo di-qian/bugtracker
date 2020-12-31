@@ -20,6 +20,7 @@ const BugEditScreen = ({ history }) => {
   const [project, setProject] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [imageEdit, setImageEdit] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -71,7 +72,7 @@ const BugEditScreen = ({ history }) => {
 
       const { data } = await axios.post('/api/upload', formData, config);
 
-      setImage(data);
+      settingImage(data);
       setUploading(false);
     } catch (error) {
       console.error(error);
@@ -81,6 +82,8 @@ const BugEditScreen = ({ history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+
+    setImageEdit(false);
 
     var dt = new Date();
     dt.setMonth(dt.getMonth() + 1);
@@ -115,6 +118,11 @@ const BugEditScreen = ({ history }) => {
     } else {
       setAssignedTo(null);
     }
+  };
+
+  const settingImage = (e) => {
+    setImage(e);
+    setImageEdit(true);
   };
 
   return (
@@ -253,7 +261,8 @@ const BugEditScreen = ({ history }) => {
                 type="text"
                 placeholder="Enter image url"
                 value={image}
-                onChange={(e) => setImage(e.target.value)}
+                onChange={(e) => settingImage(e.target.value)}
+                isInvalid={errorCreate && errorCreate.image && !imageEdit}
               ></Form.Control>
               <Form.File
                 id="image-file"
@@ -262,6 +271,13 @@ const BugEditScreen = ({ history }) => {
                 onChange={uploadFileHandler}
               ></Form.File>
               {uploading && <Loader />}
+              <Form.Control.Feedback
+                className="tooltipposition"
+                type="invalid"
+                tooltip
+              >
+                {errorCreate && errorCreate.image}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId="assignedTo">

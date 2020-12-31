@@ -1,5 +1,7 @@
 import Validator from 'validator';
 import isEmpty from 'is-empty';
+import fs from 'fs';
+import path from 'path';
 
 const validateRegisterInput = (data) => {
   let errors = {};
@@ -36,6 +38,17 @@ const validateRegisterInput = (data) => {
 
   if (!Validator.equals(data.password, data.confirmPassword)) {
     errors.confirmPassword = 'Passwords must match';
+  }
+
+  try {
+    const __dirname = path.resolve();
+    const imagePath = path.join(__dirname, data.image);
+    console.log(imagePath);
+    if (!fs.existsSync(imagePath)) {
+      errors.image = 'Incorrect image file path';
+    }
+  } catch (err) {
+    errors.image = err;
   }
 
   return {
@@ -81,6 +94,17 @@ const validateProfileInput = (data) => {
 
   if (!Validator.equals(data.password, data.confirmPassword)) {
     errors.confirmPassword = 'Passwords must match';
+  }
+
+  try {
+    const __dirname = path.resolve();
+    const imagePath = path.join(__dirname, data.image);
+    console.log(imagePath);
+    if (!fs.existsSync(imagePath)) {
+      errors.image = 'Incorrect image file path';
+    }
+  } catch (err) {
+    errors.image = err;
   }
 
   return {
@@ -137,6 +161,18 @@ const validateNewBugInput = (data) => {
   if (Validator.isEmpty(data.project)) {
     errors.project = 'Project is required';
   }
+
+  try {
+    const __dirname = path.resolve();
+    const imagePath = path.join(__dirname, data.image);
+    console.log(imagePath);
+    if (!fs.existsSync(imagePath)) {
+      errors.image = 'Incorrect image file path';
+    }
+  } catch (err) {
+    errors.image = err;
+  }
+
   return {
     errors,
     //isValid: isEmpty(errors),
@@ -161,10 +197,20 @@ const validateEditBugInput = (data) => {
 
   let date = new Date(data.resolvedBy); // some mock date
   let milliseconds = date.getTime();
-  console.log(milliseconds + ' ' + Date.now());
+
   if (milliseconds < Date.now()) {
-    console.log('here12');
     errors.duedate = 'Invalid due date';
+  }
+
+  try {
+    const __dirname = path.resolve();
+    const imagePath = path.join(__dirname, data.image);
+
+    if (!fs.existsSync(imagePath)) {
+      errors.image = 'Incorrect image file path';
+    }
+  } catch (err) {
+    errors.image = err;
   }
 
   return {

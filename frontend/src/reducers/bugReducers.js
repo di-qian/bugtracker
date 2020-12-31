@@ -28,6 +28,10 @@ import {
   BUG_UPDATE_RESOLVED_SUCCESS,
   BUG_UPDATE_FAIL,
   BUG_UPDATE_RESET,
+  BUG_UPDATE_RMASSIGNEE_REQUEST,
+  BUG_UPDATE_RMASSIGNEE_SUCCESS,
+  BUG_UPDATE_RMASSIGNEE_FAIL,
+  BUG_UPDATE_RMASSIGNEE_RESET,
 } from '../constants/bugConstants';
 
 export const bugListReducer = (state = { bugs: [] }, action) => {
@@ -162,6 +166,19 @@ export const bugCommentCreateReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case BUG_CREATE_COMMENT_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const bugRmAssigneeReducer = (state = {}, action) => {
+  switch (action.type) {
+    case BUG_UPDATE_RMASSIGNEE_REQUEST:
+      return { loading: true };
+    case BUG_UPDATE_RMASSIGNEE_SUCCESS:
+      return { loading: false, success: true };
+    case BUG_UPDATE_RMASSIGNEE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

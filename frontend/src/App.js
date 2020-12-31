@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import TesterMessageToast from './components/TesterMessageToast';
 import HomeScreen from './screens/HomeScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import BugEditScreen from './screens/BugEditScreen';
@@ -24,52 +25,72 @@ const App = () => {
     <Router>
       <Header />
       <main className="py-3">
-        <Container>
-          <Switch>
-            <Route path="/login" component={LoginScreen} />
-            <Route path="/register" component={RegisterScreen} />
-            <Route path="/auth/profile" component={ProfileScreen} />
-            <Route path="/auth/bug/create" component={BugCreateScreen} />
-            <Route path="/auth/bug/edit/:id" component={BugEditScreen} exact />
-            <Route
-              path="/admin/project/create"
-              component={ProjectCreateScreen}
-            />
-            <Route
-              path="/admin/projectlist/page/:pageNumber"
-              component={ProjectListScreen}
-              exact
-            />
-            <Route
-              path="/admin/projectlist"
-              component={ProjectListScreen}
-              exact
-            />
-            <Route
-              path="/admin/project/:id/edit"
-              component={ProjectEditScreen}
-            />
-            <Route
-              path="/admin/userlist/page/:pageNumber"
-              component={UserListScreen}
-              exact
-            />
-            <Route path="/admin/userlist" component={UserListScreen} exact />
-            <Route path="/admin/user/create" component={UserCreateScreen} />
-            <Route path="/admin/user/:id/edit" component={UserEditScreen} />
+        <Container fluid>
+          <Row className="justify-content-md-center">
+            <Col xs md="3" lg="3" className="mr-auto">
+              <TesterMessageToast />
+            </Col>
+            <Col md="8" lg="6">
+              <Switch>
+                <Route path="/login" component={LoginScreen} />
+                <Route path="/register" component={RegisterScreen} />
+                <Route path="/auth/profile" component={ProfileScreen} />
+                <Route path="/auth/bug/create" component={BugCreateScreen} />
+                <Route
+                  path="/auth/bug/edit/:id"
+                  component={BugEditScreen}
+                  exact
+                />
+                <Route
+                  path="/admin/project/create"
+                  component={ProjectCreateScreen}
+                />
+                <Route
+                  path="/admin/projectlist/page/:pageNumber"
+                  component={ProjectListScreen}
+                  exact
+                />
+                <Route
+                  path="/admin/projectlist"
+                  component={ProjectListScreen}
+                  exact
+                />
+                <Route
+                  path="/admin/project/:id/edit"
+                  component={ProjectEditScreen}
+                />
+                <Route
+                  path="/admin/userlist/page/:pageNumber"
+                  component={UserListScreen}
+                  exact
+                />
+                <Route
+                  path="/admin/userlist"
+                  component={UserListScreen}
+                  exact
+                />
+                <Route path="/admin/user/create" component={UserCreateScreen} />
+                <Route path="/admin/user/:id/edit" component={UserEditScreen} />
 
-            <Route
-              path="/auth/dashboard/page/:pageNumber"
-              component={DashboardScreen}
-              exact
-            />
+                <Route
+                  path="/auth/dashboard/page/:pageNumber"
+                  component={DashboardScreen}
+                  exact
+                />
 
-            <Route path="/auth/dashboard" component={DashboardScreen} exact />
-            <Route path="/auth/fail" component={NotAuthorized} exact />
-            <Route path="/" component={HomeScreen} exact />
+                <Route
+                  path="/auth/dashboard"
+                  component={DashboardScreen}
+                  exact
+                />
+                <Route path="/auth/fail" component={NotAuthorized} exact />
+                <Route path="/" component={HomeScreen} exact />
 
-            <Route component={NoMatch} />
-          </Switch>
+                <Route component={NoMatch} />
+              </Switch>
+            </Col>
+            <Col xs md="3" lg="3" className="mr-auto"></Col>
+          </Row>
         </Container>
       </main>
       <Footer />
