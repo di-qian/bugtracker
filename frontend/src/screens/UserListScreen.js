@@ -6,6 +6,11 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
 import { listUsers, deleteUser } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  USER_LIST_PAGE,
+} from '../constants/screenConstants';
 
 const UserListScreen = ({ history, match }) => {
   const pageNumber = match.params.pageNumber || 1;
@@ -23,11 +28,18 @@ const UserListScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
+      dispatch(getScreenName(USER_LIST_PAGE));
       dispatch(listUsers(pageNumber));
     } else {
       history.push('/auth/fail');
     }
   }, [dispatch, history, successDelete, userInfo, pageNumber]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {
@@ -98,13 +110,15 @@ const UserListScreen = ({ history, match }) => {
                         <i className="fas fa-edit"></i>
                       </Button>
                     </LinkContainer>
-                    <Button
-                      variant="danger"
-                      className="btn-sm"
-                      onClick={() => deleteHandler(user._id)}
-                    >
-                      <i className="fas fa-trash"></i>
-                    </Button>
+                    {!user.isAdmin && (
+                      <Button
+                        variant="danger"
+                        className="btn-sm"
+                        onClick={() => deleteHandler(user._id)}
+                      >
+                        <i className="fas fa-trash"></i>
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

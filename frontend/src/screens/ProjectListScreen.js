@@ -6,6 +6,11 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
 import { listProjects, deleteProject } from '../actions/projectActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  PROJECT_LIST_PAGE,
+} from '../constants/screenConstants';
 
 const ProjectListScreen = ({ history, match }) => {
   const pageNumber = match.params.pageNumber || 1;
@@ -23,11 +28,18 @@ const ProjectListScreen = ({ history, match }) => {
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
+      dispatch(getScreenName(PROJECT_LIST_PAGE));
       dispatch(listProjects(pageNumber));
     } else {
       history.push('/auth/fail');
     }
   }, [dispatch, history, successDelete, userInfo, pageNumber]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {

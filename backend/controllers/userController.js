@@ -10,16 +10,19 @@ import {
 
 // @desc    Fetch Users
 // @route   GET /api/users
-// @access  Public
+// @access  Private
 const getUsers = asyncHandler(async (req, res) => {
   const pageSize = 10;
   const page = Number(req.query.pageNumber) || 1;
 
+  const allusers = await User.find({});
   const count = await User.countDocuments({});
   const users = await User.find({})
+    .sort({ createdAt: -1 })
     .limit(pageSize)
     .skip(pageSize * (page - 1));
-  res.json({ users, page, pages: Math.ceil(count / pageSize) });
+
+  res.json({ allusers, users, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single user

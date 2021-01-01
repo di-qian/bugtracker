@@ -152,9 +152,12 @@ const RegisterScreen = ({ location, history }) => {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" className="mr-2">
               Register
             </Button>
+            <Link className="btn btn-dark" to="/">
+              Go Back
+            </Link>
           </Form>
           <Row className="py-3">
             <Col>

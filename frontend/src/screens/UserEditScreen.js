@@ -6,7 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getUserDetails, updateUser } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
 import { USER_UPDATE_RESET } from '../constants/userConstants';
+import {
+  SCREEN_NAME_RESET,
+  USER_EDIT_PAGE,
+} from '../constants/screenConstants';
 
 const UserEditScreen = ({ match, history }) => {
   const userId = match.params.id;
@@ -45,6 +50,7 @@ const UserEditScreen = ({ match, history }) => {
     if (!userInfo || (userInfo && !userInfo.isAdmin)) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(USER_EDIT_PAGE));
       if (!user.name || user._id !== userId || successUpdate) {
         if (successUpdate) {
           setUpdateSuccess(successUpdate);
@@ -64,6 +70,12 @@ const UserEditScreen = ({ match, history }) => {
       dispatch({ type: USER_UPDATE_RESET });
     }
   }, [dispatch, history, userInfo, userId, user, successUpdate, updateSuccess]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];

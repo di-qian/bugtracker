@@ -25,6 +25,8 @@ import {
   createBugComment,
   removeBugAssignee,
 } from '../actions/bugActions';
+import { getScreenName } from '../actions/screenActions';
+import { SCREEN_NAME_RESET, BUG_EDIT_PAGE } from '../constants/screenConstants';
 import {
   BUG_CREATE_COMMENT_RESET,
   BUG_UPDATE_RESET,
@@ -67,10 +69,10 @@ const BugEditScreen = ({ history, match }) => {
   const { loading, error, bug } = bugDetails;
 
   const projectList = useSelector((state) => state.projectList);
-  const { projects } = projectList;
+  const { allprojects } = projectList;
 
   const userList = useSelector((state) => state.userList);
-  const { users } = userList;
+  const { allusers } = userList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -104,6 +106,7 @@ const BugEditScreen = ({ history, match }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(BUG_EDIT_PAGE));
       if (!bug || !bug.name) {
         dispatch(listBugDetails(match.params.id));
 
@@ -214,6 +217,12 @@ const BugEditScreen = ({ history, match }) => {
     resolvedAt,
   ]);
 
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
+
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -249,14 +258,14 @@ const BugEditScreen = ({ history, match }) => {
   };
 
   const settingProject = (e) => {
-    const newproject = projects.find((x) => x.name === e);
+    const newproject = allprojects.find((x) => x.name === e);
     if (newproject) {
       setProject(newproject._id);
     }
   };
 
   const settingAssignee = (e) => {
-    const newAssignee = users.find((x) => x.name === e);
+    const newAssignee = allusers.find((x) => x.name === e);
 
     if (newAssignee) {
       setAssignedTo(newAssignee);
@@ -338,7 +347,7 @@ const BugEditScreen = ({ history, match }) => {
     if (bug.project.name !== project.name) {
       await dispatch(updateBug('UPDATE_PROJECT', { ...bug, project }));
 
-      const newproject = projects.find((x) => x._id === project);
+      const newproject = allprojects.find((x) => x._id === project);
       if (newproject) {
         const str1 = newproject.name;
         const str2 = 'reassigned the task under project "';
@@ -522,8 +531,8 @@ const BugEditScreen = ({ history, match }) => {
                     custom
                   >
                     <option key="0">Choose...</option>
-                    {users
-                      ? users
+                    {allusers
+                      ? allusers
                           .filter((user) => !user.isAdmin)
                           .map((user) => (
                             <option key={user._id}>{user.name}</option>
@@ -539,7 +548,13 @@ const BugEditScreen = ({ history, match }) => {
               <Col xs="auto">
                 {!isEditAssignee ? (
                   <i
-                    className={bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'}
+                    className={
+                      bug.resolvedAt ||
+                      (bug.project &&
+                        bug.project.managerAssigned._id !== userInfo._id)
+                        ? 'hide'
+                        : 'far fa-edit fa-lg'
+                    }
                     onClick={enableAssigneeEditButton}
                   ></i>
                 ) : (
@@ -567,9 +582,10 @@ const BugEditScreen = ({ history, match }) => {
                       onChange={(e) => settingProject(e.target.value)}
                       custom
                     >
-                      {projects.map((project) => (
-                        <option key={project._id}>{project.name}</option>
-                      ))}
+                      {allprojects &&
+                        allprojects.map((project) => (
+                          <option key={project._id}>{project.name}</option>
+                        ))}
                     </Form.Control>
                   </Col>
                   <Col xs="auto">

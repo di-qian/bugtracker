@@ -7,6 +7,11 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 import { createUser } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  USER_CREATE_PAGE,
+} from '../constants/screenConstants';
 import { USER_CREATE_RESET } from '../constants/userConstants';
 
 const UserCreateScreen = ({ location, history }) => {
@@ -35,12 +40,19 @@ const UserCreateScreen = ({ location, history }) => {
     if (!userInfo || (userInfo && !userInfo.isAdmin)) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(USER_CREATE_PAGE));
       dispatch({ type: USER_CREATE_RESET });
       if (success) {
         history.push('/admin/userlist');
       }
     }
   }, [dispatch, history, success]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();

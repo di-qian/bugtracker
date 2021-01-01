@@ -7,6 +7,11 @@ import Loader from '../components/Loader';
 import { listProjectDetails, updateProject } from '../actions/projectActions';
 import { PROJECT_UPDATE_RESET } from '../constants/projectConstants';
 import { listUsers } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  PROJECT_EDIT_PAGE,
+} from '../constants/screenConstants';
 
 const ProjectEditScreen = ({ history, match }) => {
   const projectId = match.params.id;
@@ -21,7 +26,7 @@ const ProjectEditScreen = ({ history, match }) => {
   const { loading, error, project } = projectDetails;
 
   const userList = useSelector((state) => state.userList);
-  const { users } = userList;
+  const { allusers } = userList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -33,6 +38,7 @@ const ProjectEditScreen = ({ history, match }) => {
     if (!userInfo || (userInfo && !userInfo.isAdmin)) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(PROJECT_EDIT_PAGE));
       if (!project.name || project._id !== projectId || success) {
         setUpdateSuccess(success);
         setShow(true);
@@ -59,6 +65,12 @@ const ProjectEditScreen = ({ history, match }) => {
     projectId,
   ]);
 
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
+
   const submitHandler = (e) => {
     e.preventDefault();
     setShow(false);
@@ -77,7 +89,7 @@ const ProjectEditScreen = ({ history, match }) => {
   };
 
   const settingAssignedTo = (e) => {
-    const user_assignedTo = users.find((x) => x.name === e);
+    const user_assignedTo = allusers.find((x) => x.name === e);
     if (user_assignedTo) {
       setManagerAssigned(user_assignedTo);
     }
@@ -140,8 +152,8 @@ const ProjectEditScreen = ({ history, match }) => {
                     value={managerAssigned.name ? managerAssigned.name : ''}
                     custom
                   >
-                    {users
-                      ? users
+                    {allusers
+                      ? allusers
                           .filter((user) => user.isManager)
                           .map((user) => (
                             <option key={user._id}>{user.name}</option>

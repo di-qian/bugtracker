@@ -7,7 +7,12 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
 import { listBugs, deleteBug } from '../actions/bugActions';
+import { getScreenName } from '../actions/screenActions';
 import { BUG_CREATE_RESET } from '../constants/bugConstants';
+import {
+  SCREEN_NAME_RESET,
+  DASHBOARD_PAGE,
+} from '../constants/screenConstants';
 
 const DashboardScreen = ({ history, match }) => {
   const keyword = match.params.keyword;
@@ -33,10 +38,17 @@ const DashboardScreen = ({ history, match }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(DASHBOARD_PAGE));
       dispatch({ type: BUG_CREATE_RESET });
       dispatch(listBugs(keyword, pageNumber));
     }
   }, [dispatch, history, userInfo, successDelete, keyword, pageNumber]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {
@@ -126,11 +138,6 @@ const DashboardScreen = ({ history, match }) => {
                   </td>
 
                   <td className={userInfo.isAdmin ? '' : 'hideAdmin'}>
-                    {/* <LinkContainer to={`/admin/bug/${bug._id}/edit`}>
-                      <Button variant="light" className="btn-sm">
-                        <i className="fas fa-edit"></i>
-                      </Button>
-                    </LinkContainer> */}
                     <Button
                       variant="danger"
                       className="btn-sm"

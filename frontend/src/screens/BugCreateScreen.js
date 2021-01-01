@@ -10,6 +10,11 @@ import FormContainer from '../components/FormContainer';
 import { createBug } from '../actions/bugActions';
 import { listProjects } from '../actions/projectActions';
 import { listUsers } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  BUG_CREATE_PAGE,
+} from '../constants/screenConstants';
 import { BUG_CREATE_RESET } from '../constants/bugConstants';
 
 const BugEditScreen = ({ history }) => {
@@ -35,10 +40,10 @@ const BugEditScreen = ({ history }) => {
   } = bugCreate;
 
   const projectList = useSelector((state) => state.projectList);
-  const { projects } = projectList;
+  const { allprojects } = projectList;
 
   const userList = useSelector((state) => state.userList);
-  const { users } = userList;
+  const { allusers } = userList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -47,6 +52,7 @@ const BugEditScreen = ({ history }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
+      dispatch(getScreenName(BUG_CREATE_PAGE));
       dispatch(listProjects());
       dispatch(listUsers());
       dispatch({ type: BUG_CREATE_RESET });
@@ -55,6 +61,12 @@ const BugEditScreen = ({ history }) => {
       }
     }
   }, [dispatch, history, userInfo, successCreate]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -103,7 +115,7 @@ const BugEditScreen = ({ history }) => {
   };
 
   const settingProject = (e) => {
-    const newproject = projects.find((x) => x.name === e);
+    const newproject = allprojects.find((x) => x.name === e);
     if (newproject) {
       setProject(newproject._id);
     } else {
@@ -112,7 +124,7 @@ const BugEditScreen = ({ history }) => {
   };
 
   const settingAssignedTo = (e) => {
-    const user_assignedTo = users.find((x) => x.name === e);
+    const user_assignedTo = allusers.find((x) => x.name === e);
     if (user_assignedTo) {
       setAssignedTo(user_assignedTo._id);
     } else {
@@ -242,7 +254,7 @@ const BugEditScreen = ({ history }) => {
                 custom
               >
                 <option key="0">Choose...</option>
-                {projects.map((project) => (
+                {allprojects.map((project) => (
                   <option key={project._id}>{project.name}</option>
                 ))}
               </Form.Control>
@@ -290,8 +302,8 @@ const BugEditScreen = ({ history }) => {
                 custom
               >
                 <option key="0">Choose...</option>
-                {users
-                  ? users
+                {allusers
+                  ? allusers
                       .filter((user) => !user.isAdmin)
                       .map((user) => (
                         <option key={user._id}>{user.name}</option>

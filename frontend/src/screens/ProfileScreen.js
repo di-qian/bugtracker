@@ -6,6 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { getUserDetails, updateUserProfile } from '../actions/userActions';
+import { getScreenName } from '../actions/screenActions';
+import {
+  SCREEN_NAME_RESET,
+  USER_PROFILE_EDIT_PAGE,
+} from '../constants/screenConstants';
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
 
 const ProfileScreen = ({ history }) => {
@@ -37,6 +42,8 @@ const ProfileScreen = ({ history }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
+      console.log(userInfo.name);
+      dispatch(getScreenName(USER_PROFILE_EDIT_PAGE));
       if (!user || !user.name || success) {
         setUpdateSuccess(success);
         setShow(true);
@@ -55,6 +62,12 @@ const ProfileScreen = ({ history }) => {
       dispatch({ type: USER_UPDATE_PROFILE_RESET });
     }
   }, [dispatch, history, userInfo, user, success, updateSuccess]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: SCREEN_NAME_RESET });
+    };
+  }, []);
 
   const submitHandler = (e) => {
     e.preventDefault();

@@ -95,9 +95,12 @@ const LoginScreen = ({ location, history }) => {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" className="mr-2">
               Sign In
             </Button>
+            <Link className="btn btn-dark" to="/">
+              Go Back
+            </Link>
           </Form>
 
           <Row className="py-3">

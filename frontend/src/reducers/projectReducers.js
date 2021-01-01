@@ -26,6 +26,7 @@ export const projectListReducer = (state = { projects: [] }, action) => {
     case PROJECT_LIST_SUCCESS:
       return {
         loading: false,
+        allprojects: action.payload.allprojects,
         projects: action.payload.projects,
         pages: action.payload.pages,
         page: action.payload.page,

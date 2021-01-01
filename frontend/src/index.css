@@ -13,6 +13,9 @@ main {
 .fl {
   color: blue;
 }
+.fs {
+  color: green;
+}
 
 .hide {
   visibility: hidden;

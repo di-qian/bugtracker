@@ -13,13 +13,14 @@ const getProjects = asyncHandler(async (req, res) => {
   const pageSize = 5;
   const page = Number(req.query.pageNumber) || 1;
 
+  const allprojects = await Project.find({});
   const count = await Project.countDocuments({});
-
   const projects = await Project.find({})
+    .sort({ createdAt: -1 })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .populate('managerAssigned', 'name');
-  res.json({ projects, page, pages: Math.ceil(count / pageSize) });
+  res.json({ allprojects, projects, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Fetch single project

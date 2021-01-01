@@ -29,6 +29,8 @@ import {
   projectUpdateReducer,
 } from './reducers/projectReducers';
 
+import { screenNameReducer } from './reducers/screenReducers';
+
 const reducer = combineReducers({
   bugList: bugListReducer,
   bugDetails: bugDetailsReducer,
@@ -50,6 +52,7 @@ const reducer = combineReducers({
   projectDelete: projectDeleteReducer,
   projectCreate: projectCreateReducer,
   projectUpdate: projectUpdateReducer,
+  screenName: screenNameReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
