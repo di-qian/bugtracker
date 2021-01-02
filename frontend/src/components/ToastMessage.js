@@ -14,23 +14,26 @@ import {
   PROJECT_CREATE_PAGE,
 } from '../constants/screenConstants';
 
-const ToastMessage = ({ curr_page, user }) => {
+const ToastMessage = ({ curr_page, lg_user }) => {
   const [projManager, setProjManager] = useState('');
 
   const bugDetails = useSelector((state) => state.bugDetails);
   const { bug } = bugDetails;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   useEffect(() => {
     if (bug.project) {
       setProjManager(bug.project.managerAssigned.name);
     }
-  }, [bug]);
+  }, [bug, user]);
 
   switch (curr_page) {
     case DASHBOARD_PAGE:
       return (
         <>
-          {user.isAdmin ? (
+          {lg_user.isAdmin ? (
             <p>
               From the navigation bar, select "Profile" to edit your user
               profile. Select "Manager Users" to create/edit/delete users.
@@ -46,7 +49,7 @@ const ToastMessage = ({ curr_page, user }) => {
             Click the <Badge variant="primary">New Issue</Badge> button on this
             page to create a new bug report, .
           </p>
-          {user.isAdmin && (
+          {lg_user.isAdmin && (
             <p>
               Click the delete icon <i className="fas fa-trash fh" /> to delete
               a bug report from bug report list.
@@ -66,7 +69,7 @@ const ToastMessage = ({ curr_page, user }) => {
             Fill in all required information on this page to create a new bug
             report.
           </p>
-          {user.isManager ? (
+          {lg_user.isManager ? (
             <p>
               Your manager status allows you to appoint an Assignee for the new
               bug.
@@ -139,7 +142,10 @@ const ToastMessage = ({ curr_page, user }) => {
           <p>
             Click the delete icon <i className="fas fa-trash fh" /> to delete a
             user from user list.{' '}
-            <em>(Note: the master admin user cannot be deleted.)</em>
+            <em>
+              (Note: the master admin user cannot be editted by others or
+              deleted. )
+            </em>
           </p>
         </>
       );
@@ -148,11 +154,17 @@ const ToastMessage = ({ curr_page, user }) => {
       return (
         <>
           <p>You can update user profile information on this page.</p>
-          <p>
-            By designating user as "manager" or "admin", the user is given
-            authorization for those duties. New user status will be reflected on
-            the user list page.
-          </p>
+          {user.email !== 'admin@example.com' ? (
+            <p>
+              By designating user as "manager" or "admin", the user is given
+              authorization for those duties. New user status will be reflected
+              on the user list page.
+            </p>
+          ) : (
+            <p>
+              Master admin's name, email and admin status cannot be changed.
+            </p>
+          )}
         </>
       );
 

@@ -958,21 +958,10 @@ const BugEditScreen = ({ history, match }) => {
                       variant="success"
                       disabled={bug.resolvedAt ? true : false}
                       //onClick={() => enableConfirmButton()}
-                      onClick={handleShow}
+                      onClick={() => handleShow}
                     >
                       Resolved
                     </Button>
-                    {/* ) : (
-                      <Button
-                        className="mr-2"
-                        type="button"
-                        variant="success"
-                        disabled={bug.resolvedAt ? true : false}
-                        onClick={() => settingResolvedAt()}
-                      >
-                        Confirm
-                      </Button>
-                    )} */}
 
                     <Link className="btn btn-dark" to="/auth/dashboard">
                       Go Back
@@ -998,7 +987,7 @@ const BugEditScreen = ({ history, match }) => {
             Confirm
           </Button>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Cancel
           </Button>
         </Modal.Footer>
       </Modal>

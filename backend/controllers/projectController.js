@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import isEmpty from 'is-empty';
 import Project from '../models/projectModel.js';
+import Bug from '../models/bugModel.js';
 import {
   validateNewProjectInput,
   validateEditProjectInput,
@@ -108,10 +109,18 @@ const updateProject = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Fetch all bugs related to a project
+// @route   GET /api/projects/:id/bugs
+const getProjectBugs = asyncHandler(async (req, res) => {
+  const projectbugs = await Bug.find({ project: { _id: req.params.id } });
+  res.json({ projectbugs });
+});
+
 export {
   getProjects,
   getProjectById,
   deleteProject,
   createProject,
   updateProject,
+  getProjectBugs,
 };

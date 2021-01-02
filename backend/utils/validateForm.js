@@ -2,6 +2,7 @@ import Validator from 'validator';
 import isEmpty from 'is-empty';
 import fs from 'fs';
 import path from 'path';
+const default_Profile_Path = '/images/profiles/profile1.png';
 
 const validateRegisterInput = (data) => {
   let errors = {};
@@ -99,9 +100,10 @@ const validateProfileInput = (data) => {
   try {
     const __dirname = path.resolve();
     const imagePath = path.join(__dirname, data.image);
-    console.log(imagePath);
-    if (!fs.existsSync(imagePath)) {
-      errors.image = 'Incorrect image file path';
+    if (data.image !== default_Profile_Path) {
+      if (!fs.existsSync(imagePath)) {
+        errors.image = 'Incorrect image file path';
+      }
     }
   } catch (err) {
     errors.image = err;

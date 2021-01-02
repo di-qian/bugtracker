@@ -76,7 +76,7 @@ const TesterMessageToast = () => {
               ) : (
                 <p>You are logged in as a team member.</p>
               )}
-              <ToastMessage curr_page={screen} user={user} />
+              <ToastMessage curr_page={screen} lg_user={user} />
             </>
           )}
         </Toast.Body>

@@ -254,9 +254,10 @@ const BugEditScreen = ({ history }) => {
                 custom
               >
                 <option key="0">Choose...</option>
-                {allprojects.map((project) => (
-                  <option key={project._id}>{project.name}</option>
-                ))}
+                {allprojects &&
+                  allprojects.map((project) => (
+                    <option key={project._id}>{project.name}</option>
+                  ))}
               </Form.Control>
               <Form.Control.Feedback
                 className="tooltipposition"

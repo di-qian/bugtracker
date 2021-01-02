@@ -40,11 +40,7 @@ const UserEditScreen = ({ match, history }) => {
   const { userInfo } = userLogin;
 
   const userUpdate = useSelector((state) => state.userUpdate);
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = userUpdate;
+  const { error: errorUpdate, success: successUpdate } = userUpdate;
 
   useEffect(() => {
     if (!userInfo || (userInfo && !userInfo.isAdmin)) {
@@ -177,11 +173,13 @@ const UserEditScreen = ({ match, history }) => {
           ) : (
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
-                <Form.Label>Edit Name</Form.Label>
+                <Form.Label>Edit Name</Form.Label>{' '}
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="name"
                   placeholder="Enter name"
                   value={name}
+                  disabled={email === 'admin@example.com'}
                   onChange={(e) => setName(e.target.value)}
                   isInvalid={errorUpdate && errorUpdate.name && !name}
                 ></Form.Control>
@@ -190,17 +188,18 @@ const UserEditScreen = ({ match, history }) => {
                   type="invalid"
                   tooltip
                 >
-                  {console.log(errorUpdate)}
                   {errorUpdate && errorUpdate.name}
                 </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group controlId="email">
-                <Form.Label>Edit Email Address</Form.Label>
+                <Form.Label>Edit Email Address</Form.Label>{' '}
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
                   value={email}
+                  disabled={email === 'admin@example.com'}
                   onChange={(e) => settingEmail(e.target.value)}
                   isInvalid={errorUpdate && errorUpdate.email && !emailEdit}
                 ></Form.Control>
@@ -214,7 +213,8 @@ const UserEditScreen = ({ match, history }) => {
               </Form.Group>
 
               <Form.Group controlId="password">
-                <Form.Label>Edit Password</Form.Label>
+                <Form.Label>Edit Password</Form.Label>{' '}
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="password"
                   placeholder="Enter new password"
@@ -234,7 +234,8 @@ const UserEditScreen = ({ match, history }) => {
               </Form.Group>
 
               <Form.Group controlId="confirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
+                <Form.Label>Confirm Password</Form.Label>{' '}
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="password"
                   placeholder="Confirm new password"
@@ -260,6 +261,7 @@ const UserEditScreen = ({ match, history }) => {
                   type="checkbox"
                   label="Is Admin"
                   checked={isAdmin}
+                  disabled={email === 'admin@example.com'}
                   onChange={(e) => setIsAdmin(e.target.checked)}
                 ></Form.Check>
               </Form.Group>
@@ -288,7 +290,7 @@ const UserEditScreen = ({ match, history }) => {
                   custom
                   onChange={uploadFileHandler}
                 ></Form.File>
-                {loadingUpdate && <Loader />}
+                {uploading && <Loader />}
                 <Form.Control.Feedback
                   className="tooltipposition"
                   type="invalid"

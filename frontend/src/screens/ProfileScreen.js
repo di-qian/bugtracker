@@ -171,7 +171,7 @@ const ProfileScreen = ({ history }) => {
             <Form onSubmit={submitHandler}>
               <Form.Group controlId="name">
                 <Form.Label className="mr-1">Edit Name</Form.Label>
-
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="name"
                   placeholder="Enter name"
@@ -190,7 +190,7 @@ const ProfileScreen = ({ history }) => {
 
               <Form.Group controlId="email">
                 <Form.Label className="mr-1">Edit Email Address</Form.Label>
-
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
@@ -209,6 +209,7 @@ const ProfileScreen = ({ history }) => {
 
               <Form.Group controlId="password">
                 <Form.Label>Edit Password</Form.Label>
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="password"
                   placeholder="Enter new password"
@@ -229,6 +230,7 @@ const ProfileScreen = ({ history }) => {
 
               <Form.Group controlId="confirmPassword">
                 <Form.Label>Confirm Password</Form.Label>
+                <i className="fas fa-asterisk fa-xs fh"></i>
                 <Form.Control
                   type="password"
                   placeholder="Confirm new password"

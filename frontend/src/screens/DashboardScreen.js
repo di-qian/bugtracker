@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { LinkContainer } from 'react-router-bootstrap';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { Row, Table, Badge, Button } from 'react-bootstrap';
+import { Table, Badge, Button, Modal } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Paginate from '../components/Paginate';
@@ -16,6 +15,8 @@ import {
 
 const DashboardScreen = ({ history, match }) => {
   const keyword = match.params.keyword;
+  const [show, setShow] = useState(false);
+  const [delBug, setDelBug] = useState('');
 
   const pageNumber = match.params.pageNumber || 1;
 
@@ -38,6 +39,7 @@ const DashboardScreen = ({ history, match }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
+      setDelBug('');
       dispatch(getScreenName(DASHBOARD_PAGE));
       dispatch({ type: BUG_CREATE_RESET });
       dispatch(listBugs(keyword, pageNumber));
@@ -50,10 +52,19 @@ const DashboardScreen = ({ history, match }) => {
     };
   }, []);
 
-  const deleteHandler = (id) => {
-    if (window.confirm('Are you sure')) {
-      dispatch(deleteBug(id));
-    }
+  const handleClose = () => {
+    setDelBug('');
+    setShow(false);
+  };
+
+  const handleShow = (id) => {
+    setDelBug(id);
+    setShow(true);
+  };
+
+  const deleteHandler = () => {
+    dispatch(deleteBug(delBug));
+    handleClose();
   };
 
   const createBugHandler = () => {
@@ -90,64 +101,69 @@ const DashboardScreen = ({ history, match }) => {
                 <th className="display-edit">
                   <i className="fas fa-list-ul"></i>
                 </th>
-                <th className={userInfo && !userInfo.isAdmin && 'hideAdmin'}>
+                <th
+                  className={userInfo && !userInfo.isAdmin ? 'hideAdmin' : ''}
+                >
                   Del
                 </th>
               </tr>
             </thead>
             <tbody>
-              {bugs.map((bug) => (
-                <tr key={bug._id}>
-                  <td className="display-project">{bug.project.name}</td>
-                  <td className="display-summary">{bug.name}</td>
-                  <td className="display-status">
-                    {bug.resolvedAt ? (
-                      <Badge variant="success">CLOSED</Badge>
-                    ) : Date.parse(bug.resolvedBy) > Date.now() ? (
-                      <Badge variant="primary">OPEN</Badge>
-                    ) : (
-                      <Badge variant="danger">OVERDUE</Badge>
-                    )}
-                  </td>
-                  <td className="display-createdAt">
-                    <Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>
-                  </td>
-                  <td className="display-resolvedBy">
-                    <Moment format="MM/DD/YYYY">{bug.resolvedBy}</Moment>
-                  </td>
-                  <td className="display-priority">
-                    {bug.priority === 'High' ? (
-                      <i className="fas fa-bolt fh"> High</i>
-                    ) : bug.priority === 'Normal' ? (
-                      <i className="fas fa-bolt fn"> Normal</i>
-                    ) : (
-                      <i className="fas fa-bolt fl"> Low</i>
-                    )}
-                  </td>
-                  <td className="display-assignedTo">
-                    {bug.assignedTo ? (
-                      bug.assignedTo.name
-                    ) : (
-                      <Badge variant="warning">PENDING</Badge>
-                    )}
-                  </td>
-                  <td className="display-edit">
-                    <a href={`/auth/bug/edit/${bug._id}`}>
-                      <i className="fas fa-list-ul"></i>
-                    </a>
-                  </td>
+              {bugs &&
+                bugs.map((bug) => (
+                  <tr key={bug._id}>
+                    <td className="display-project">
+                      {bug.project && bug.project.name}
+                    </td>
+                    <td className="display-summary">{bug.name}</td>
+                    <td className="display-status">
+                      {bug.resolvedAt ? (
+                        <Badge variant="success">CLOSED</Badge>
+                      ) : Date.parse(bug.resolvedBy) > Date.now() ? (
+                        <Badge variant="primary">OPEN</Badge>
+                      ) : (
+                        <Badge variant="danger">OVERDUE</Badge>
+                      )}
+                    </td>
+                    <td className="display-createdAt">
+                      <Moment format="MM/DD/YYYY">{bug.createdAt}</Moment>
+                    </td>
+                    <td className="display-resolvedBy">
+                      <Moment format="MM/DD/YYYY">{bug.resolvedBy}</Moment>
+                    </td>
+                    <td className="display-priority">
+                      {bug.priority === 'High' ? (
+                        <i className="fas fa-bolt fh"> High</i>
+                      ) : bug.priority === 'Normal' ? (
+                        <i className="fas fa-bolt fn"> Normal</i>
+                      ) : (
+                        <i className="fas fa-bolt fl"> Low</i>
+                      )}
+                    </td>
+                    <td className="display-assignedTo">
+                      {bug.assignedTo ? (
+                        bug.assignedTo.name
+                      ) : (
+                        <Badge variant="warning">PENDING</Badge>
+                      )}
+                    </td>
+                    <td className="display-edit">
+                      <a href={`/auth/bug/edit/${bug._id}`}>
+                        <i className="fas fa-list-ul"></i>
+                      </a>
+                    </td>
 
-                  <td className={userInfo.isAdmin ? '' : 'hideAdmin'}>
-                    <Button
-                      variant="danger"
-                      className="btn-sm"
-                      onClick={() => deleteHandler(bug._id)}
-                    >
-                      <i className="fas fa-trash"></i>
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                    <td className={userInfo.isAdmin ? '' : 'hideAdmin'}>
+                      <Button
+                        variant="danger"
+                        className="btn-sm"
+                        onClick={() => handleShow(bug._id)}
+                      >
+                        <i className="fas fa-trash"></i>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
 
@@ -158,6 +174,21 @@ const DashboardScreen = ({ history, match }) => {
           />
         </>
       )}
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm deleting bug report</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Once confirmed, the bug report will be deleted!</Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={deleteHandler}>
+            Delete
+          </Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

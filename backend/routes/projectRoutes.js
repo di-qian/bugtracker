@@ -6,6 +6,7 @@ import {
   deleteProject,
   createProject,
   updateProject,
+  getProjectBugs,
 } from '../controllers/projectController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -17,4 +18,5 @@ router
   .delete(protect, admin, deleteProject)
   .put(protect, admin, updateProject);
 
+router.route('/:id/bugs').get(protect, admin, getProjectBugs);
 export default router;
