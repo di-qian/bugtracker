@@ -42,7 +42,6 @@ const ProfileScreen = ({ history }) => {
     if (!userInfo) {
       history.push('/auth/fail');
     } else {
-      console.log(userInfo.name);
       dispatch(getScreenName(USER_PROFILE_EDIT_PAGE));
       if (!user || !user.name || success) {
         setUpdateSuccess(success);
@@ -67,7 +66,7 @@ const ProfileScreen = ({ history }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -114,12 +113,10 @@ const ProfileScreen = ({ history }) => {
   };
 
   const uploadFileHandler = async (e) => {
-    console.log(e.target.files);
     const file = e.target.files[0];
 
     const formData = new FormData();
     formData.append('image', file);
-    console.log(formData);
     setUploading(true);
 
     try {

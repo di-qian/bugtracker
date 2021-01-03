@@ -7,7 +7,6 @@ import {
   USER_REGISTER_FAIL,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
-  GET_ERRORS,
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_SUCCESS,
@@ -28,7 +27,6 @@ import {
   USER_CREATE_REQUEST,
   USER_CREATE_SUCCESS,
   USER_CREATE_FAIL,
-  USER_LOGIN_ERRORS,
 } from '../constants/userConstants';
 
 export const login = (email, password) => async (dispatch) => {
@@ -64,7 +62,7 @@ export const login = (email, password) => async (dispatch) => {
     //       : error.message,
     // });
     dispatch({
-      type: USER_LOGIN_ERRORS,
+      type: USER_LOGIN_FAIL,
       payload: error.response.data,
     });
   }
@@ -121,7 +119,7 @@ export const register = (name, email, password, confirmPassword) => async (
     //       : error.message,
     // });
     dispatch({
-      type: GET_ERRORS,
+      type: USER_REGISTER_FAIL,
       payload: error.response.data,
     });
   }
@@ -257,20 +255,25 @@ export const createUser = (
   image,
   isAdmin,
   isManager
-) => async (dispatch) => {
+) => async (dispatch, getState) => {
   try {
     dispatch({
       type: USER_CREATE_REQUEST,
     });
 
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
       },
     };
 
     const { data } = await axios.post(
-      '/api/users',
+      '/api/users/create',
       { name, email, password, confirmPassword, image, isAdmin, isManager },
       config
     );
@@ -280,7 +283,7 @@ export const createUser = (
       payload: data,
     });
 
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    // localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: USER_CREATE_FAIL,

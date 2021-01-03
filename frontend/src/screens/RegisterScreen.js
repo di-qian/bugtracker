@@ -16,7 +16,6 @@ const RegisterScreen = ({ location, history }) => {
   const [emailEdit, setEmailEdit] = useState(false);
   const [passwordEdit, setPasswordEdit] = useState(false);
   const [confirmPasswordEdit, setConfirmPasswordEdit] = useState(false);
-  const [message, setMessage] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -36,18 +35,11 @@ const RegisterScreen = ({ location, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // if (!name || !email || !password || !confirmPassword) {
-    //   setMessage('Please filling all required information');
-    // } else {
-    //   if (password !== confirmPassword) {
-    //     setMessage('Passwords do not match');
-    //   } else {
+
     setEmailEdit(false);
     setPasswordEdit(false);
     setConfirmPasswordEdit(false);
     dispatch(register(name, email, password, confirmPassword));
-    //   }
-    // }
   };
 
   const settingEmail = (e) => {
@@ -70,7 +62,6 @@ const RegisterScreen = ({ location, history }) => {
       <Row className="justify-content-md-center">
         <Col md={8}>
           <h3 className="pagetitlefont">Sign Up</h3> <hr />
-          {message && <Message variant="success">{message}</Message>}
           {error && <Message variant="danger">{error}</Message>}
           {loading && <Loader />}
           <Form onSubmit={submitHandler}>

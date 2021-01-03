@@ -30,6 +30,7 @@ import { SCREEN_NAME_RESET, BUG_EDIT_PAGE } from '../constants/screenConstants';
 import {
   BUG_CREATE_COMMENT_RESET,
   BUG_UPDATE_RESET,
+  BUG_DETAILS_RESET,
 } from '../constants/bugConstants';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -81,7 +82,7 @@ const BugEditScreen = ({ history, match }) => {
   const {
     loading: updateLoading,
     error: updateError,
-    bug: updatedBug,
+
     successAssigneeUpdate,
     successNameUpdate,
     successProjectUpdate,
@@ -89,14 +90,12 @@ const BugEditScreen = ({ history, match }) => {
     successDueDateUpdate,
     successDescriptionUpdate,
     successImageUpdate,
-    successResolvedAtUpdate,
   } = bugUpdate;
 
   const bugCommentCreate = useSelector((state) => state.bugCommentCreate);
   const {
     success: successBugTracker,
     loading: loadingBugTracker,
-    error: errorBugTracker,
   } = bugCommentCreate;
 
   const handleClose = () => setShow(false);
@@ -115,13 +114,13 @@ const BugEditScreen = ({ history, match }) => {
       } else {
         if (successBugTracker) {
           setComment('');
-          console.log('here1');
+
           dispatch({ type: BUG_CREATE_COMMENT_RESET });
         }
 
         if (successNameUpdate) {
           setName('');
-          console.log('here2');
+
           const combined_comment = ' updated the bug summary.';
           dispatch(createBugComment(match.params.id, { combined_comment }));
           setIsEditIssue(false);
@@ -131,7 +130,6 @@ const BugEditScreen = ({ history, match }) => {
 
         if (successDescriptionUpdate) {
           setDescription('');
-          console.log('here3');
           const combined_comment = ' updated the bug description.';
           dispatch(createBugComment(match.params.id, { combined_comment }));
           setIsEditDescription(false);
@@ -165,7 +163,6 @@ const BugEditScreen = ({ history, match }) => {
           successAssigneeUpdate ||
           successProjectUpdate
         ) {
-          console.log('here4');
           //dispatch({ type: BUG_CREATE_COMMENT_RESET });
           dispatch({ type: BUG_UPDATE_RESET });
         }
@@ -219,6 +216,7 @@ const BugEditScreen = ({ history, match }) => {
 
   useEffect(() => {
     return () => {
+      dispatch({ type: BUG_DETAILS_RESET });
       dispatch({ type: SCREEN_NAME_RESET });
     };
   }, []);
@@ -315,7 +313,6 @@ const BugEditScreen = ({ history, match }) => {
             createBugComment(match.params.id, { combined_comment })
           );
         } else {
-          console.log('i am ready to remove assignee');
           await dispatch(removeBugAssignee(match.params.id));
 
           const combined_comment = 'unassigned the task.';
@@ -513,7 +510,7 @@ const BugEditScreen = ({ history, match }) => {
                   src={
                     bug.assignedTo
                       ? assignedToImage
-                      : '/images/profiles/profile1.png'
+                      : '/images/profiles/defaultprofile.png'
                   }
                   width="35"
                   height="35"
@@ -553,13 +550,13 @@ const BugEditScreen = ({ history, match }) => {
                       (bug.project &&
                         bug.project.managerAssigned._id !== userInfo._id)
                         ? 'hide'
-                        : 'far fa-edit fa-lg'
+                        : 'far fa-edit fa-lg ik'
                     }
                     onClick={enableAssigneeEditButton}
                   ></i>
                 ) : (
                   <i
-                    className="fas fa-check fa-lg"
+                    className="fas fa-check fa-lg ik"
                     onClick={disableAssigneeEditButton}
                   ></i>
                 )}
@@ -592,13 +589,13 @@ const BugEditScreen = ({ history, match }) => {
                     {!isEditProject ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enableProjectEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disableProjectEditButton}
                       ></i>
                     )}
@@ -633,13 +630,13 @@ const BugEditScreen = ({ history, match }) => {
                     {!isEditIssue ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enableIssueEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disableIssueEditButton}
                       ></i>
                     )}
@@ -671,13 +668,13 @@ const BugEditScreen = ({ history, match }) => {
                     {!isEditPriority ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enablePriorityEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disablePriorityEditButton}
                       ></i>
                     )}
@@ -740,13 +737,13 @@ const BugEditScreen = ({ history, match }) => {
                     {!isEditDueDate ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enableDueDateEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disableDueDateEditButton}
                       ></i>
                     )}
@@ -787,13 +784,13 @@ const BugEditScreen = ({ history, match }) => {
                     {!isEditDescription ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enableDescriptionEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disableDescriptionEditButton}
                       ></i>
                     )}
@@ -865,23 +862,19 @@ const BugEditScreen = ({ history, match }) => {
                     )}
 
                     {uploading && <Loader />}
-
-                    {/* <a href={bug.image}>
-                        <i className="fas fa-paperclip" />{' '}
-                      </a> */}
                   </Col>
 
                   <Col xs="auto">
                     {!isEditImage ? (
                       <i
                         className={
-                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg'
+                          bug.resolvedAt ? 'hide' : 'far fa-edit fa-lg ik'
                         }
                         onClick={enableImageEditButton}
                       ></i>
                     ) : (
                       <i
-                        className="fas fa-check fa-lg"
+                        className="fas fa-check fa-lg ik"
                         onClick={disableImageEditButton}
                       ></i>
                     )}
@@ -895,17 +888,18 @@ const BugEditScreen = ({ history, match }) => {
                   Tracker Logs:
                 </Form.Label>
                 <ListGroup variant="flush">
-                  {bug.comments.map((tracker) => (
-                    <ListGroup.Item key={tracker._id}>
-                      <p className="font-weight-light font-italic">
-                        <i className="far fa-comment"></i>
-                        <Moment format=" MM/DD/YYYY  hh:mm:ss A">
-                          {tracker.updatedAt}
-                        </Moment>
-                        {', ' + tracker.name + ' ' + tracker.comment}
-                      </p>
-                    </ListGroup.Item>
-                  ))}
+                  {bug &&
+                    bug.comments.map((tracker) => (
+                      <ListGroup.Item key={tracker._id}>
+                        <p className="font-weight-light font-italic">
+                          <i className="far fa-comment"></i>
+                          <Moment format=" MM/DD/YYYY  hh:mm:ss A">
+                            {tracker.updatedAt}
+                          </Moment>
+                          {', ' + tracker.name + ' ' + tracker.comment}
+                        </p>
+                      </ListGroup.Item>
+                    ))}
                 </ListGroup>
               </Form.Group>
               <hr />

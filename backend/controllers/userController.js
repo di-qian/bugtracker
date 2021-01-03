@@ -2,7 +2,10 @@ import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
 import isEmpty from 'is-empty';
 import User from '../models/userModel.js';
+import Bug from '../models/bugModel.js';
+import Project from '../models/projectModel.js';
 import {
+  validateCreateUserInput,
   validateRegisterInput,
   validateProfileInput,
   validateLoginInput,
@@ -76,29 +79,57 @@ const authUser = asyncHandler(async (req, res) => {
   if (!isEmpty(errors)) {
     return res.status(400).json(errors);
   }
-
-  // if (user && (await user.matchPassword(password))) {
-  //   res.json({
-  //     _id: user._id,
-  //     name: user.name,
-  //     email: user.email,
-  //     image: user.image,
-  //     isAdmin: user.isAdmin,
-  //     isManager: user.isManager,
-  //     token: generateToken(user._id),
-  //   });
-  // } else {
-  //   res.status(401);
-  //   throw new Error('Invalid email or password');
-  // }
 });
 
 // @desc    Register a new user
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, confirmPassword, image } = req.body;
+  const { name, email, password, confirmPassword } = req.body;
   const { errors } = validateRegisterInput({
+    name,
+    email,
+    password,
+    confirmPassword,
+  });
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    errors.email = 'User email is already registered';
+
+    res.status(400);
+  }
+
+  // Check validation
+  if (!isEmpty(errors)) {
+    return res.status(400).json(errors);
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error('Invalid user data');
+  }
+});
+
+// @desc    Register a new user
+// @route   POST /api/users/create
+// @access  Public
+const createUser = asyncHandler(async (req, res) => {
+  const { name, email, password, confirmPassword, image } = req.body;
+  const { errors } = validateCreateUserInput({
     name,
     email,
     password,
@@ -109,9 +140,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     errors.email = 'User email is already registered';
-    //isValid: isEmpty(errors);
     res.status(400);
-    //throw new Error('User already exists');
   }
 
   // Check validation
@@ -242,7 +271,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
   const { name, email, password, confirmPassword, image } = req.body;
-  console.log(req.body);
   const { errors } = validateProfileInput({
     name,
     email,
@@ -286,6 +314,24 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Fetch all bugs related to a project
+// @route   GET /api/projects/:id/bugs
+const getAssigneeBugs = asyncHandler(async (req, res) => {
+  const assigneebugs = await Bug.find({
+    assignedTo: { _id: req.params.id },
+  }).populate('project', 'name');
+  res.json({ assigneebugs });
+});
+
+// @desc    Fetch all bugs related to a project
+// @route   GET /api/projects/:id/bugs
+const getManagerProjects = asyncHandler(async (req, res) => {
+  const managerprojects = await Project.find({
+    managerAssigned: { _id: req.params.id },
+  });
+  res.json({ managerprojects });
+});
+
 export {
   getUsers,
   getUserById,
@@ -293,6 +339,9 @@ export {
   getUserProfile,
   registerUser,
   updateUserProfile,
+  createUser,
   deleteUser,
   updateUser,
+  getAssigneeBugs,
+  getManagerProjects,
 };

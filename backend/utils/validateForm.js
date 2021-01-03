@@ -2,9 +2,9 @@ import Validator from 'validator';
 import isEmpty from 'is-empty';
 import fs from 'fs';
 import path from 'path';
-const default_Profile_Path = '/images/profiles/profile1.png';
+const default_Profile_Path = '/images/profiles/defaultprofile.png';
 
-const validateRegisterInput = (data) => {
+const validateCreateUserInput = (data) => {
   let errors = {};
   // Convert empty fields to an empty string so we can use validator functions
 
@@ -44,7 +44,6 @@ const validateRegisterInput = (data) => {
   try {
     const __dirname = path.resolve();
     const imagePath = path.join(__dirname, data.image);
-    console.log(imagePath);
     if (!fs.existsSync(imagePath)) {
       errors.image = 'Incorrect image file path';
     }
@@ -54,7 +53,48 @@ const validateRegisterInput = (data) => {
 
   return {
     errors,
-    isValid: isEmpty(errors),
+  };
+};
+
+const validateRegisterInput = (data) => {
+  let errors = {};
+  // Convert empty fields to an empty string so we can use validator functions
+
+  data.name = !isEmpty(data.name) ? data.name : '';
+  // Name checks
+  if (Validator.isEmpty(data.name)) {
+    errors.name = 'Name field is required';
+  }
+
+  data.email = !isEmpty(data.email) ? data.email : '';
+  // Email checks
+  if (Validator.isEmpty(data.email)) {
+    errors.email = 'Email field is required';
+  } else if (!Validator.isEmail(data.email)) {
+    errors.email = 'Email is invalid';
+  }
+
+  data.password = !isEmpty(data.password) ? data.password : '';
+  if (Validator.isEmpty(data.password)) {
+    errors.password = 'Password field is required';
+  }
+  if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
+    errors.password = 'Password must be at least 6 characters';
+  }
+
+  data.confirmPassword = !isEmpty(data.confirmPassword)
+    ? data.confirmPassword
+    : '';
+  if (Validator.isEmpty(data.confirmPassword)) {
+    errors.confirmPassword = 'Confirm password field is required';
+  }
+
+  if (!Validator.equals(data.password, data.confirmPassword)) {
+    errors.confirmPassword = 'Passwords must match';
+  }
+
+  return {
+    errors,
   };
 };
 
@@ -167,7 +207,6 @@ const validateNewBugInput = (data) => {
   try {
     const __dirname = path.resolve();
     const imagePath = path.join(__dirname, data.image);
-    console.log(imagePath);
     if (!fs.existsSync(imagePath)) {
       errors.image = 'Incorrect image file path';
     }
@@ -262,6 +301,7 @@ const validateEditProjectInput = (data) => {
 };
 
 export {
+  validateCreateUserInput,
   validateRegisterInput,
   validateProfileInput,
   validateLoginInput,

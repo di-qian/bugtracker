@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from 'react-redux';
+import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Badge, Button, Modal } from 'react-bootstrap';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
@@ -17,6 +18,7 @@ const DashboardScreen = ({ history, match }) => {
   const keyword = match.params.keyword;
   const [show, setShow] = useState(false);
   const [delBug, setDelBug] = useState('');
+  const [delBugName, setDelBugName] = useState('');
 
   const pageNumber = match.params.pageNumber || 1;
 
@@ -40,6 +42,7 @@ const DashboardScreen = ({ history, match }) => {
       history.push('/auth/fail');
     } else {
       setDelBug('');
+      setDelBugName('');
       dispatch(getScreenName(DASHBOARD_PAGE));
       dispatch({ type: BUG_CREATE_RESET });
       dispatch(listBugs(keyword, pageNumber));
@@ -50,15 +53,17 @@ const DashboardScreen = ({ history, match }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const handleClose = () => {
     setDelBug('');
+    setDelBugName('');
     setShow(false);
   };
 
-  const handleShow = (id) => {
+  const handleShow = (id, name) => {
     setDelBug(id);
+    setDelBugName(name);
     setShow(true);
   };
 
@@ -98,9 +103,7 @@ const DashboardScreen = ({ history, match }) => {
                 <th className="display-resolvedBy">Due On</th>
                 <th className="display-priority">Priority</th>
                 <th className="display-assignedTo">Assignee</th>
-                <th className="display-edit">
-                  <i className="fas fa-list-ul"></i>
-                </th>
+                <th className="display-edit">Edit</th>
                 <th
                   className={userInfo && !userInfo.isAdmin ? 'hideAdmin' : ''}
                 >
@@ -133,11 +136,11 @@ const DashboardScreen = ({ history, match }) => {
                     </td>
                     <td className="display-priority">
                       {bug.priority === 'High' ? (
-                        <i className="fas fa-bolt fh"> High</i>
+                        <i className="fas fa-exclamation fh"> High</i>
                       ) : bug.priority === 'Normal' ? (
-                        <i className="fas fa-bolt fn"> Normal</i>
+                        <i className="fas fa-exclamation fn"> Normal</i>
                       ) : (
-                        <i className="fas fa-bolt fl"> Low</i>
+                        <i className="fas fa-exclamation fl"> Low</i>
                       )}
                     </td>
                     <td className="display-assignedTo">
@@ -147,17 +150,20 @@ const DashboardScreen = ({ history, match }) => {
                         <Badge variant="warning">PENDING</Badge>
                       )}
                     </td>
+
                     <td className="display-edit">
-                      <a href={`/auth/bug/edit/${bug._id}`}>
-                        <i className="fas fa-list-ul"></i>
-                      </a>
+                      <LinkContainer to={`/auth/bug/edit/${bug._id}`}>
+                        <Button variant="link" className="btn-sm">
+                          <i className="fas fa-list-ul"></i>
+                        </Button>
+                      </LinkContainer>
                     </td>
 
                     <td className={userInfo.isAdmin ? '' : 'hideAdmin'}>
                       <Button
                         variant="danger"
                         className="btn-sm"
-                        onClick={() => handleShow(bug._id)}
+                        onClick={() => handleShow(bug._id, bug.name)}
                       >
                         <i className="fas fa-trash"></i>
                       </Button>
@@ -177,7 +183,7 @@ const DashboardScreen = ({ history, match }) => {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm deleting bug report</Modal.Title>
+          <Modal.Title>Confirm deleting bug report: {delBugName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>Once confirmed, the bug report will be deleted!</Modal.Body>
         <Modal.Footer>

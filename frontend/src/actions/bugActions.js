@@ -153,16 +153,16 @@ export const updateBug = (updatetype, bug) => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
-    console.log(userInfo.token);
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    console.log('before updatebug: ' + config);
+
     const { data } = await axios.put(`/api/bugs/${bug._id}`, bug, config);
-    console.log('i am here ' + data);
+
     switch (updatetype) {
       case 'UPDATE_ASSIGNEE':
         dispatch({
@@ -292,14 +292,14 @@ export const removeBugAssignee = (id) => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
-    console.log(userInfo.token);
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    console.log('before: ' + config);
+
     const { data } = await axios.put(
       `/api/bugs/${id}/rmassignedto`,
       {},

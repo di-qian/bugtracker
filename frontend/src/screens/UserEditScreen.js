@@ -71,7 +71,7 @@ const UserEditScreen = ({ match, history }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];

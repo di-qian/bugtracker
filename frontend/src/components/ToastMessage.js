@@ -24,7 +24,7 @@ const ToastMessage = ({ curr_page, lg_user }) => {
   const { user } = userDetails;
 
   useEffect(() => {
-    if (bug.project) {
+    if (bug.project && bug.project.managerAssigned) {
       setProjManager(bug.project.managerAssigned.name);
     }
   }, [bug, user]);

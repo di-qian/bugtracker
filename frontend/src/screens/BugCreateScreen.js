@@ -66,7 +66,7 @@ const BugEditScreen = ({ history }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -106,7 +106,6 @@ const BugEditScreen = ({ history }) => {
         priority,
         image,
         description,
-        createdBy: userInfo._id,
         resolvedBy: dt,
         project,
         assignedTo,

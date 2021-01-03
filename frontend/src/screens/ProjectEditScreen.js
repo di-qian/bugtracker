@@ -69,7 +69,7 @@ const ProjectEditScreen = ({ history, match }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -139,7 +139,6 @@ const ProjectEditScreen = ({ history, match }) => {
                     type="invalid"
                     tooltip
                   >
-                    {console.log(errorUpdate)}
                     {errorUpdate && errorUpdate.name}
                   </Form.Control.Feedback>
                 </Form.Group>

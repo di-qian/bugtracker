@@ -38,14 +38,12 @@ const importData = async () => {
       return {
         ...bug,
         project: bugProject,
-        createdBy: managerUser,
+
         assignedTo: memberUser,
       };
     });
 
     await Bug.insertMany(sampleBugs);
-
-    console.log('Data Imported!');
     process.exit();
   } catch (error) {
     console.error(`${error}`);
@@ -59,7 +57,6 @@ const destroyData = async () => {
     await Project.deleteMany();
     await User.deleteMany();
 
-    console.log('Data Destroyed!');
     process.exit();
   } catch (error) {
     console.error(`${error}`);

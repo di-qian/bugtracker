@@ -47,7 +47,7 @@ const ProjectListScreen = ({ history, match }) => {
     return () => {
       dispatch({ type: SCREEN_NAME_RESET });
     };
-  }, []);
+  }, [dispatch]);
 
   const listProjectBugs = async (id) => {
     try {

@@ -13,7 +13,7 @@ const commentSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/images/profiles/profile1.png',
+      default: '/images/profiles/defaultprofile.png',
     },
     comment: { type: String, required: true },
   },
@@ -49,11 +49,7 @@ const bugSchema = mongoose.Schema(
     resolvedAt: {
       type: Date,
     },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
+
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

@@ -5,6 +5,7 @@ import {
   BUG_DETAILS_REQUEST,
   BUG_DETAILS_SUCCESS,
   BUG_DETAILS_FAIL,
+  BUG_DETAILS_RESET,
   BUG_DELETE_REQUEST,
   BUG_DELETE_SUCCESS,
   BUG_DELETE_FAIL,
@@ -31,7 +32,6 @@ import {
   BUG_UPDATE_RMASSIGNEE_REQUEST,
   BUG_UPDATE_RMASSIGNEE_SUCCESS,
   BUG_UPDATE_RMASSIGNEE_FAIL,
-  BUG_UPDATE_RMASSIGNEE_RESET,
 } from '../constants/bugConstants';
 
 export const bugListReducer = (state = { bugs: [] }, action) => {
@@ -63,6 +63,8 @@ export const bugDetailsReducer = (
       return { loading: false, bug: action.payload };
     case BUG_DETAILS_FAIL:
       return { loading: false, error: action.payload };
+    case BUG_DETAILS_RESET:
+      return { bug: { comments: [] } };
     default:
       return state;
   }

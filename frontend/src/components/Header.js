@@ -24,9 +24,6 @@ const Header = () => {
             </Navbar.Brand>
           </LinkContainer>
 
-          {/* <Navbar.Brand href={userInfo ? '/auth/dashboard' : '/'}>
-            {userInfo ? 'Dashboard' : 'Bug Tracker'}
-          </Navbar.Brand> */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">

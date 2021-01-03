@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+
+import { Row, Col, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import FormContainer from '../components/FormContainer';
+
 import { LinkContainer } from 'react-router-bootstrap';
 import HomeCarousel from '../components/HomeCarousel';
 import { USER_LOGIN_ERRORS_RESET } from '../constants/userConstants';

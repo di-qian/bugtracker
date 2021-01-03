@@ -91,7 +91,6 @@ const createBug = asyncHandler(async (req, res) => {
     project: req.body.project,
     priority: req.body.priority,
     resolvedBy: req.body.resolvedBy,
-    createdBy: req.body.createdBy,
     assignedTo: temp_assignTo,
   });
 
@@ -134,7 +133,6 @@ const updateBug = asyncHandler(async (req, res) => {
     priority,
     resolvedBy,
     resolvedAt,
-    createdBy,
     assignedTo,
     comments,
   } = req.body;
@@ -161,7 +159,6 @@ const updateBug = asyncHandler(async (req, res) => {
     bug.priority = priority;
     bug.resolvedBy = resolvedBy;
     bug.resolvedAt = resolvedAt;
-    bug.createdBy = createdBy;
     bug.assignedTo = assignedTo;
     bug.comments = comments;
 
