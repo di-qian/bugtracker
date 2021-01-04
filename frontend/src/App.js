@@ -27,10 +27,10 @@ const App = () => {
       <main className="py-3">
         <Container fluid>
           <Row className="justify-content-md-center">
-            <Col xs md="3" lg="3" className="mr-auto">
+            <Col xs sm="4" md="3" lg="2" className="mr-auto">
               <TesterMessageToast />
             </Col>
-            <Col md="8" lg="6">
+            <Col sm="4" md="6" lg="7">
               <Switch>
                 <Route path="/login" component={LoginScreen} />
                 <Route path="/register" component={RegisterScreen} />
@@ -89,7 +89,7 @@ const App = () => {
                 <Route component={NoMatch} />
               </Switch>
             </Col>
-            <Col xs md="3" lg="3" className="mr-auto"></Col>
+            <Col xs sm="4" md="3" lg="2" className="mr-auto"></Col>
           </Row>
         </Container>
       </main>

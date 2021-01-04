@@ -39,9 +39,9 @@ const TesterMessageToast = () => {
               </p>
               <p>
                 Key features: <br />
-                - create new bug report, <br />
-                - edit existing bug report, <br />
-                - edit user profile, <br />
+                - create new bug report. <br />
+                - edit existing bug report. <br />
+                - edit user profile. <br />
               </p>
               <hr />
               <p>
@@ -51,8 +51,8 @@ const TesterMessageToast = () => {
               </p>
               <p>
                 Key features: <br />
-                - all team member capabilities, <br />
-                - designate assignee for a bug, <br />
+                - all team member capabilities. <br />
+                - designate assignee for a bug. <br />
               </p>
               <hr />
               <p>
@@ -62,9 +62,9 @@ const TesterMessageToast = () => {
               </p>
               <p>
                 Key features: <br />
-                - all team member capabilities, <br />
-                - create/edit/delete users, <br />
-                - create/edit/delete project, <br />
+                - all team member capabilities. <br />
+                - create/edit/delete users. <br />
+                - create/edit/delete projects. <br />
               </p>
             </>
           ) : (

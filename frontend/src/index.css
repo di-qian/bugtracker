@@ -82,7 +82,7 @@ hr.solid {
 }
 
 .toastwidth {
-  width: 225px;
+  width: 200px;
 }
 
 .carousel h4 {
@@ -153,13 +153,13 @@ hr.solid {
   }
 }
 
-@media screen and (max-width: 1225px) and (min-width: 1045px) {
+@media screen and (max-width: 1225px) and (min-width: 1095px) {
   .display-createdAt {
     display: none;
   }
 }
 
-@media screen and (max-width: 1045px) and (min-width: 835px) {
+@media screen and (max-width: 1095px) and (min-width: 835px) {
   .display-createdAt {
     display: none;
   }
@@ -168,7 +168,7 @@ hr.solid {
   }
 }
 
-@media screen and (max-width: 835px) and (min-width: 565px) {
+@media screen and (max-width: 835px) and (min-width: 595px) {
   .display-createdAt {
     display: none;
   }
@@ -180,7 +180,7 @@ hr.solid {
   }
 }
 
-@media screen and (max-width: 565px) and (min-width: 415px) {
+@media screen and (max-width: 595px) and (min-width: 415px) {
   .display-createdAt {
     display: none;
   }

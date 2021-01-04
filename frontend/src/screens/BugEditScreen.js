@@ -172,8 +172,13 @@ const BugEditScreen = ({ history, match }) => {
         setDescription(bug.description);
         setImage(bug.image);
 
-        if (!assignedTo) {
+        if (!assignedTo && assignedToName !== 'Choose...') {
           setAssignedTo(bug.assignedTo);
+          setAssignedToImage(
+            bug.assignedTo
+              ? bug.assignedTo.image
+              : '/images/profiles/defaultprofile.png'
+          );
         } else {
           if (!assignedToName) {
             setAssignedToName(assignedTo.name);
@@ -182,7 +187,6 @@ const BugEditScreen = ({ history, match }) => {
             setAssignedToImage(assignedTo.image);
           }
         }
-
         setResolvedBy(new Date(bug.resolvedBy));
       }
     }
@@ -272,7 +276,7 @@ const BugEditScreen = ({ history, match }) => {
     } else {
       setAssignedTo('');
       setAssignedToName(e);
-      setAssignedToImage('');
+      setAssignedToImage('/images/profiles/defaultprofile.png');
     }
   };
 
@@ -326,7 +330,7 @@ const BugEditScreen = ({ history, match }) => {
       if (assignedToName !== '' && assignedToName !== 'Choose...') {
         await dispatch(updateBug('UPDATE_ASSIGNEE', { ...bug, assignedTo }));
 
-        const str1 = assignedTo.name;
+        const str1 = assignedToName;
         const str2 = 'reassigned the task to ';
         const combined_comment = str2.concat(str1) + '.';
 
@@ -508,9 +512,10 @@ const BugEditScreen = ({ history, match }) => {
                 <Image
                   className="mr-2"
                   src={
-                    bug.assignedTo
-                      ? assignedToImage
-                      : '/images/profiles/defaultprofile.png'
+                    assignedToImage
+                    // bug.assignedTo
+                    // ? assignedToImage
+                    // : '/images/profiles/defaultprofile.png'
                   }
                   width="35"
                   height="35"
@@ -844,7 +849,7 @@ const BugEditScreen = ({ history, match }) => {
                             {bug.image ? (
                               <i className="fas fa-paperclip" />
                             ) : (
-                              'No image'
+                              'No image uploaded'
                             )}
                           </Accordion.Toggle>
                           <Accordion.Collapse eventKey="0">
@@ -952,7 +957,7 @@ const BugEditScreen = ({ history, match }) => {
                       variant="success"
                       disabled={bug.resolvedAt ? true : false}
                       //onClick={() => enableConfirmButton()}
-                      onClick={() => handleShow}
+                      onClick={() => handleShow()}
                     >
                       Resolved
                     </Button>
